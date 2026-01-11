@@ -279,10 +279,14 @@
         <div class="scanner-body">
             <div class="config-card" style="margin-bottom:14px">
                 <div class="config-row">
-                    <span class="config-label">Fecha:</span>
-                    <input type="date" class="form-input" id="dashboardDate">
-                    <button class="lock-btn" id="applyDashboardDate">Ver</button>
+                    <span class="config-label">Desde:</span>
+                    <input type="date" class="form-input" id="dashboardDateFrom">
                 </div>
+                <div class="config-row">
+                    <span class="config-label">Hasta:</span>
+                    <input type="date" class="form-input" id="dashboardDateTo">
+                </div>
+                <button class="btn btn-primary mt-14" id="applyDashboardDate">Ver Resumen</button>
             </div>
             
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
@@ -305,12 +309,12 @@
             </div>
             
             <div class="config-card" style="text-align:center;background:linear-gradient(135deg,var(--primary),#0065FF)">
-                <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:600">TOTAL MOVIMIENTOS</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:600">TOTAL EN RANGO</div>
                 <div id="dashTotal" style="font-size:40px;font-weight:800;color:white">0</div>
             </div>
             
             <div class="config-card" style="margin-top:14px">
-                <h4 style="font-size:12px;margin-bottom:10px">Acumulado General</h4>
+                <h4 style="font-size:12px;margin-bottom:10px">Acumulado General (Todo el histórico)</h4>
                 <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
                     <span>Total Recepciones:</span><strong id="dashTotalRecepcion">0</strong>
                 </div>
@@ -551,14 +555,36 @@
     <div id="exportScreen" class="screen">
         <div class="scanner-header"><button class="back-btn" id="backExport">←</button><h2 class="scanner-title">📊 Exportar</h2></div>
         <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <p style="font-size:12px;font-weight:600;margin-bottom:10px">Filtrar por fecha:</p>
+                <div class="config-row">
+                    <span class="config-label">Desde:</span>
+                    <input type="date" class="form-input" id="exportDateFrom">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Hasta:</span>
+                    <input type="date" class="form-input" id="exportDateTo">
+                </div>
+            </div>
+            
             <p style="font-size:12px;color:var(--text-light);margin-bottom:14px">Selecciona el reporte a descargar</p>
             
             <div class="config-card" style="cursor:pointer" id="exportMovsHoy">
                 <div style="display:flex;align-items:center;gap:12px">
                     <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
                     <div>
-                        <div style="font-weight:700;font-size:14px">Movimientos del Día</div>
-                        <div style="font-size:11px;color:var(--text-light)">Recepciones, acomodos, traspasos y embarques de hoy</div>
+                        <div style="font-weight:700;font-size:14px">Movimientos</div>
+                        <div style="font-size:11px;color:var(--text-light)">Todos los movimientos en el rango seleccionado</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="config-card" style="cursor:pointer" id="exportEmbarques">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:var(--error-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📤</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Embarques</div>
+                        <div style="font-size:11px;color:var(--text-light)">Solo embarques en el rango seleccionado</div>
                     </div>
                 </div>
             </div>
@@ -795,7 +821,8 @@
         document.getElementById('applyDashboardDate').addEventListener('click', renderDashboard);
         
         // Export buttons
-        document.getElementById('exportMovsHoy').addEventListener('click', exportMovimientosHoy);
+        document.getElementById('exportMovsHoy').addEventListener('click', exportMovimientos);
+        document.getElementById('exportEmbarques').addEventListener('click', exportEmbarques);
         document.getElementById('exportPendientes').addEventListener('click', exportPendientes);
         document.getElementById('exportInventario').addEventListener('click', exportInventario);
         
@@ -1676,30 +1703,83 @@
         showToast('success','Archivo descargado');
     }
     
-    function exportMovimientosHoy(){
-        var today = new Date().toDateString();
-        var todayMovs = state.movements.filter(function(m){
-            return new Date(m.timestamp).toDateString() === today;
-        });
+    function getExportDateRange(){
+        var from = document.getElementById('exportDateFrom').value;
+        var to = document.getElementById('exportDateTo').value;
         
-        if(!todayMovs.length){
-            showToast('warning','No hay movimientos de hoy');
+        var fromDate = from ? new Date(from + 'T00:00:00') : null;
+        var toDate = to ? new Date(to + 'T23:59:59') : null;
+        
+        // Si no hay fechas, usar hoy
+        if(!fromDate && !toDate){
+            var today = new Date();
+            fromDate = new Date(today.toDateString());
+            toDate = new Date(today.toDateString());
+            toDate.setHours(23,59,59);
+        }
+        
+        return { from: fromDate, to: toDate };
+    }
+    
+    function filterByDateRange(movements, range){
+        return movements.filter(function(m){
+            var mDate = new Date(m.timestamp);
+            var pass = true;
+            if(range.from) pass = pass && mDate >= range.from;
+            if(range.to) pass = pass && mDate <= range.to;
+            return pass;
+        });
+    }
+    
+    function exportMovimientos(){
+        var range = getExportDateRange();
+        var filtered = filterByDateRange(state.movements, range);
+        
+        if(!filtered.length){
+            showToast('warning','No hay movimientos en el rango seleccionado');
             return;
         }
         
         var typeNames = {recepcion:'Recepcion',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
-        var csv = 'MOVIMIENTOS DEL DIA - ' + new Date().toLocaleDateString('es-MX') + '\n\n';
-        csv += 'Hora,Tipo,Usuario,Codigo,Ubicacion/Bodega,Referencia\n';
+        var fromStr = range.from ? range.from.toLocaleDateString('es-MX') : 'Inicio';
+        var toStr = range.to ? range.to.toLocaleDateString('es-MX') : 'Fin';
         
-        todayMovs.forEach(function(m){
-            var ubicacion = m.location || m.bodega || '';
-            var ref = m.referencia || m.motivo || '';
-            csv += '"'+m.hora+'","'+typeNames[m.type]+'","'+m.user+'","'+m.equipment.full+'","'+ubicacion+'","'+ref+'"\n';
+        var csv = 'MOVIMIENTOS - ' + fromStr + ' a ' + toStr + '\n\n';
+        csv += 'Fecha,Hora,Tipo,Usuario,Codigo,Prefijo,Serie,Ubicacion,Bodega,Referencia\n';
+        
+        filtered.forEach(function(m){
+            csv += '"'+m.fecha+'","'+m.hora+'","'+typeNames[m.type]+'","'+m.user+'","'+m.equipment.full+'","'+m.equipment.prefix+'","'+m.equipment.serie+'","'+(m.location||'')+'","'+(m.bodega||'')+'","'+(m.referencia||'')+'"\n';
         });
         
-        csv += '\nTotal: ' + todayMovs.length + ' movimientos';
+        csv += '\nTotal: ' + filtered.length + ' movimientos';
         
-        downloadCSV(csv, 'movimientos_hoy_'+new Date().toISOString().slice(0,10)+'.csv');
+        downloadCSV(csv, 'movimientos_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+    
+    function exportEmbarques(){
+        var range = getExportDateRange();
+        var filtered = filterByDateRange(state.movements, range).filter(function(m){
+            return m.type === 'embarque';
+        });
+        
+        if(!filtered.length){
+            showToast('warning','No hay embarques en el rango seleccionado');
+            return;
+        }
+        
+        var fromStr = range.from ? range.from.toLocaleDateString('es-MX') : 'Inicio';
+        var toStr = range.to ? range.to.toLocaleDateString('es-MX') : 'Fin';
+        
+        var csv = 'EMBARQUES - ' + fromStr + ' a ' + toStr + '\n\n';
+        csv += 'Fecha,Hora,Usuario,Codigo,Prefijo,Serie,Referencia\n';
+        
+        filtered.forEach(function(m){
+            csv += '"'+m.fecha+'","'+m.hora+'","'+m.user+'","'+m.equipment.full+'","'+m.equipment.prefix+'","'+m.equipment.serie+'","'+(m.referencia||'')+'"\n';
+        });
+        
+        csv += '\nTotal: ' + filtered.length + ' embarques';
+        
+        downloadCSV(csv, 'embarques_'+new Date().toISOString().slice(0,10)+'.csv');
     }
     
     function exportPendientes(){
@@ -2310,28 +2390,37 @@
 
     // ==================== DASHBOARD ====================
     function renderDashboard(){
-        var dateInput = document.getElementById('dashboardDate');
-        if(!dateInput.value){
-            dateInput.value = new Date().toISOString().slice(0,10);
+        var fromInput = document.getElementById('dashboardDateFrom');
+        var toInput = document.getElementById('dashboardDateTo');
+        
+        // Si no hay fechas, usar hoy
+        if(!fromInput.value && !toInput.value){
+            var today = new Date().toISOString().slice(0,10);
+            fromInput.value = today;
+            toInput.value = today;
         }
         
-        var selectedDate = new Date(dateInput.value + 'T00:00:00');
-        var selectedDateStr = selectedDate.toDateString();
+        var fromDate = fromInput.value ? new Date(fromInput.value + 'T00:00:00') : null;
+        var toDate = toInput.value ? new Date(toInput.value + 'T23:59:59') : null;
         
-        var dayMovs = state.movements.filter(function(m){
-            return new Date(m.timestamp).toDateString() === selectedDateStr;
+        var rangeMovs = state.movements.filter(function(m){
+            var mDate = new Date(m.timestamp);
+            var pass = true;
+            if(fromDate) pass = pass && mDate >= fromDate;
+            if(toDate) pass = pass && mDate <= toDate;
+            return pass;
         });
         
-        var dayRecepcion = dayMovs.filter(function(m){ return m.type === 'recepcion'; }).length;
-        var dayAcomodo = dayMovs.filter(function(m){ return m.type === 'acomodo'; }).length;
-        var dayTraspaso = dayMovs.filter(function(m){ return m.type === 'traspaso'; }).length;
-        var dayEmbarque = dayMovs.filter(function(m){ return m.type === 'embarque'; }).length;
+        var rangeRecepcion = rangeMovs.filter(function(m){ return m.type === 'recepcion'; }).length;
+        var rangeAcomodo = rangeMovs.filter(function(m){ return m.type === 'acomodo'; }).length;
+        var rangeTraspaso = rangeMovs.filter(function(m){ return m.type === 'traspaso'; }).length;
+        var rangeEmbarque = rangeMovs.filter(function(m){ return m.type === 'embarque'; }).length;
         
-        document.getElementById('dashRecepcion').textContent = dayRecepcion;
-        document.getElementById('dashAcomodo').textContent = dayAcomodo;
-        document.getElementById('dashTraspaso').textContent = dayTraspaso;
-        document.getElementById('dashEmbarque').textContent = dayEmbarque;
-        document.getElementById('dashTotal').textContent = dayMovs.length;
+        document.getElementById('dashRecepcion').textContent = rangeRecepcion;
+        document.getElementById('dashAcomodo').textContent = rangeAcomodo;
+        document.getElementById('dashTraspaso').textContent = rangeTraspaso;
+        document.getElementById('dashEmbarque').textContent = rangeEmbarque;
+        document.getElementById('dashTotal').textContent = rangeMovs.length;
         
         // Acumulado general
         var totalRecepcion = state.movements.filter(function(m){ return m.type === 'recepcion'; }).length;
