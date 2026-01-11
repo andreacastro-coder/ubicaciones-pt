@@ -1,0 +1,2431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0052CC">
+    <title>Ubicaciones PT | Industronic</title>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        :root{--primary:#0052CC;--primary-dark:#003d99;--bg-light:#f4f5f7;--text-dark:#172b4d;--text-light:#7a869a;--border:#dfe1e6;--success:#36B37E;--success-bg:#e3fcef;--warning:#FF991F;--warning-bg:#fffae6;--error:#DE350B;--error-bg:#ffebe6;--info:#0065FF;--info-bg:#deebff;--radius:12px}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-light);color:var(--text-dark);min-height:100vh}
+        .screen{display:none;animation:fadeIn .25s}.screen.active{display:block}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        
+        .header{background:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+        .header-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--text-dark)}
+        .logo-icon{width:28px;height:28px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px}
+        .user-pill{background:var(--bg-light);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;color:var(--text-dark);cursor:pointer}
+        
+        .login-container{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:linear-gradient(180deg,var(--primary) 0%,var(--primary-dark) 40%,var(--bg-light) 40%)}
+        .login-card{background:white;border-radius:16px;padding:32px 24px;width:100%;max-width:380px;box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+        .login-logo{text-align:center;margin-bottom:20px}
+        .login-logo-icon{width:50px;height:50px;background:var(--primary);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px}
+        .login-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}
+        .login-subtitle{color:var(--text-light);text-align:center;font-size:13px;margin-bottom:24px}
+        
+        .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+        .role-btn{background:var(--bg-light);border:2px solid transparent;border-radius:var(--radius);padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s}
+        .role-btn:hover,.role-btn:active{border-color:var(--primary);background:var(--info-bg)}
+        .role-btn .icon{font-size:24px;margin-bottom:6px}
+        .role-btn .name{font-size:13px;font-weight:700}
+        .role-btn .desc{font-size:10px;color:var(--text-light);margin-top:2px}
+        
+        .user-list{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow-y:auto}
+        .user-btn{background:var(--bg-light);border:2px solid transparent;border-radius:8px;padding:12px 14px;font-size:14px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px}
+        .user-btn:hover,.user-btn:active{border-color:var(--primary);background:var(--info-bg)}
+        .user-btn .avatar{width:32px;height:32px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+        .back-link{text-align:center;margin-top:16px;font-size:13px;color:var(--primary);cursor:pointer;font-weight:600}
+        
+        .menu-container{padding:16px}
+        .welcome-banner{background:linear-gradient(135deg,var(--primary),#0065FF);border-radius:var(--radius);padding:20px;color:white;margin-bottom:20px}
+        .welcome-banner h2{font-size:18px;font-weight:700;margin-bottom:2px}
+        .welcome-banner p{font-size:12px;opacity:.9}
+        .stats-row{display:flex;gap:10px;margin-top:14px}
+        .stat-box{flex:1;background:rgba(255,255,255,.18);border-radius:8px;padding:10px;text-align:center}
+        .stat-box .value{font-size:22px;font-weight:800}
+        .stat-box .label{font-size:10px;opacity:.85;text-transform:uppercase}
+        
+        .section-title{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px}
+        .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .menu-card{background:white;border-radius:var(--radius);padding:18px 14px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,0.1);border:1px solid var(--border)}
+        .menu-card:active{transform:scale(0.98)}
+        .menu-icon{width:44px;height:44px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:22px}
+        .menu-card.recepcion .menu-icon{background:var(--success-bg)}
+        .menu-card.acomodo .menu-icon{background:var(--info-bg)}
+        .menu-card.traspaso .menu-icon{background:var(--warning-bg)}
+        .menu-card.embarque .menu-icon{background:var(--error-bg)}
+        .menu-card.consulta .menu-icon{background:#f3e8ff}
+        .menu-card.historial .menu-icon{background:var(--bg-light)}
+        .menu-card.mis-movs .menu-icon{background:#fef3c7}
+        .menu-card.export .menu-icon{background:#dbeafe}
+        .menu-title{font-weight:700;font-size:13px}
+        .menu-desc{font-size:10px;color:var(--text-light);margin-top:2px}
+        
+        .scanner-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:white;border-bottom:1px solid var(--border)}
+        .back-btn{background:var(--bg-light);border:none;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:16px}
+        .scanner-title{font-size:16px;font-weight:700;flex:1}
+        .scanner-body{padding:16px}
+        
+        .config-card{background:white;border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .config-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .config-row+.config-row{margin-top:12px}
+        .config-label{font-size:12px;font-weight:600;color:var(--text-light);min-width:70px}
+        .config-select,.form-input{flex:1;background:var(--bg-light);border:2px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;min-width:0}
+        .config-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235e6c84' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+        .config-select:focus,.form-input:focus{outline:none;border-color:var(--primary)}
+        .lock-btn{background:var(--bg-light);border:2px solid var(--border);border-radius:8px;padding:8px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+        .lock-btn.locked{background:var(--primary);border-color:var(--primary);color:white}
+        
+        .input-tabs{display:flex;background:var(--bg-light);border-radius:8px;padding:3px;margin-bottom:14px}
+        .input-tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;color:var(--text-light)}
+        .input-tab.active{background:white;color:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+        
+        .scanner-box{background:white;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .scanner-region{width:100%;aspect-ratio:4/3;background:#1a1a2e}
+        .scan-status{padding:12px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text-light)}
+        .scan-status .dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+        
+        .scanned-list{background:white;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .scanned-list-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        .scanned-list-header h4{font-size:13px;font-weight:700}
+        .scanned-count{background:var(--primary);color:white;font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px}
+        .scanned-items{max-height:180px;overflow-y:auto}
+        .scanned-item{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);font-size:13px}
+        .scanned-item:last-child{border-bottom:none}
+        .scanned-item .code{font-family:monospace;font-weight:600}
+        .scanned-item .time{font-size:10px;color:var(--text-light)}
+        .scanned-item .remove-btn{background:none;border:none;color:var(--error);cursor:pointer;padding:4px;font-size:16px}
+        .empty-list{padding:24px;text-align:center;color:var(--text-light);font-size:12px}
+        
+        .btn{width:100%;padding:14px;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+        .btn-primary{background:var(--primary);color:white}
+        .btn-success{background:var(--success);color:white}
+        .btn-secondary{background:var(--bg-light);color:var(--text-dark);border:2px solid var(--border)}
+        .btn:disabled{opacity:.5;cursor:not-allowed}
+        
+        .location-dropdown{position:relative;flex:1}
+        .location-dropdown .suggestions{position:absolute;top:100%;left:0;right:0;background:white;border:2px solid var(--primary);border-top:none;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;z-index:50;display:none}
+        .location-dropdown .suggestions.show{display:block}
+        .suggestion-item{padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border)}
+        .suggestion-item:hover{background:var(--info-bg)}
+        
+        .search-card{background:white;border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .search-row{display:flex;gap:10px}
+        .search-btn{background:var(--primary);color:white;border:none;border-radius:8px;padding:12px 16px;font-weight:700;cursor:pointer}
+        
+        .equipment-card{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .equipment-header{background:var(--primary);color:white;padding:16px}
+        .equipment-header .code{font-family:monospace;font-size:18px;font-weight:700}
+        .equipment-header .details{display:flex;gap:16px;font-size:12px;opacity:.9;margin-top:4px}
+        .equipment-status{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .status-badge{padding:5px 10px;border-radius:16px;font-size:11px;font-weight:700}
+        .status-badge.en-bodega{background:var(--success-bg);color:var(--success)}
+        .status-badge.embarcado{background:var(--error-bg);color:var(--error)}
+        .equipment-timeline{padding:14px 16px}
+        .timeline-title{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;margin-bottom:10px}
+        .timeline-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+        .timeline-item:last-child{border-bottom:none}
+        .timeline-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+        .timeline-dot.recepcion{background:var(--success)}
+        .timeline-dot.acomodo{background:var(--info)}
+        .timeline-dot.traspaso{background:var(--warning)}
+        .timeline-dot.embarque{background:var(--error)}
+        .timeline-content .action{font-size:13px;font-weight:600}
+        .timeline-content .meta{font-size:11px;color:var(--text-light);margin-top:2px}
+        
+        .history-filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+        .filter-chip{background:white;border:2px solid var(--border);border-radius:16px;padding:6px 12px;font-size:11px;font-weight:600;white-space:nowrap;cursor:pointer}
+        .filter-chip.active{border-color:var(--primary);background:var(--primary);color:white}
+        .history-list{display:flex;flex-direction:column;gap:10px}
+        .history-item{background:white;border-radius:var(--radius);padding:14px;display:flex;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+        .history-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .history-icon.recepcion{background:var(--success-bg)}
+        .history-icon.acomodo{background:var(--info-bg)}
+        .history-icon.traspaso{background:var(--warning-bg)}
+        .history-icon.embarque{background:var(--error-bg)}
+        .history-content{flex:1;min-width:0}
+        .history-code{font-family:monospace;font-size:13px;font-weight:600}
+        .history-details{font-size:11px;color:var(--text-light);margin-top:2px}
+        .history-meta{display:flex;gap:10px;font-size:10px;color:var(--text-light);margin-top:4px;flex-wrap:wrap}
+        .history-actions{margin-top:6px;display:flex;gap:6px}
+        .history-actions button{background:var(--bg-light);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:10px;font-weight:600;cursor:pointer;color:white}
+        .history-actions button.delete{background:var(--error);border-color:var(--error)}
+        .history-actions button.edit{background:var(--info);border-color:var(--info)}
+        
+        .config-select{width:100%;padding:10px 12px;font-size:13px;border:2px solid var(--border);border-radius:8px;background:white;color:var(--text-dark);cursor:pointer}
+        .config-select:focus{outline:none;border-color:var(--primary)}
+        
+        .form-group{margin-bottom:14px}
+        .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-light);margin-bottom:6px}
+        
+        .toast{position:fixed;bottom:80px;left:16px;right:16px;background:white;border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);transform:translateY(100px);opacity:0;transition:all .3s;z-index:1000}
+        .toast.show{transform:translateY(0);opacity:1}
+        .toast.success{border-left:4px solid var(--success)}
+        .toast.error{border-left:4px solid var(--error)}
+        .toast.warning{border-left:4px solid var(--warning)}
+        
+        .pending-badge{position:fixed;bottom:20px;right:16px;background:var(--warning);color:white;padding:8px 14px;border-radius:20px;font-size:12px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:none}
+        .pending-badge.show{display:flex;align-items:center;gap:6px}
+        .offline-bar{background:var(--warning);color:white;padding:8px;text-align:center;font-size:12px;font-weight:600;display:none}
+        .offline-bar.show{display:block}
+        .empty-state{text-align:center;padding:40px 20px;color:var(--text-light)}
+        .hidden{display:none!important}
+        .mt-14{margin-top:14px}
+        .form-group{margin-bottom:12px}
+        .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-light);margin-bottom:6px}
+        .alert-box{background:var(--warning-bg);border:1px solid var(--warning);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:#92400e}
+        
+        .qr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:200;display:none;flex-direction:column}
+        .qr-modal.show{display:flex}
+    </style>
+</head>
+<body>
+    <div id="offlineBar" class="offline-bar">⚠️ Sin conexión - Guardado local</div>
+
+    <!-- LOGIN -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-logo">
+                    <div class="login-logo-icon">!i</div>
+                </div>
+                <h1 class="login-title">Ubicaciones PT</h1>
+                <p class="login-subtitle">Selecciona tu tipo de acceso</p>
+                
+                <div id="roleSelection">
+                    <div class="role-grid">
+                        <div class="role-btn" id="roleUsuario"><div class="icon">👷</div><div class="name">Usuario</div><div class="desc">Operaciones</div></div>
+                        <div class="role-btn" id="roleConsulta"><div class="icon">🔍</div><div class="name">Consulta</div><div class="desc">Solo buscar</div></div>
+                        <div class="role-btn" id="roleAuditoria"><div class="icon">📋</div><div class="name">Auditoria</div><div class="desc" style="color:var(--warning)">🔒 Clave</div></div>
+                        <div class="role-btn" id="roleSupervisor"><div class="icon">⭐</div><div class="name">Supervisor</div><div class="desc" style="color:var(--warning)">🔒 Clave</div></div>
+                    </div>
+                </div>
+                
+                <div id="userSelection" class="hidden">
+                    <div class="user-list" id="userGrid"></div>
+                    <div class="back-link" id="backToRolesBtn">← Cambiar tipo de acceso</div>
+                </div>
+                
+                <div id="passwordSection" class="hidden">
+                    <h3 id="passwordTitle" style="font-size:14px;text-align:center;margin-bottom:12px">Clave</h3>
+                    <input type="password" id="passwordInput" style="width:100%;padding:12px;font-size:16px;text-align:center;letter-spacing:4px;border:2px solid var(--border);border-radius:8px;background:var(--bg-light)" placeholder="****" maxlength="10">
+                    <p id="passwordError" style="color:var(--error);font-size:12px;text-align:center;margin-top:8px;display:none">Clave incorrecta</p>
+                    <button id="passwordBtn" style="width:100%;margin-top:12px;padding:14px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">Ingresar</button>
+                    <div class="back-link" id="backFromPassword">← Cambiar</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <div id="menuScreen" class="screen">
+        <div class="header">
+            <div class="header-logo"><div class="logo-icon">!i</div><span>Ubicaciones PT</span></div>
+            <div class="user-pill" id="logoutBtn"><span id="currentUserName">Usuario</span> ▼</div>
+        </div>
+        <div class="menu-container">
+            <div class="welcome-banner">
+                <h2 id="welcomeTitle">Bienvenido</h2>
+                <p id="welcomeRole">Sistema de ubicaciones</p>
+                <div class="stats-row">
+                    <div class="stat-box"><div class="value" id="statToday">0</div><div class="label">Hoy</div></div>
+                    <div class="stat-box"><div class="value" id="statPending">0</div><div class="label">Pendientes</div></div>
+                    <div class="stat-box"><div class="value" id="statTotal">0</div><div class="label">Total</div></div>
+                </div>
+            </div>
+            
+            <div id="operationsSection">
+                <div class="section-title">Operaciones</div>
+                <div class="menu-grid">
+                    <div class="menu-card recepcion" id="menuRecepcion"><div class="menu-icon">📥</div><div class="menu-title">Recepción</div><div class="menu-desc">Entrada de equipos</div></div>
+                    <div class="menu-card acomodo" id="menuAcomodo"><div class="menu-icon">📍</div><div class="menu-title">Acomodo</div><div class="menu-desc">Asignar ubicación</div></div>
+                    <div class="menu-card traspaso" id="menuTraspaso"><div class="menu-icon">🔄</div><div class="menu-title">Traspaso</div><div class="menu-desc">Mover a bodega</div></div>
+                    <div class="menu-card embarque" id="menuEmbarque"><div class="menu-icon">📤</div><div class="menu-title">Embarque</div><div class="menu-desc">Salida de equipos</div></div>
+                </div>
+            </div>
+            
+            <div id="consultasSection">
+                <div class="section-title">Consultas</div>
+                <div class="menu-grid">
+                    <div class="menu-card consulta" id="menuConsulta"><div class="menu-icon">🔍</div><div class="menu-title">Buscar Serie</div><div class="menu-desc">Historial completo</div></div>
+                    <div class="menu-card historial" id="menuHistorial"><div class="menu-icon">📋</div><div class="menu-title">Historial</div><div class="menu-desc">Todos los movimientos</div></div>
+                    <div class="menu-card mis-movs" id="menuMisMovs"><div class="menu-icon">✏️</div><div class="menu-title">Mis Movimientos</div><div class="menu-desc">Editar/Eliminar</div></div>
+                    <div class="menu-card export" id="menuExport"><div class="menu-icon">📊</div><div class="menu-title">Exportar</div><div class="menu-desc">Descargar Excel</div></div>
+                    <div class="menu-card traspaso" id="menuPendientes"><div class="menu-icon">⏳</div><div class="menu-title">Pendientes</div><div class="menu-desc">Sin acomodar</div></div>
+                </div>
+            </div>
+            
+            <div id="adminSection" class="hidden">
+                <div class="section-title">Administracion</div>
+                <div class="menu-grid">
+                    <div class="menu-card recepcion" id="menuDashboard"><div class="menu-icon">📈</div><div class="menu-title">Dashboard</div><div class="menu-desc">Resumen diario</div></div>
+                    <div class="menu-card consulta" id="menuAuditSample"><div class="menu-icon">🎯</div><div class="menu-title">Muestreo</div><div class="menu-desc">Verificar fisico</div></div>
+                    <div class="menu-card historial" id="menuMetric"><div class="menu-icon">📊</div><div class="menu-title">Metrico</div><div class="menu-desc">Confiabilidad</div></div>
+                    <div class="menu-card acomodo" id="menuCargaMasiva"><div class="menu-icon">📤</div><div class="menu-title">Carga Masiva</div><div class="menu-desc">Subir inventario</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DASHBOARD -->
+    <div id="dashboardScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backDashboard">←</button><h2 class="scanner-title">📈 Dashboard</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row">
+                    <span class="config-label">Fecha:</span>
+                    <input type="date" class="form-input" id="dashboardDate">
+                    <button class="lock-btn" id="applyDashboardDate">Ver</button>
+                </div>
+            </div>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                <div class="config-card" style="text-align:center;background:var(--success-bg)">
+                    <div style="font-size:11px;color:var(--success);font-weight:600">📥 RECEPCIONES</div>
+                    <div id="dashRecepcion" style="font-size:32px;font-weight:800;color:var(--success)">0</div>
+                </div>
+                <div class="config-card" style="text-align:center;background:var(--info-bg)">
+                    <div style="font-size:11px;color:var(--info);font-weight:600">📍 ACOMODOS</div>
+                    <div id="dashAcomodo" style="font-size:32px;font-weight:800;color:var(--info)">0</div>
+                </div>
+                <div class="config-card" style="text-align:center;background:var(--warning-bg)">
+                    <div style="font-size:11px;color:#92400e;font-weight:600">🔄 TRASPASOS</div>
+                    <div id="dashTraspaso" style="font-size:32px;font-weight:800;color:#92400e">0</div>
+                </div>
+                <div class="config-card" style="text-align:center;background:var(--error-bg)">
+                    <div style="font-size:11px;color:var(--error);font-weight:600">📤 EMBARQUES</div>
+                    <div id="dashEmbarque" style="font-size:32px;font-weight:800;color:var(--error)">0</div>
+                </div>
+            </div>
+            
+            <div class="config-card" style="text-align:center;background:linear-gradient(135deg,var(--primary),#0065FF)">
+                <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:600">TOTAL MOVIMIENTOS</div>
+                <div id="dashTotal" style="font-size:40px;font-weight:800;color:white">0</div>
+            </div>
+            
+            <div class="config-card" style="margin-top:14px">
+                <h4 style="font-size:12px;margin-bottom:10px">Acumulado General</h4>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+                    <span>Total Recepciones:</span><strong id="dashTotalRecepcion">0</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+                    <span>Total Acomodos:</span><strong id="dashTotalAcomodo">0</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+                    <span>Total Traspasos:</span><strong id="dashTotalTraspaso">0</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+                    <span>Total Embarques:</span><strong id="dashTotalEmbarque">0</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px;font-weight:700;color:var(--primary)">
+                    <span>TOTAL GENERAL:</span><strong id="dashTotalGeneral">0</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CARGA MASIVA -->
+    <div id="cargaMasivaScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backCargaMasiva">←</button><h2 class="scanner-title">📤 Carga Masiva</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <h4 style="margin-bottom:8px">Subir Inventario General</h4>
+                <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Sube un archivo Excel (.xlsx) con las series y ubicaciones. Se registrarán como "Captura General".</p>
+                
+                <div style="background:var(--info-bg);border-radius:8px;padding:12px;margin-bottom:14px">
+                    <p style="font-size:11px;color:var(--info);font-weight:600;margin-bottom:6px">📋 Formato del archivo Excel:</p>
+                    <table style="width:100%;font-size:10px;border-collapse:collapse;margin-top:6px">
+                        <tr style="background:rgba(0,101,255,0.1)">
+                            <th style="padding:4px;border:1px solid var(--info);text-align:left">SERIE</th>
+                            <th style="padding:4px;border:1px solid var(--info);text-align:left">UBICACION</th>
+                            <th style="padding:4px;border:1px solid var(--info);text-align:left">FECHA ACTUALIZACION</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;border:1px solid var(--border);font-family:monospace">5208-070225310</td>
+                            <td style="padding:4px;border:1px solid var(--border)">RACK1-EST1-A-01</td>
+                            <td style="padding:4px;border:1px solid var(--border)">10/01/2026</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;border:1px solid var(--border);font-family:monospace">070225311</td>
+                            <td style="padding:4px;border:1px solid var(--border)">RACK2-EST1-B-05</td>
+                            <td style="padding:4px;border:1px solid var(--border)">10/01/2026</td>
+                        </tr>
+                    </table>
+                    <p style="font-size:10px;color:var(--text-light);margin-top:6px">* Acepta código completo o solo serie de 8-9 dígitos</p>
+                </div>
+                
+                <input type="file" id="xlsxFileInput" accept=".xlsx,.xls" style="display:none">
+                <button class="btn btn-primary" id="selectFileBtn">📁 Seleccionar Archivo Excel</button>
+                
+                <div id="fileInfo" class="hidden" style="margin-top:14px;padding:12px;background:var(--bg-light);border-radius:8px">
+                    <p style="font-size:12px"><strong>Archivo:</strong> <span id="fileName">-</span></p>
+                    <p style="font-size:12px"><strong>Series detectadas:</strong> <span id="seriesCount">0</span></p>
+                </div>
+            </div>
+            
+            <div id="previewSection" class="hidden">
+                <div class="config-card">
+                    <h4 style="margin-bottom:8px">Vista Previa (primeras 10)</h4>
+                    <div id="previewList" style="max-height:200px;overflow-y:auto"></div>
+                </div>
+                
+                <div style="background:var(--warning-bg);border-radius:8px;padding:12px;margin-bottom:14px">
+                    <p style="font-size:11px;color:#92400e">⚠️ Esta acción registrará todas las series como "Captura General". Los movimientos existentes NO se borrarán.</p>
+                </div>
+                
+                <button class="btn btn-success" id="processFileBtn">✓ Procesar <span id="processCount">0</span> series</button>
+            </div>
+            
+            <div id="progressSection" class="hidden" style="margin-top:14px">
+                <div class="config-card" style="text-align:center">
+                    <p style="font-size:14px;font-weight:700;margin-bottom:8px">Procesando...</p>
+                    <div style="height:8px;background:var(--bg-light);border-radius:4px;overflow:hidden">
+                        <div id="progressBar" style="height:100%;width:0%;background:var(--success);border-radius:4px;transition:width 0.3s"></div>
+                    </div>
+                    <p style="font-size:12px;color:var(--text-light);margin-top:8px"><span id="progressText">0</span> de <span id="progressTotal">0</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AUDIT SAMPLE -->
+    <div id="auditSampleScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backAuditSample">←</button><h2 class="scanner-title">🎯 Muestreo</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <h4 style="margin-bottom:8px">Verificacion Fisica</h4>
+                <p style="font-size:12px;color:var(--text-light)">15% recepciones de ayer + 3 con acomodo</p>
+                <div style="display:flex;gap:12px;margin-top:12px">
+                    <div style="background:var(--bg-light);padding:8px 12px;border-radius:8px;font-size:11px">Fecha: <strong id="auditDate">--</strong></div>
+                    <div style="background:var(--bg-light);padding:8px 12px;border-radius:8px;font-size:11px">Series: <strong id="auditSampleSize">0</strong></div>
+                </div>
+            </div>
+            <div id="auditSampleList" style="margin-bottom:14px"></div>
+            <button class="btn btn-primary" id="generateSampleBtn">🎲 Generar Muestra</button>
+            <button class="btn btn-success mt-14 hidden" id="finishAuditBtn">✓ Finalizar Auditoria</button>
+        </div>
+    </div>
+    
+    <!-- METRIC -->
+    <div id="metricScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backMetric">←</button><h2 class="scanner-title">📊 Metrico</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="text-align:center">
+                <p style="font-size:12px;color:var(--text-light)">Indice de Confiabilidad</p>
+                <div id="metricValue" style="font-size:48px;font-weight:800;margin:10px 0;color:var(--success)">--%</div>
+                <div style="height:8px;background:var(--bg-light);border-radius:4px;overflow:hidden"><div id="metricBar" style="height:100%;width:0%;background:var(--success);border-radius:4px"></div></div>
+                <p id="metricDetail" style="font-size:12px;color:var(--text-light);margin-top:8px">Sin datos</p>
+            </div>
+            <div class="config-card">
+                <h4 style="font-size:12px;margin-bottom:8px">Escala</h4>
+                <p style="font-size:11px;color:var(--success)">🟢 90-100%: Excelente</p>
+                <p style="font-size:11px;color:var(--warning)">🟡 80-89%: Aceptable</p>
+                <p style="font-size:11px;color:var(--error)">🔴 &lt;80%: Critico</p>
+            </div>
+            <div class="config-card">
+                <h4 style="font-size:12px;margin-bottom:8px">Historial</h4>
+                <div id="auditHistoryList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECEPCION -->
+    <div id="recepcionScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backRecepcion">←</button><h2 class="scanner-title">📥 Recepción</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="config-row">
+                    <span class="config-label">Bodega:</span>
+                    <select class="config-select" id="recepcionBodega"><option value="B3">B3</option><option value="B5">B5</option><option value="B6" selected>B6</option><option value="B7">B7</option></select>
+                    <button class="lock-btn" id="recepcionLockBtn">🔓 Fijar</button>
+                </div>
+            </div>
+            <div class="input-tabs"><div class="input-tab active" id="recepcionTabScan">📷 Escanear</div><div class="input-tab" id="recepcionTabManual">⌨️ Manual</div></div>
+            <div id="recepcionScanView"><div class="scanner-box"><div class="scanner-region" id="recepcion-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea códigos de barras</span></div></div></div>
+            <div id="recepcionManualView" class="hidden"><div class="form-group"><label>Código del equipo</label><input type="text" class="form-input" id="recepcionManualInput" placeholder="Ej: 5208-070225310"></div><button class="btn btn-primary" id="recepcionAddBtn">+ Agregar</button></div>
+            <div id="recepcionDuplicateAlert" class="alert-box hidden">⚠️ Este equipo ya existe en otra ubicación</div>
+            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Equipos escaneados</h4><span class="scanned-count" id="recepcionCount">0</span></div><div class="scanned-items" id="recepcionItems"><div class="empty-list">Escanea equipos para agregarlos</div></div></div>
+            <button class="btn btn-success" id="recepcionConfirmBtn" disabled>✓ Confirmar Recepción</button>
+        </div>
+    </div>
+
+    <!-- ACOMODO -->
+    <div id="acomodoScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backAcomodo">←</button><h2 class="scanner-title">📍 Acomodo</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="form-group" style="margin-bottom:10px">
+                    <label>Ubicación destino</label>
+                    <div class="config-row">
+                        <div class="location-dropdown"><input type="text" class="form-input" id="acomodoLocation" placeholder="Escribe o escanea QR"><div class="suggestions" id="locationSuggestions"></div></div>
+                        <button class="lock-btn" id="scanLocationQRBtn">📷 QR</button>
+                    </div>
+                </div>
+            </div>
+            <div class="input-tabs"><div class="input-tab active" id="acomodoTabScan">📷 Escanear Equipo</div><div class="input-tab" id="acomodoTabManual">⌨️ Manual</div></div>
+            <div id="acomodoScanView"><div class="scanner-box"><div class="scanner-region" id="acomodo-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea el código del equipo</span></div></div></div>
+            <div id="acomodoManualView" class="hidden"><div class="form-group"><label>Código del equipo</label><input type="text" class="form-input" id="acomodoManualInput" placeholder="Ej: 5208-070225310"></div><button class="btn btn-primary" id="acomodoAddBtn">+ Agregar</button></div>
+            <div id="acomodoDuplicateAlert" class="alert-box hidden">⚠️ Este equipo ya existe en otra ubicación</div>
+            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Equipos a acomodar</h4><span class="scanned-count" id="acomodoCount">0</span></div><div class="scanned-items" id="acomodoItems"><div class="empty-list">Escanea equipos para agregarlos</div></div></div>
+            <button class="btn btn-success" id="acomodoConfirmBtn" disabled>✓ Confirmar Acomodo</button>
+        </div>
+    </div>
+
+    <!-- TRASPASO -->
+    <div id="traspasoScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backTraspaso">←</button><h2 class="scanner-title">🔄 Traspaso</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="config-row"><span class="config-label">Destino:</span><select class="config-select" id="traspasoBodega"><option value="B3">B3</option><option value="B5">B5</option><option value="B6">B6</option><option value="B7">B7</option></select><button class="lock-btn" id="traspasoLockBtn">🔓 Fijar</button></div>
+                <div class="config-row"><span class="config-label">Solicitó:</span><input type="text" class="form-input" id="traspasoSolicitante" placeholder="Nombre"></div>
+                <div class="config-row"><span class="config-label">Motivo:</span><input type="text" class="form-input" id="traspasoMotivo" placeholder="Motivo del traspaso"></div>
+            </div>
+            <div class="input-tabs"><div class="input-tab active" id="traspasoTabScan">📷 Escanear</div><div class="input-tab" id="traspasoTabManual">⌨️ Manual</div></div>
+            <div id="traspasoScanView"><div class="scanner-box"><div class="scanner-region" id="traspaso-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea códigos de barras</span></div></div></div>
+            <div id="traspasoManualView" class="hidden"><div class="form-group"><label>Código del equipo</label><input type="text" class="form-input" id="traspasoManualInput" placeholder="Ej: 5208-070225310"></div><button class="btn btn-primary" id="traspasoAddBtn">+ Agregar</button></div>
+            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Equipos a traspasar</h4><span class="scanned-count" id="traspasoCount">0</span></div><div class="scanned-items" id="traspasoItems"><div class="empty-list">Escanea equipos para agregarlos</div></div></div>
+            <button class="btn btn-success" id="traspasoConfirmBtn" disabled>✓ Confirmar Traspaso</button>
+        </div>
+    </div>
+
+    <!-- EMBARQUE -->
+    <div id="embarqueScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backEmbarque">←</button><h2 class="scanner-title">📤 Embarque</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="config-row"><span class="config-label">Referencia:</span><input type="text" class="form-input" id="embarqueReferencia" placeholder="Pedido / Folio"><button class="lock-btn" id="embarqueLockBtn">🔓 Fijar</button></div>
+            </div>
+            <div class="input-tabs"><div class="input-tab active" id="embarqueTabScan">📷 Escanear</div><div class="input-tab" id="embarqueTabManual">⌨️ Manual</div></div>
+            <div id="embarqueScanView"><div class="scanner-box"><div class="scanner-region" id="embarque-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea equipos para embarcar</span></div></div></div>
+            <div id="embarqueManualView" class="hidden"><div class="form-group"><label>Código del equipo</label><input type="text" class="form-input" id="embarqueManualInput" placeholder="Ej: 5208-070225310"></div><button class="btn btn-primary" id="embarqueAddBtn">+ Agregar</button></div>
+            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Equipos a embarcar</h4><span class="scanned-count" id="embarqueCount">0</span></div><div class="scanned-items" id="embarqueItems"><div class="empty-list">Escanea equipos para embarcar</div></div></div>
+            <button class="btn btn-success" id="embarqueConfirmBtn" disabled>✓ Confirmar Embarque</button>
+        </div>
+    </div>
+
+    <!-- CONSULTA -->
+    <div id="consultaScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backConsulta">←</button><h2 class="scanner-title">🔍 Buscar Serie</h2></div>
+        <div class="scanner-body">
+            <div class="search-card">
+                <div class="search-row"><input type="text" class="form-input" id="consultaInput" placeholder="Escribe la serie..."><button class="search-btn" id="searchBtn">🔍</button></div>
+            </div>
+            <div id="consultaResults"><div class="empty-state"><p>Escribe un código para buscar su historial</p></div></div>
+        </div>
+    </div>
+    
+    <!-- PENDIENTES -->
+    <div id="pendientesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backPendientes">←</button><h2 class="scanner-title">⏳ Pendientes</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row">
+                    <input type="text" class="form-input" id="pendientesSearch" placeholder="Buscar serie...">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Fecha:</span>
+                    <input type="date" class="form-input" id="pendientesDate">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Ordenar:</span>
+                    <select class="config-select" id="pendientesSort">
+                        <option value="fecha-desc">Más reciente</option>
+                        <option value="fecha-asc">Más antiguo</option>
+                        <option value="serie-asc">Serie A-Z</option>
+                        <option value="serie-desc">Serie Z-A</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary mt-14" id="applyPendientesFilter">Aplicar</button>
+            </div>
+            <div id="pendientesList"></div>
+        </div>
+    </div>
+    
+    <!-- EXPORTAR -->
+    <div id="exportScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExport">←</button><h2 class="scanner-title">📊 Exportar</h2></div>
+        <div class="scanner-body">
+            <p style="font-size:12px;color:var(--text-light);margin-bottom:14px">Selecciona el reporte a descargar</p>
+            
+            <div class="config-card" style="cursor:pointer" id="exportMovsHoy">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Movimientos del Día</div>
+                        <div style="font-size:11px;color:var(--text-light)">Recepciones, acomodos, traspasos y embarques de hoy</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="config-card" style="cursor:pointer" id="exportPendientes">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⏳</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Pendientes de Acomodo</div>
+                        <div style="font-size:11px;color:var(--text-light)">Equipos recibidos o traspasados sin ubicación</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="config-card" style="cursor:pointer" id="exportInventario">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:var(--info-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Inventario Actual</div>
+                        <div style="font-size:11px;color:var(--text-light)">Todas las series con su ubicación actual</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div id="historialScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backHistorial">←</button><h2 class="scanner-title">📋 Historial</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row">
+                    <span class="config-label">Desde:</span>
+                    <input type="date" class="form-input" id="historyDateFrom">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Hasta:</span>
+                    <input type="date" class="form-input" id="historyDateTo">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Serie:</span>
+                    <input type="text" class="form-input" id="historySerieFilter" placeholder="Filtrar por serie...">
+                </div>
+                <button class="btn btn-primary mt-14" id="applyHistoryFilters">Aplicar Filtros</button>
+            </div>
+            <div class="history-filters" id="historyFilters">
+                <div class="filter-chip active" data-filter="all">Todos</div>
+                <div class="filter-chip" data-filter="recepcion">Recepción</div>
+                <div class="filter-chip" data-filter="acomodo">Acomodo</div>
+                <div class="filter-chip" data-filter="traspaso">Traspaso</div>
+                <div class="filter-chip" data-filter="embarque">Embarque</div>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- MIS MOVIMIENTOS -->
+    <div id="misMovimientosScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backMisMovs">←</button><h2 class="scanner-title">✏️ Mis Movimientos</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row">
+                    <input type="text" class="form-input" id="misMovsSearch" placeholder="Buscar serie...">
+                    <button class="lock-btn" id="scanMisMovsQR">📷</button>
+                </div>
+            </div>
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:10px">Puedes editar o eliminar tus movimientos</p>
+            <div class="history-list" id="myMovsList"></div>
+        </div>
+    </div>
+    
+    <!-- EDIT MODAL -->
+    <div id="editModal" class="qr-modal">
+        <div class="scanner-header" style="background:var(--primary);border:none">
+            <button class="back-btn" id="closeEditModal" style="background:rgba(255,255,255,0.2);color:white">×</button>
+            <h2 class="scanner-title" style="color:white">Editar Movimiento</h2>
+        </div>
+        <div style="padding:20px;background:var(--bg-light);flex:1;overflow-y:auto">
+            <div class="config-card">
+                <div class="form-group">
+                    <label>Código</label>
+                    <input type="text" class="form-input" id="editCodigo" readonly style="background:#e9ecef">
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <input type="text" class="form-input" id="editTipo" readonly style="background:#e9ecef">
+                </div>
+                <div class="form-group" id="editUbicacionGroup">
+                    <label>Ubicación</label>
+                    <input type="text" class="form-input" id="editUbicacion" placeholder="Nueva ubicación">
+                </div>
+                <div class="form-group" id="editBodegaGroup">
+                    <label>Bodega</label>
+                    <select class="config-select" id="editBodega">
+                        <option value="B3">B3</option>
+                        <option value="B5">B5</option>
+                        <option value="B6">B6</option>
+                        <option value="B7">B7</option>
+                    </select>
+                </div>
+                <div class="form-group" id="editReferenciaGroup">
+                    <label>Referencia</label>
+                    <input type="text" class="form-input" id="editReferencia" placeholder="Referencia">
+                </div>
+                <input type="hidden" id="editMovId">
+                <button class="btn btn-success mt-14" id="saveEditBtn">💾 Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MIS MOVS QR MODAL -->
+    <div id="misMovsQRModal" class="qr-modal">
+        <div class="scanner-header" style="background:transparent;border:none">
+            <button class="back-btn" id="closeMisMovsQR" style="background:rgba(255,255,255,0.2);color:white">←</button>
+            <h2 class="scanner-title" style="color:white">Escanear Serie</h2>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px">
+            <div class="scanner-box" style="width:100%;max-width:400px">
+                <div class="scanner-region" id="mis-movs-qr-scanner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR MODAL -->
+    <div id="locationQRModal" class="qr-modal">
+        <div class="scanner-header" style="background:transparent;border:none"><button class="back-btn" id="closeQRModal" style="background:rgba(255,255,255,0.2);color:white">←</button><h2 class="scanner-title" style="color:white">Escanear QR Ubicación</h2></div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px"><div class="scanner-box" style="width:100%;max-width:400px"><div class="scanner-region" id="location-qr-scanner"></div></div></div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast"><span id="toastMessage">Mensaje</span></div>
+    <div id="pendingBadge" class="pending-badge">⏳ <span id="pendingCount">0</span> pendientes</div>
+
+<script>
+(function(){
+    // ==================== CONFIG ====================
+    const CONFIG = {
+        users: ['Alma Valeria Silva','Azael de Jesus Alfaro','Edson Adan Picon','Gerardo Mayel Perez','Juan Antonio Arreaga','Luis Alonso Canizales','Rene Saucedo','Rolando Ismael Martinez'],
+        bodegas: ['B3','B5','B6','B7'],
+        locations: generateLocations(),
+        sheetsWebAppUrl: null
+    };
+
+    function generateLocations(){
+        const locs = [];
+        for(let r=1; r<=15; r++){
+            for(let e=1; e<=2; e++){
+                for(const n of ['A','B','C','D','E']){
+                    for(let p=1; p<=12; p++){
+                        locs.push('RACK'+r+'-EST'+e+'-'+n+'-'+String(p).padStart(2,'0'));
+                    }
+                }
+            }
+        }
+        locs.push('TARIMA-1','TARIMA-2','TARIMA-3','PISO-AREA1','PISO-AREA2','EQUIPOS-PARED');
+        return locs.sort();
+    }
+
+    // ==================== STATE ====================
+    let state = {
+        currentUser: null,
+        currentRole: null,
+        movements: [],
+        pendingSync: [],
+        scanners: {},
+        scannedItems: {recepcion:[],acomodo:[],traspaso:[],embarque:[]},
+        locks: {recepcion:false,traspaso:false,embarque:false},
+        locationQRScanner: null,
+        currentFilter: 'all',
+        auditResults: [],
+        currentAudit: null,
+        passwords: { auditoria: '7918', supervisor: '2026' }
+    };
+
+    // ==================== DOM READY ====================
+    document.addEventListener('DOMContentLoaded', function(){
+        loadStorage();
+        renderUsers();
+        updateStats();
+        updatePending();
+        bindEvents();
+        
+        window.addEventListener('online', function(){ document.getElementById('offlineBar').classList.remove('show'); });
+        window.addEventListener('offline', function(){ document.getElementById('offlineBar').classList.add('show'); });
+        if(!navigator.onLine) document.getElementById('offlineBar').classList.add('show');
+    });
+
+    // ==================== BIND EVENTS ====================
+    function bindEvents(){
+        // Roles
+        document.getElementById('roleUsuario').addEventListener('click', function(){ selectRole('usuario'); });
+        document.getElementById('roleConsulta').addEventListener('click', function(){ selectRole('consulta'); });
+        document.getElementById('roleAuditoria').addEventListener('click', function(){ selectRole('auditoria'); });
+        document.getElementById('roleSupervisor').addEventListener('click', function(){ selectRole('supervisor'); });
+        document.getElementById('backToRolesBtn').addEventListener('click', backToRoles);
+        document.getElementById('backFromPassword').addEventListener('click', backToRoles);
+        document.getElementById('passwordBtn').addEventListener('click', validatePassword);
+        document.getElementById('passwordInput').addEventListener('keypress', function(e){ if(e.key==='Enter') validatePassword(); });
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // Menu
+        document.getElementById('menuRecepcion').addEventListener('click', function(){ openModule('recepcion'); });
+        document.getElementById('menuAcomodo').addEventListener('click', function(){ openModule('acomodo'); });
+        document.getElementById('menuTraspaso').addEventListener('click', function(){ openModule('traspaso'); });
+        document.getElementById('menuEmbarque').addEventListener('click', function(){ openModule('embarque'); });
+        document.getElementById('menuConsulta').addEventListener('click', function(){ openModule('consulta'); });
+        document.getElementById('menuHistorial').addEventListener('click', function(){ openModule('historial'); });
+        document.getElementById('menuMisMovs').addEventListener('click', function(){ openModule('misMovimientos'); });
+        document.getElementById('menuExport').addEventListener('click', function(){ openModule('export'); });
+        document.getElementById('menuPendientes').addEventListener('click', function(){ openModule('pendientes'); });
+        document.getElementById('menuDashboard').addEventListener('click', function(){ openModule('dashboard'); });
+        document.getElementById('menuAuditSample').addEventListener('click', function(){ openModule('auditSample'); });
+        document.getElementById('menuMetric').addEventListener('click', function(){ openModule('metric'); });
+        document.getElementById('menuCargaMasiva').addEventListener('click', function(){ openModule('cargaMasiva'); });
+
+        // Back buttons
+        document.getElementById('backRecepcion').addEventListener('click', goBack);
+        document.getElementById('backAcomodo').addEventListener('click', goBack);
+        document.getElementById('backTraspaso').addEventListener('click', goBack);
+        document.getElementById('backEmbarque').addEventListener('click', goBack);
+        document.getElementById('backConsulta').addEventListener('click', goBack);
+        document.getElementById('backCargaMasiva').addEventListener('click', goBack);
+        document.getElementById('backDashboard').addEventListener('click', goBack);
+        document.getElementById('backHistorial').addEventListener('click', goBack);
+        document.getElementById('backMisMovs').addEventListener('click', goBack);
+        document.getElementById('backPendientes').addEventListener('click', goBack);
+        document.getElementById('backExport').addEventListener('click', goBack);
+        document.getElementById('backAuditSample').addEventListener('click', goBack);
+        document.getElementById('backMetric').addEventListener('click', goBack);
+        document.getElementById('generateSampleBtn').addEventListener('click', generateAuditSample);
+        document.getElementById('finishAuditBtn').addEventListener('click', finishAudit);
+        document.getElementById('applyHistoryFilters').addEventListener('click', applyHistoryFilters);
+        document.getElementById('applyPendientesFilter').addEventListener('click', renderPendientesList);
+        document.getElementById('applyDashboardDate').addEventListener('click', renderDashboard);
+        
+        // Export buttons
+        document.getElementById('exportMovsHoy').addEventListener('click', exportMovimientosHoy);
+        document.getElementById('exportPendientes').addEventListener('click', exportPendientes);
+        document.getElementById('exportInventario').addEventListener('click', exportInventario);
+        
+        // Carga Masiva (Excel)
+        document.getElementById('selectFileBtn').addEventListener('click', function(){ document.getElementById('xlsxFileInput').click(); });
+        document.getElementById('xlsxFileInput').addEventListener('change', handleExcelFile);
+        document.getElementById('processFileBtn').addEventListener('click', processExcelFile);
+        
+        // Mis Movimientos
+        document.getElementById('misMovsSearch').addEventListener('input', function(e){ renderMyMovements(e.target.value); });
+        document.getElementById('scanMisMovsQR').addEventListener('click', openMisMovsQRScanner);
+        document.getElementById('closeMisMovsQR').addEventListener('click', closeMisMovsQRScanner);
+        document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+        document.getElementById('saveEditBtn').addEventListener('click', saveEditMovement);
+
+        // Tabs
+        document.getElementById('recepcionTabScan').addEventListener('click', function(){ switchTab('recepcion','scan'); });
+        document.getElementById('recepcionTabManual').addEventListener('click', function(){ switchTab('recepcion','manual'); });
+        document.getElementById('acomodoTabScan').addEventListener('click', function(){ switchTab('acomodo','scan'); });
+        document.getElementById('acomodoTabManual').addEventListener('click', function(){ switchTab('acomodo','manual'); });
+        document.getElementById('traspasoTabScan').addEventListener('click', function(){ switchTab('traspaso','scan'); });
+        document.getElementById('traspasoTabManual').addEventListener('click', function(){ switchTab('traspaso','manual'); });
+        document.getElementById('embarqueTabScan').addEventListener('click', function(){ switchTab('embarque','scan'); });
+        document.getElementById('embarqueTabManual').addEventListener('click', function(){ switchTab('embarque','manual'); });
+
+        // Lock buttons
+        document.getElementById('recepcionLockBtn').addEventListener('click', function(){ toggleLock('recepcion'); });
+        document.getElementById('traspasoLockBtn').addEventListener('click', function(){ toggleLock('traspaso'); });
+        document.getElementById('embarqueLockBtn').addEventListener('click', function(){ toggleLock('embarque'); });
+
+        // Add buttons
+        document.getElementById('recepcionAddBtn').addEventListener('click', function(){ addManual('recepcion'); });
+        document.getElementById('acomodoAddBtn').addEventListener('click', function(){ addManual('acomodo'); });
+        document.getElementById('traspasoAddBtn').addEventListener('click', function(){ addManual('traspaso'); });
+        document.getElementById('embarqueAddBtn').addEventListener('click', function(){ addManual('embarque'); });
+
+        // Manual inputs enter
+        document.getElementById('recepcionManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('recepcion'); });
+        document.getElementById('acomodoManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('acomodo'); });
+        document.getElementById('traspasoManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('traspaso'); });
+        document.getElementById('embarqueManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('embarque'); });
+
+        // Confirm buttons
+        document.getElementById('recepcionConfirmBtn').addEventListener('click', confirmRecepcion);
+        document.getElementById('acomodoConfirmBtn').addEventListener('click', confirmAcomodo);
+        document.getElementById('traspasoConfirmBtn').addEventListener('click', confirmTraspaso);
+        document.getElementById('embarqueConfirmBtn').addEventListener('click', confirmEmbarque);
+
+        // Location dropdown
+        document.getElementById('acomodoLocation').addEventListener('input', function(e){ filterLocs(e.target.value); });
+        document.getElementById('acomodoLocation').addEventListener('focus', showLocs);
+        document.addEventListener('click', function(e){ if(!e.target.closest('.location-dropdown')) document.getElementById('locationSuggestions').classList.remove('show'); });
+
+        // QR
+        document.getElementById('scanLocationQRBtn').addEventListener('click', scanLocationQR);
+        document.getElementById('closeQRModal').addEventListener('click', closeLocationQR);
+
+        // Search
+        document.getElementById('searchBtn').addEventListener('click', searchSerie);
+        document.getElementById('consultaInput').addEventListener('keypress', function(e){ if(e.key==='Enter') searchSerie(); });
+        
+        // Mis movimientos search
+        document.getElementById('misMovsSearch').addEventListener('input', function(e){ renderMyMovements(e.target.value); });
+
+        // History filters
+        document.getElementById('historyFilters').addEventListener('click', function(e){
+            if(e.target.classList.contains('filter-chip')){
+                document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+                e.target.classList.add('active');
+                state.currentFilter = e.target.dataset.filter;
+                applyHistoryFilters();
+            }
+        });
+    }
+
+    // ==================== STORAGE ====================
+    function loadStorage(){
+        try{
+            var m = localStorage.getItem('ubicaciones_movements');
+            var p = localStorage.getItem('ubicaciones_pending');
+            var ar = localStorage.getItem('ubicaciones_auditResults');
+            if(m) state.movements = JSON.parse(m);
+            if(p) state.pendingSync = JSON.parse(p);
+            if(ar) state.auditResults = JSON.parse(ar);
+        }catch(e){}
+    }
+
+    function saveStorage(){
+        try{
+            localStorage.setItem('ubicaciones_movements', JSON.stringify(state.movements));
+            localStorage.setItem('ubicaciones_pending', JSON.stringify(state.pendingSync));
+            localStorage.setItem('ubicaciones_auditResults', JSON.stringify(state.auditResults));
+        }catch(e){}
+    }
+
+    // ==================== ROLES ====================
+    function selectRole(role){
+        state.currentRole = role;
+        if(role === 'consulta'){
+            state.currentUser = 'Consulta';
+            document.getElementById('currentUserName').textContent = 'Consulta';
+            applyRolePermissions();
+            showScreen('menuScreen');
+            showToast('success','Modo consulta activado');
+        }else if(role === 'auditoria' || role === 'supervisor'){
+            document.getElementById('roleSelection').classList.add('hidden');
+            document.getElementById('userSelection').classList.add('hidden');
+            document.getElementById('passwordSection').classList.remove('hidden');
+            document.getElementById('passwordTitle').textContent = role === 'auditoria' ? 'Clave Auditoria' : 'Clave Supervisor';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordInput').focus();
+        }else{
+            document.getElementById('roleSelection').classList.add('hidden');
+            document.getElementById('userSelection').classList.remove('hidden');
+        }
+    }
+    
+    function validatePassword(){
+        var pass = document.getElementById('passwordInput').value;
+        if(pass === state.passwords[state.currentRole]){
+            state.currentUser = state.currentRole === 'auditoria' ? 'Auditoria' : 'Supervisor';
+            document.getElementById('currentUserName').textContent = state.currentUser;
+            document.getElementById('welcomeTitle').textContent = 'Bienvenido';
+            document.getElementById('welcomeRole').textContent = 'Acceso: ' + state.currentUser;
+            applyRolePermissions();
+            showScreen('menuScreen');
+            showToast('success','Acceso autorizado');
+        }else{
+            document.getElementById('passwordError').style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+        }
+    }
+
+    function backToRoles(){
+        document.getElementById('roleSelection').classList.remove('hidden');
+        document.getElementById('userSelection').classList.add('hidden');
+        document.getElementById('passwordSection').classList.add('hidden');
+    }
+
+    function renderUsers(){
+        var g = document.getElementById('userGrid');
+        var html = '';
+        CONFIG.users.forEach(function(u){
+            var i = u.split(' ').map(function(n){ return n[0]; }).join('');
+            html += '<button class="user-btn" data-user="'+u+'"><div class="avatar">'+i+'</div><span>'+u+'</span></button>';
+        });
+        g.innerHTML = html;
+        g.addEventListener('click', function(e){
+            var btn = e.target.closest('.user-btn');
+            if(btn) selectUser(btn.dataset.user);
+        });
+    }
+
+    function selectUser(u){
+        state.currentUser = u;
+        document.getElementById('currentUserName').textContent = u;
+        document.getElementById('welcomeTitle').textContent = 'Hola, ' + u.split(' ')[0];
+        document.getElementById('welcomeRole').textContent = 'Rol: ' + state.currentRole.charAt(0).toUpperCase() + state.currentRole.slice(1);
+        applyRolePermissions();
+        showScreen('menuScreen');
+        showToast('success','Bienvenido, '+u);
+    }
+
+    function applyRolePermissions(){
+        var ops = document.getElementById('operationsSection');
+        var hist = document.getElementById('menuHistorial');
+        var myMovs = document.getElementById('menuMisMovs');
+        var exp = document.getElementById('menuExport');
+        var admin = document.getElementById('adminSection');
+        var muestreo = document.getElementById('menuAuditSample');
+        
+        if(state.currentRole === 'consulta'){
+            ops.classList.add('hidden');
+            hist.classList.add('hidden');
+            myMovs.classList.add('hidden');
+            exp.classList.add('hidden');
+            admin.classList.add('hidden');
+        }else if(state.currentRole === 'usuario'){
+            ops.classList.remove('hidden');
+            hist.classList.add('hidden');
+            myMovs.classList.remove('hidden');
+            exp.classList.add('hidden');
+            admin.classList.add('hidden');
+        }else if(state.currentRole === 'auditoria'){
+            // Auditoria: todo acceso incluyendo muestreo
+            ops.classList.remove('hidden');
+            hist.classList.remove('hidden');
+            myMovs.classList.add('hidden');
+            exp.classList.remove('hidden');
+            admin.classList.remove('hidden');
+            muestreo.classList.remove('hidden');
+        }else if(state.currentRole === 'supervisor'){
+            // Supervisor: todo EXCEPTO muestreo
+            ops.classList.remove('hidden');
+            hist.classList.remove('hidden');
+            myMovs.classList.add('hidden');
+            exp.classList.remove('hidden');
+            admin.classList.remove('hidden');
+            muestreo.classList.add('hidden');
+        }
+    }
+
+    function logout(){
+        stopScanners();
+        state.currentUser = null;
+        state.currentRole = null;
+        document.getElementById('roleSelection').classList.remove('hidden');
+        document.getElementById('userSelection').classList.add('hidden');
+        showScreen('loginScreen');
+    }
+
+    // ==================== NAVIGATION ====================
+    function showScreen(id){
+        document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+        document.getElementById(id).classList.add('active');
+    }
+
+    function openModule(m){
+        showScreen(m+'Screen');
+        if(['recepcion','acomodo','traspaso','embarque'].indexOf(m) !== -1){
+            setTimeout(function(){ startScanner(m); }, 300);
+        }
+        if(m === 'historial') applyHistoryFilters();
+        if(m === 'misMovimientos') renderMyMovements();
+        if(m === 'pendientes') renderPendientesList();
+        if(m === 'dashboard') renderDashboard();
+        if(m === 'auditSample') renderAuditSample();
+        if(m === 'metric') renderMetric();
+        if(m === 'cargaMasiva') resetCargaMasiva();
+    }
+
+    function goBack(){
+        stopScanners();
+        ['recepcion','acomodo','traspaso','embarque'].forEach(function(m){
+            state.scannedItems[m] = [];
+            updateList(m);
+        });
+        showScreen('menuScreen');
+        updateStats();
+    }
+
+    // ==================== SCANNER ====================
+    function startScanner(m){
+        var id = m + '-scanner';
+        var el = document.getElementById(id);
+        if(!el) return;
+        if(state.scanners[m]){
+            try{ state.scanners[m].stop(); }catch(e){}
+        }
+        state.scanners[m] = new Html5Qrcode(id);
+        state.scanners[m].start(
+            {facingMode:'environment'},
+            {fps:10,qrbox:{width:250,height:150}},
+            function(code){ onScan(m, code); },
+            function(){}
+        ).catch(function(e){ showToast('error','Error cámara'); });
+    }
+
+    function stopScanners(){
+        Object.keys(state.scanners).forEach(function(k){
+            if(state.scanners[k]){
+                try{ state.scanners[k].stop(); }catch(e){}
+                state.scanners[k] = null;
+            }
+        });
+    }
+
+    function onScan(m, code){
+        if(navigator.vibrate) navigator.vibrate(100);
+        
+        // Validar ubicacion para acomodo
+        if(m === 'acomodo'){
+            var loc = document.getElementById('acomodoLocation').value.trim();
+            if(!loc){
+                showToast('error','Primero selecciona ubicación');
+                return;
+            }
+        }
+        
+        var p = parseCode(code);
+        if(!p){ showToast('error','Código no válido'); return; }
+        
+        // Check duplicate in current list
+        var isDup = state.scannedItems[m].some(function(i){ return i.full === p.full; });
+        if(isDup){ showToast('warning','Ya escaneado'); return; }
+        
+        // Check if exists in another location
+        var existing = findEquipmentLocation(p.full);
+        if(existing && m !== 'embarque'){
+            document.getElementById(m+'DuplicateAlert').classList.remove('hidden');
+            document.getElementById(m+'DuplicateAlert').textContent = '⚠️ Este equipo está en: ' + existing;
+            setTimeout(function(){ document.getElementById(m+'DuplicateAlert').classList.add('hidden'); }, 5000);
+        }
+        
+        state.scannedItems[m].push({
+            prefix: p.prefix,
+            serie: p.serie,
+            full: p.full,
+            scannedAt: new Date().toISOString()
+        });
+        updateList(m);
+        showToast('success', p.full + ' agregado');
+    }
+
+    function parseCode(c){
+        var clean = c.trim().toUpperCase();
+        
+        // Si no tiene guiones, intentar extraer serie de los ultimos 9 digitos
+        if(clean.indexOf('-') === -1){
+            if(clean.length >= 10){
+                var s = clean.slice(-9);
+                var pr = clean.slice(0,-9);
+                if(/^\d+$/.test(s) && pr.length >= 2){
+                    return {prefix:pr, serie:s.padStart(9,'0'), full:pr+'-'+s.padStart(9,'0')};
+                }
+            }
+            return null;
+        }
+        
+        // Buscar el ultimo guion seguido de numeros (la serie)
+        var lastDash = clean.lastIndexOf('-');
+        var possibleSerie = clean.substring(lastDash + 1);
+        
+        // Si lo que sigue al ultimo guion son puros numeros de 8-9 digitos, es la serie
+        if(/^\d{8,9}$/.test(possibleSerie)){
+            var pr = clean.substring(0, lastDash);
+            var s = possibleSerie.padStart(9, '0');
+            // Prefijo puede tener guiones internos (ej: BAT-1360)
+            if(pr.length >= 2){
+                return {prefix:pr, serie:s, full:pr+'-'+s};
+            }
+        }
+        
+        // Formato simple: PREFIJO-SERIE (un solo guion)
+        var dash = clean.lastIndexOf('-');
+        var pr = clean.substring(0, dash);
+        var s = clean.substring(dash + 1);
+        if(pr.length >= 2 && s.length >= 8 && s.length <= 9 && /^\d+$/.test(s)){
+            s = s.padStart(9, '0');
+            return {prefix:pr, serie:s, full:pr+'-'+s};
+        }
+        
+        return null;
+    }
+
+    function findEquipmentLocation(code){
+        for(var i=0; i<state.movements.length; i++){
+            var m = state.movements[i];
+            if(m.equipment.full === code){
+                if(m.type === 'embarque') return null;
+                if(m.type === 'acomodo') return m.location;
+                if(m.type === 'recepcion' || m.type === 'traspaso') return m.bodega;
+            }
+        }
+        return null;
+    }
+
+    // ==================== LOCATION QR ====================
+    function scanLocationQR(){
+        document.getElementById('locationQRModal').classList.add('show');
+        setTimeout(function(){
+            if(state.locationQRScanner){
+                try{ state.locationQRScanner.stop(); }catch(e){}
+            }
+            state.locationQRScanner = new Html5Qrcode('location-qr-scanner');
+            state.locationQRScanner.start(
+                {facingMode:'environment'},
+                {fps:10,qrbox:{width:250,height:250}},
+                function(code){
+                    if(navigator.vibrate) navigator.vibrate(100);
+                    document.getElementById('acomodoLocation').value = code.toUpperCase();
+                    closeLocationQR();
+                    showToast('success','Ubicación: '+code);
+                },
+                function(){}
+            ).catch(function(){ showToast('error','Error cámara'); });
+        }, 300);
+    }
+
+    function closeLocationQR(){
+        if(state.locationQRScanner){
+            try{ state.locationQRScanner.stop(); }catch(e){}
+        }
+        document.getElementById('locationQRModal').classList.remove('show');
+    }
+
+    // ==================== UI ====================
+    function switchTab(m, tab){
+        var scanTab = document.getElementById(m+'TabScan');
+        var manualTab = document.getElementById(m+'TabManual');
+        var scanView = document.getElementById(m+'ScanView');
+        var manualView = document.getElementById(m+'ManualView');
+        
+        if(tab === 'scan'){
+            scanTab.classList.add('active');
+            manualTab.classList.remove('active');
+            scanView.classList.remove('hidden');
+            manualView.classList.add('hidden');
+            startScanner(m);
+        }else{
+            scanTab.classList.remove('active');
+            manualTab.classList.add('active');
+            scanView.classList.add('hidden');
+            manualView.classList.remove('hidden');
+            if(state.scanners[m]){
+                try{ state.scanners[m].stop(); }catch(e){}
+            }
+        }
+    }
+
+    function toggleLock(m){
+        state.locks[m] = !state.locks[m];
+        var btn = document.getElementById(m+'LockBtn');
+        btn.textContent = state.locks[m] ? '🔒 Fijado' : '🔓 Fijar';
+        btn.classList.toggle('locked', state.locks[m]);
+        showToast('success', state.locks[m] ? 'Configuración fijada' : 'Desbloqueado');
+    }
+
+    function updateList(m){
+        var items = state.scannedItems[m];
+        var cont = document.getElementById(m+'Items');
+        var cnt = document.getElementById(m+'Count');
+        var btn = document.getElementById(m+'ConfirmBtn');
+        
+        cnt.textContent = items.length;
+        btn.disabled = items.length === 0;
+        
+        if(!items.length){
+            cont.innerHTML = '<div class="empty-list">Escanea equipos para agregarlos</div>';
+            return;
+        }
+        
+        var html = '';
+        items.forEach(function(item, idx){
+            var t = new Date(item.scannedAt).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+            html += '<div class="scanned-item"><div><div class="code">'+item.full+'</div><div class="time">'+t+'</div></div><button class="remove-btn" data-module="'+m+'" data-idx="'+idx+'">✕</button></div>';
+        });
+        cont.innerHTML = html;
+        
+        cont.querySelectorAll('.remove-btn').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                removeItem(btn.dataset.module, parseInt(btn.dataset.idx));
+            });
+        });
+    }
+
+    function removeItem(m, i){
+        state.scannedItems[m].splice(i, 1);
+        updateList(m);
+    }
+
+    function addManual(m){
+        var inp = document.getElementById(m+'ManualInput');
+        
+        // Validar ubicacion para acomodo
+        if(m === 'acomodo'){
+            var loc = document.getElementById('acomodoLocation').value.trim();
+            if(!loc){
+                showToast('error','Primero selecciona ubicación');
+                document.getElementById('acomodoLocation').focus();
+                return;
+            }
+        }
+        
+        var p = parseCode(inp.value);
+        if(!p){ showToast('error','Código no válido'); return; }
+        
+        var isDup = state.scannedItems[m].some(function(i){ return i.full === p.full; });
+        if(isDup){ showToast('warning','Ya agregado'); return; }
+        
+        state.scannedItems[m].push({
+            prefix: p.prefix,
+            serie: p.serie,
+            full: p.full,
+            scannedAt: new Date().toISOString()
+        });
+        updateList(m);
+        inp.value = '';
+        inp.focus();
+        showToast('success', p.full + ' agregado');
+    }
+
+    // ==================== LOCATIONS ====================
+    function showLocs(){
+        filterLocs(document.getElementById('acomodoLocation').value);
+        document.getElementById('locationSuggestions').classList.add('show');
+    }
+
+    function filterLocs(q){
+        var s = document.getElementById('locationSuggestions');
+        var filtered = CONFIG.locations.filter(function(l){
+            return l.toLowerCase().indexOf(q.toLowerCase()) !== -1;
+        }).slice(0, 15);
+        
+        if(filtered.length){
+            var html = '';
+            filtered.forEach(function(l){
+                html += '<div class="suggestion-item" data-loc="'+l+'">'+l+'</div>';
+            });
+            s.innerHTML = html;
+            s.querySelectorAll('.suggestion-item').forEach(function(item){
+                item.addEventListener('click', function(){
+                    document.getElementById('acomodoLocation').value = item.dataset.loc;
+                    s.classList.remove('show');
+                });
+            });
+        }else{
+            s.innerHTML = '<div class="suggestion-item" style="color:var(--text-light)">No encontrado</div>';
+        }
+    }
+
+    // ==================== CONFIRM ====================
+    function confirmRecepcion(){
+        var b = document.getElementById('recepcionBodega').value;
+        var items = state.scannedItems.recepcion;
+        if(!items.length) return;
+        
+        items.forEach(function(i){ saveMovement('recepcion', i, {bodega:b}); });
+        showToast('success', items.length + ' equipos recibidos en ' + b);
+        state.scannedItems.recepcion = [];
+        updateList('recepcion');
+        if(!state.locks.recepcion) goBack();
+    }
+
+    function confirmAcomodo(){
+        var loc = document.getElementById('acomodoLocation').value;
+        var items = state.scannedItems.acomodo;
+        if(!loc){ showToast('error','Selecciona ubicación'); return; }
+        if(!items.length) return;
+        
+        items.forEach(function(i){ saveMovement('acomodo', i, {location:loc}); });
+        showToast('success', items.length + ' equipos en ' + loc);
+        state.scannedItems.acomodo = [];
+        updateList('acomodo');
+        document.getElementById('acomodoLocation').value = '';
+    }
+
+    function confirmTraspaso(){
+        var b = document.getElementById('traspasoBodega').value;
+        var sol = document.getElementById('traspasoSolicitante').value;
+        var mot = document.getElementById('traspasoMotivo').value;
+        var items = state.scannedItems.traspaso;
+        if(!items.length) return;
+        
+        items.forEach(function(i){ saveMovement('traspaso', i, {bodega:b, solicitante:sol, motivo:mot}); });
+        showToast('success', items.length + ' equipos a ' + b);
+        state.scannedItems.traspaso = [];
+        updateList('traspaso');
+        if(!state.locks.traspaso){
+            document.getElementById('traspasoSolicitante').value = '';
+            document.getElementById('traspasoMotivo').value = '';
+            goBack();
+        }
+    }
+
+    function confirmEmbarque(){
+        var ref = document.getElementById('embarqueReferencia').value;
+        var items = state.scannedItems.embarque;
+        if(!items.length) return;
+        
+        items.forEach(function(i){ saveMovement('embarque', i, {referencia:ref}); });
+        showToast('success', items.length + ' equipos embarcados');
+        state.scannedItems.embarque = [];
+        updateList('embarque');
+        if(!state.locks.embarque){
+            document.getElementById('embarqueReferencia').value = '';
+            goBack();
+        }
+    }
+
+    function saveMovement(type, eq, extra){
+        var now = new Date();
+        var mov = {
+            id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+            timestamp: now.toISOString(),
+            fecha: now.toLocaleDateString('es-MX'),
+            hora: now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),
+            type: type,
+            user: state.currentUser,
+            equipment: eq,
+            synced: false
+        };
+        Object.keys(extra || {}).forEach(function(k){ mov[k] = extra[k]; });
+        
+        state.movements.unshift(mov);
+        state.pendingSync.push(mov);
+        saveStorage();
+        updateStats();
+        updatePending();
+    }
+
+    // ==================== SEARCH ====================
+    function searchSerie(){
+        var q = document.getElementById('consultaInput').value.trim().toUpperCase();
+        var res = document.getElementById('consultaResults');
+        if(!q){ showToast('warning','Escribe un código'); return; }
+        
+        var matches = state.movements.filter(function(m){
+            return m.equipment.full.indexOf(q) !== -1 || m.equipment.serie.indexOf(q) !== -1;
+        });
+        
+        if(!matches.length){
+            res.innerHTML = '<div class="empty-state"><p>No se encontró "'+q+'"</p></div>';
+            return;
+        }
+        
+        var last = matches[0];
+        var isEmb = last.type === 'embarque';
+        var loc = last.location || last.bodega || '-';
+        var typeNames = {recepcion:'Recepción',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
+        
+        var html = '<div class="equipment-card">';
+        html += '<div class="equipment-header"><div class="code">'+matches[0].equipment.full+'</div>';
+        html += '<div class="details"><span>Prefijo: '+matches[0].equipment.prefix+'</span><span>Serie: '+matches[0].equipment.serie+'</span></div></div>';
+        html += '<div class="equipment-status"><span class="status-badge '+(isEmb?'embarcado':'en-bodega')+'">'+(isEmb?'📤 Embarcado':'📍 En Bodega')+'</span>';
+        html += '<span>'+(isEmb?'Ref: '+(last.referencia||'-'):'Ubicación: '+loc)+'</span></div>';
+        html += '<div class="equipment-timeline"><div class="timeline-title">Historial de movimientos</div>';
+        
+        matches.forEach(function(m){
+            var det = '';
+            if(m.type==='recepcion') det = 'Bodega: '+m.bodega;
+            else if(m.type==='acomodo') det = 'Ubicación: '+m.location;
+            else if(m.type==='traspaso') det = 'Destino: '+m.bodega+(m.solicitante?' | Solicitó: '+m.solicitante:'')+(m.motivo?' | Motivo: '+m.motivo:'');
+            else if(m.type==='embarque') det = 'Ref: '+(m.referencia||'-');
+            
+            html += '<div class="timeline-item"><div class="timeline-dot '+m.type+'"></div>';
+            html += '<div class="timeline-content"><div class="action">'+typeNames[m.type]+'</div>';
+            html += '<div class="meta">'+m.fecha+' '+m.hora+' • '+m.user+' • '+det+'</div></div></div>';
+        });
+        
+        html += '</div></div>';
+        res.innerHTML = html;
+    }
+    
+    function renderPendientesList(){
+        var list = document.getElementById('pendientesList');
+        var searchQuery = document.getElementById('pendientesSearch').value.trim().toUpperCase();
+        var dateFilter = document.getElementById('pendientesDate').value;
+        var sortBy = document.getElementById('pendientesSort').value;
+        
+        // Obtener equipos pendientes de acomodo
+        var equipmentStatus = {};
+        var sortedMovs = state.movements.slice().sort(function(a,b){
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+        
+        sortedMovs.forEach(function(m){
+            var code = m.equipment.full;
+            if(!equipmentStatus[code]){
+                equipmentStatus[code] = { needsAcomodo: false, lastMove: null, equipment: m.equipment };
+            }
+            equipmentStatus[code].lastMove = m;
+            
+            if(m.type === 'recepcion' || m.type === 'traspaso'){
+                equipmentStatus[code].needsAcomodo = true;
+            }else if(m.type === 'acomodo' || m.type === 'embarque'){
+                equipmentStatus[code].needsAcomodo = false;
+            }
+        });
+        
+        var pending = [];
+        for(var code in equipmentStatus){
+            if(equipmentStatus[code].needsAcomodo){
+                pending.push({
+                    code: code,
+                    equipment: equipmentStatus[code].equipment,
+                    lastMove: equipmentStatus[code].lastMove
+                });
+            }
+        }
+        
+        // Aplicar filtro de busqueda
+        if(searchQuery){
+            pending = pending.filter(function(p){
+                return p.code.indexOf(searchQuery) !== -1 || p.equipment.serie.indexOf(searchQuery) !== -1;
+            });
+        }
+        
+        // Aplicar filtro de fecha
+        if(dateFilter){
+            var filterDate = new Date(dateFilter + 'T00:00:00').toDateString();
+            pending = pending.filter(function(p){
+                return new Date(p.lastMove.timestamp).toDateString() === filterDate;
+            });
+        }
+        
+        // Ordenar
+        if(sortBy === 'fecha-desc'){
+            pending.sort(function(a,b){ return new Date(b.lastMove.timestamp) - new Date(a.lastMove.timestamp); });
+        }else if(sortBy === 'fecha-asc'){
+            pending.sort(function(a,b){ return new Date(a.lastMove.timestamp) - new Date(b.lastMove.timestamp); });
+        }else if(sortBy === 'serie-asc'){
+            pending.sort(function(a,b){ return a.code.localeCompare(b.code); });
+        }else if(sortBy === 'serie-desc'){
+            pending.sort(function(a,b){ return b.code.localeCompare(a.code); });
+        }
+        
+        if(!pending.length){
+            list.innerHTML = '<div class="empty-state" style="background:var(--success-bg);border-radius:12px;padding:20px"><p style="color:var(--success);font-weight:700">✓ '+(searchQuery || dateFilter ? 'Sin resultados' : 'Todo acomodado')+'</p><p style="font-size:12px;color:var(--text-light);margin-top:4px">'+(searchQuery || dateFilter ? 'Intenta con otros filtros' : 'No hay equipos pendientes')+'</p></div>';
+            return;
+        }
+        
+        var html = '<div style="background:var(--warning-bg);border-radius:12px;padding:12px;margin-bottom:14px;text-align:center">';
+        html += '<p style="font-weight:700;color:#92400e">⏳ '+pending.length+' equipos pendientes</p></div>';
+        
+        pending.forEach(function(p){
+            var lastType = p.lastMove.type === 'recepcion' ? 'Recepción' : 'Traspaso';
+            var lastLoc = p.lastMove.bodega || '-';
+            html += '<div class="history-item">';
+            html += '<div class="history-icon '+(p.lastMove.type === 'recepcion' ? 'recepcion' : 'traspaso')+'">'+(p.lastMove.type === 'recepcion' ? '📥' : '🔄')+'</div>';
+            html += '<div class="history-content">';
+            html += '<div class="history-code">'+p.code+'</div>';
+            html += '<div class="history-details">'+lastType+' en '+lastLoc+'</div>';
+            html += '<div class="history-meta"><span>'+p.lastMove.fecha+' '+p.lastMove.hora+'</span><span>'+p.lastMove.user+'</span></div>';
+            html += '</div></div>';
+        });
+        
+        list.innerHTML = html;
+    }
+
+    // ==================== HISTORY ====================
+    function applyHistoryFilters(){
+        var dateFrom = document.getElementById('historyDateFrom').value;
+        var dateTo = document.getElementById('historyDateTo').value;
+        var serieFilter = document.getElementById('historySerieFilter').value.trim().toUpperCase();
+        
+        var f = state.movements;
+        
+        // Filtrar por tipo
+        if(state.currentFilter && state.currentFilter !== 'all'){
+            f = f.filter(function(m){ return m.type === state.currentFilter; });
+        }
+        
+        // Filtrar por fecha desde
+        if(dateFrom){
+            var fromDate = new Date(dateFrom);
+            f = f.filter(function(m){
+                var mDate = new Date(m.timestamp);
+                return mDate >= fromDate;
+            });
+        }
+        
+        // Filtrar por fecha hasta
+        if(dateTo){
+            var toDate = new Date(dateTo);
+            toDate.setHours(23,59,59);
+            f = f.filter(function(m){
+                var mDate = new Date(m.timestamp);
+                return mDate <= toDate;
+            });
+        }
+        
+        // Filtrar por serie
+        if(serieFilter){
+            f = f.filter(function(m){
+                return m.equipment.full.indexOf(serieFilter) !== -1 || m.equipment.serie.indexOf(serieFilter) !== -1;
+            });
+        }
+        
+        renderHistoryFiltered(f);
+    }
+    
+    function renderHistoryFiltered(f){
+        var list = document.getElementById('historyList');
+        
+        if(!f.length){
+            list.innerHTML = '<div class="empty-state"><p>No hay movimientos</p></div>';
+            return;
+        }
+        
+        var typeNames = {recepcion:'Recepción',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
+        var icons = {recepcion:'📥',acomodo:'📍',traspaso:'🔄',embarque:'📤'};
+        
+        var html = '<p style="font-size:11px;color:var(--text-light);margin-bottom:10px">Mostrando '+Math.min(f.length,100)+' de '+f.length+' resultados</p>';
+        f.slice(0,100).forEach(function(m){
+            var det = '';
+            if(m.type==='recepcion') det = 'Bodega: '+m.bodega;
+            else if(m.type==='acomodo') det = '→ '+m.location;
+            else if(m.type==='traspaso') det = '→ '+m.bodega+(m.motivo?' ('+m.motivo+')':'');
+            else if(m.type==='embarque') det = 'Ref: '+(m.referencia||'-');
+            
+            html += '<div class="history-item"><div class="history-icon '+m.type+'">'+icons[m.type]+'</div>';
+            html += '<div class="history-content"><div class="history-code">'+m.equipment.full+'</div>';
+            html += '<div class="history-details">'+typeNames[m.type]+' '+det+'</div>';
+            html += '<div class="history-meta"><span>'+m.fecha+' '+m.hora+'</span><span>'+m.user+'</span>';
+            if(!m.synced) html += '<span style="color:var(--warning)">⏳</span>';
+            html += '</div></div></div>';
+        });
+        
+        list.innerHTML = html;
+    }
+    
+    function renderHistory(filter){
+        state.currentFilter = filter;
+        applyHistoryFilters();
+    }
+
+    // ==================== MY MOVEMENTS ====================
+    function renderMyMovements(searchQuery){
+        var list = document.getElementById('myMovsList');
+        var myMovs = state.movements.filter(function(m){ return m.user === state.currentUser; });
+        
+        // Filtrar por busqueda si hay query
+        if(searchQuery && searchQuery.trim()){
+            var q = searchQuery.trim().toUpperCase();
+            myMovs = myMovs.filter(function(m){
+                return m.equipment.full.indexOf(q) !== -1 || m.equipment.serie.indexOf(q) !== -1;
+            });
+        }
+        
+        if(!myMovs.length){
+            list.innerHTML = '<div class="empty-state"><p>'+(searchQuery ? 'No encontrado' : 'No tienes movimientos')+'</p></div>';
+            return;
+        }
+        
+        var typeNames = {recepcion:'Recepción',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
+        var icons = {recepcion:'📥',acomodo:'📍',traspaso:'🔄',embarque:'📤'};
+        
+        var html = '<p style="font-size:11px;color:var(--text-light);margin-bottom:10px">'+myMovs.length+' movimientos</p>';
+        myMovs.slice(0,50).forEach(function(m){
+            var det = '';
+            if(m.type==='recepcion') det = 'Bodega: '+m.bodega;
+            else if(m.type==='acomodo') det = '→ '+m.location;
+            else if(m.type==='traspaso') det = '→ '+m.bodega;
+            else if(m.type==='embarque') det = 'Ref: '+(m.referencia||'-');
+            
+            html += '<div class="history-item"><div class="history-icon '+m.type+'">'+icons[m.type]+'</div>';
+            html += '<div class="history-content"><div class="history-code">'+m.equipment.full+'</div>';
+            html += '<div class="history-details">'+typeNames[m.type]+' '+det+'</div>';
+            html += '<div class="history-meta"><span>'+m.fecha+' '+m.hora+'</span></div>';
+            html += '<div class="history-actions">';
+            html += '<button class="edit" data-id="'+m.id+'" style="background:var(--info);margin-right:6px">✏️ Editar</button>';
+            html += '<button class="delete" data-id="'+m.id+'">🗑️ Eliminar</button>';
+            html += '</div></div></div>';
+        });
+        
+        list.innerHTML = html;
+        
+        list.querySelectorAll('.edit').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                openEditModal(btn.dataset.id);
+            });
+        });
+        
+        list.querySelectorAll('.delete').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                deleteMovement(btn.dataset.id);
+            });
+        });
+    }
+
+    function deleteMovement(id){
+        if(!confirm('¿Seguro que quieres eliminar este movimiento?')) return;
+        
+        var mov = state.movements.find(function(m){ return m.id === id; });
+        if(mov && mov.user !== state.currentUser){
+            showToast('error','Solo puedes eliminar tus propios movimientos');
+            return;
+        }
+        
+        state.movements = state.movements.filter(function(m){ return m.id !== id; });
+        state.pendingSync = state.pendingSync.filter(function(m){ return m.id !== id; });
+        saveStorage();
+        renderMyMovements();
+        updateStats();
+        showToast('success','Movimiento eliminado');
+    }
+
+    // ==================== EXPORT ====================
+    function downloadCSV(csv, filename){
+        var blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        showToast('success','Archivo descargado');
+    }
+    
+    function exportMovimientosHoy(){
+        var today = new Date().toDateString();
+        var todayMovs = state.movements.filter(function(m){
+            return new Date(m.timestamp).toDateString() === today;
+        });
+        
+        if(!todayMovs.length){
+            showToast('warning','No hay movimientos de hoy');
+            return;
+        }
+        
+        var typeNames = {recepcion:'Recepcion',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
+        var csv = 'MOVIMIENTOS DEL DIA - ' + new Date().toLocaleDateString('es-MX') + '\n\n';
+        csv += 'Hora,Tipo,Usuario,Codigo,Ubicacion/Bodega,Referencia\n';
+        
+        todayMovs.forEach(function(m){
+            var ubicacion = m.location || m.bodega || '';
+            var ref = m.referencia || m.motivo || '';
+            csv += '"'+m.hora+'","'+typeNames[m.type]+'","'+m.user+'","'+m.equipment.full+'","'+ubicacion+'","'+ref+'"\n';
+        });
+        
+        csv += '\nTotal: ' + todayMovs.length + ' movimientos';
+        
+        downloadCSV(csv, 'movimientos_hoy_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+    
+    function exportPendientes(){
+        var equipmentStatus = {};
+        var sortedMovs = state.movements.slice().sort(function(a,b){
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+        
+        sortedMovs.forEach(function(m){
+            var code = m.equipment.full;
+            if(!equipmentStatus[code]){
+                equipmentStatus[code] = { needsAcomodo: false, lastMove: null, equipment: m.equipment };
+            }
+            equipmentStatus[code].lastMove = m;
+            
+            if(m.type === 'recepcion' || m.type === 'traspaso'){
+                equipmentStatus[code].needsAcomodo = true;
+            }else if(m.type === 'acomodo' || m.type === 'embarque'){
+                equipmentStatus[code].needsAcomodo = false;
+            }
+        });
+        
+        var pending = [];
+        for(var code in equipmentStatus){
+            if(equipmentStatus[code].needsAcomodo){
+                pending.push({
+                    code: code,
+                    equipment: equipmentStatus[code].equipment,
+                    lastMove: equipmentStatus[code].lastMove
+                });
+            }
+        }
+        
+        if(!pending.length){
+            showToast('success','No hay pendientes - todo acomodado');
+            return;
+        }
+        
+        var csv = 'PENDIENTES DE ACOMODO - ' + new Date().toLocaleDateString('es-MX') + '\n\n';
+        csv += 'Codigo,Prefijo,Serie,Ultimo Movimiento,Bodega,Fecha,Usuario\n';
+        
+        pending.forEach(function(p){
+            var lastType = p.lastMove.type === 'recepcion' ? 'Recepcion' : 'Traspaso';
+            csv += '"'+p.code+'","'+p.equipment.prefix+'","'+p.equipment.serie+'","'+lastType+'","'+(p.lastMove.bodega||'')+'","'+p.lastMove.fecha+'","'+p.lastMove.user+'"\n';
+        });
+        
+        csv += '\nTotal: ' + pending.length + ' equipos pendientes';
+        
+        downloadCSV(csv, 'pendientes_acomodo_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+    
+    function exportInventario(){
+        var equipmentStatus = {};
+        var sortedMovs = state.movements.slice().sort(function(a,b){
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+        
+        sortedMovs.forEach(function(m){
+            var code = m.equipment.full;
+            if(!equipmentStatus[code]){
+                equipmentStatus[code] = { 
+                    equipment: m.equipment,
+                    ubicacion: null,
+                    bodega: null,
+                    embarcado: false,
+                    fechaUbicacion: null,
+                    usuarioUbicacion: null
+                };
+            }
+            
+            if(m.type === 'recepcion'){
+                equipmentStatus[code].bodega = m.bodega;
+                equipmentStatus[code].embarcado = false;
+            }else if(m.type === 'acomodo'){
+                equipmentStatus[code].ubicacion = m.location;
+                equipmentStatus[code].fechaUbicacion = m.fecha;
+                equipmentStatus[code].usuarioUbicacion = m.user;
+                equipmentStatus[code].embarcado = false;
+            }else if(m.type === 'traspaso'){
+                equipmentStatus[code].bodega = m.bodega;
+                equipmentStatus[code].ubicacion = null;
+                equipmentStatus[code].embarcado = false;
+            }else if(m.type === 'embarque'){
+                equipmentStatus[code].embarcado = true;
+            }
+        });
+        
+        var inventario = [];
+        for(var code in equipmentStatus){
+            var eq = equipmentStatus[code];
+            if(!eq.embarcado){
+                inventario.push({
+                    code: code,
+                    equipment: eq.equipment,
+                    ubicacion: eq.ubicacion || 'SIN UBICACION',
+                    bodega: eq.bodega || '',
+                    fechaUbicacion: eq.fechaUbicacion || '',
+                    usuarioUbicacion: eq.usuarioUbicacion || ''
+                });
+            }
+        }
+        
+        if(!inventario.length){
+            showToast('warning','No hay equipos en inventario');
+            return;
+        }
+        
+        // Ordenar por ubicacion
+        inventario.sort(function(a,b){
+            return a.ubicacion.localeCompare(b.ubicacion);
+        });
+        
+        var csv = 'INVENTARIO ACTUAL - ' + new Date().toLocaleDateString('es-MX') + '\n\n';
+        csv += 'Codigo,Prefijo,Serie,Ubicacion,Bodega,Fecha Acomodo,Usuario\n';
+        
+        inventario.forEach(function(i){
+            csv += '"'+i.code+'","'+i.equipment.prefix+'","'+i.equipment.serie+'","'+i.ubicacion+'","'+i.bodega+'","'+i.fechaUbicacion+'","'+i.usuarioUbicacion+'"\n';
+        });
+        
+        csv += '\nTotal: ' + inventario.length + ' equipos en inventario';
+        
+        downloadCSV(csv, 'inventario_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+
+    // ==================== STATS ====================
+    function updateStats(){
+        var today = new Date().toDateString();
+        var todayM = state.movements.filter(function(m){ return new Date(m.timestamp).toDateString() === today; });
+        document.getElementById('statToday').textContent = todayM.length;
+        
+        // Pendientes = equipos recibidos o traspasados que no tienen acomodo posterior
+        var pendingCount = countPendingAcomodo();
+        document.getElementById('statPending').textContent = pendingCount;
+        
+        document.getElementById('statTotal').textContent = state.movements.length;
+    }
+    
+    function countPendingAcomodo(){
+        // Construir estado de cada equipo
+        var equipmentStatus = {};
+        
+        // Procesar movimientos en orden cronologico (mas antiguos primero)
+        var sortedMovs = state.movements.slice().sort(function(a,b){
+            return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+        
+        sortedMovs.forEach(function(m){
+            var code = m.equipment.full;
+            if(!equipmentStatus[code]){
+                equipmentStatus[code] = { needsAcomodo: false, lastType: null };
+            }
+            
+            if(m.type === 'recepcion'){
+                // Recepcion = necesita acomodo
+                equipmentStatus[code].needsAcomodo = true;
+                equipmentStatus[code].lastType = 'recepcion';
+            }else if(m.type === 'acomodo'){
+                // Acomodo = ya no necesita
+                equipmentStatus[code].needsAcomodo = false;
+                equipmentStatus[code].lastType = 'acomodo';
+            }else if(m.type === 'traspaso'){
+                // Traspaso = necesita reacomodo
+                equipmentStatus[code].needsAcomodo = true;
+                equipmentStatus[code].lastType = 'traspaso';
+            }else if(m.type === 'embarque'){
+                // Embarque = ya salio, no cuenta
+                equipmentStatus[code].needsAcomodo = false;
+                equipmentStatus[code].lastType = 'embarque';
+            }
+        });
+        
+        // Contar cuantos necesitan acomodo
+        var count = 0;
+        for(var code in equipmentStatus){
+            if(equipmentStatus[code].needsAcomodo) count++;
+        }
+        return count;
+    }
+
+    function updatePending(){
+        var b = document.getElementById('pendingBadge');
+        var c = countPendingAcomodo();
+        document.getElementById('pendingCount').textContent = c;
+        b.classList.toggle('show', c > 0);
+    }
+
+    // ==================== TOAST ====================
+    function showToast(type, msg){
+        var t = document.getElementById('toast');
+        t.className = 'toast ' + type;
+        document.getElementById('toastMessage').textContent = msg;
+        t.classList.add('show');
+        setTimeout(function(){ t.classList.remove('show'); }, 3000);
+    }
+
+    // ==================== AUDIT ====================
+    function getAvailableEquipment(){
+        var equipmentStatus = {};
+        state.movements.forEach(function(m){
+            var code = m.equipment.full;
+            if(!equipmentStatus[code]) equipmentStatus[code] = {moves:[], lastMove:null};
+            equipmentStatus[code].moves.push(m);
+            if(!equipmentStatus[code].lastMove || new Date(m.timestamp) > new Date(equipmentStatus[code].lastMove.timestamp)){
+                equipmentStatus[code].lastMove = m;
+            }
+        });
+        
+        var available = [];
+        for(var code in equipmentStatus){
+            var eq = equipmentStatus[code];
+            if(eq.lastMove.type !== 'embarque'){
+                var acomodoMove = null;
+                for(var j=0; j<eq.moves.length; j++){
+                    if(eq.moves[j].type === 'acomodo'){ acomodoMove = eq.moves[j]; break; }
+                }
+                if(acomodoMove){
+                    available.push({
+                        code: code, equipment: eq.lastMove.equipment,
+                        location: acomodoMove.location, acomodoDate: acomodoMove.fecha, acomodoUser: acomodoMove.user
+                    });
+                }
+            }
+        }
+        return available;
+    }
+
+    function getYesterdayReceptions(){
+        var yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        var yesterdayStr = yesterday.toDateString();
+        return state.movements.filter(function(m){
+            return m.type === 'recepcion' && new Date(m.timestamp).toDateString() === yesterdayStr;
+        });
+    }
+
+    function shuffleArray(arr){
+        var a = arr.slice();
+        for(var i = a.length - 1; i > 0; i--){
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = a[i]; a[i] = a[j]; a[j] = temp;
+        }
+        return a;
+    }
+
+    function generateAuditSample(){
+        var yesterdayReceps = getYesterdayReceptions();
+        var availableWithLocation = getAvailableEquipment();
+        
+        if(yesterdayReceps.length === 0 && availableWithLocation.length === 0){
+            showToast('warning','No hay datos para muestreo');
+            return;
+        }
+        
+        var sample = [];
+        var auditId = Date.now().toString(36);
+        var now = new Date();
+        
+        var recepSampleSize = Math.max(1, Math.ceil(yesterdayReceps.length * 0.15));
+        var shuffledReceps = shuffleArray(yesterdayReceps);
+        
+        for(var i=0; i<Math.min(recepSampleSize, shuffledReceps.length); i++){
+            var m = shuffledReceps[i];
+            var eq = null;
+            for(var j=0; j<availableWithLocation.length; j++){
+                if(availableWithLocation[j].code === m.equipment.full){ eq = availableWithLocation[j]; break; }
+            }
+            sample.push({
+                id: auditId + '-' + sample.length, code: m.equipment.full, equipment: m.equipment,
+                type: 'recepcion', expectedLocation: eq ? eq.location : m.bodega,
+                sourceDate: m.fecha, sourceUser: m.user, result: null
+            });
+        }
+        
+        var alreadyIn = {};
+        sample.forEach(function(s){ alreadyIn[s.code] = true; });
+        var filteredAvail = availableWithLocation.filter(function(a){ return !alreadyIn[a.code]; });
+        var shuffledAvail = shuffleArray(filteredAvail);
+        
+        for(var k=0; k<Math.min(3, shuffledAvail.length); k++){
+            var eq = shuffledAvail[k];
+            sample.push({
+                id: auditId + '-' + sample.length, code: eq.code, equipment: eq.equipment,
+                type: 'acomodo', expectedLocation: eq.location,
+                sourceDate: eq.acomodoDate, sourceUser: eq.acomodoUser, result: null
+            });
+        }
+        
+        var fechaStr = now.toLocaleDateString('es-MX');
+        state.currentAudit = { id: auditId, date: now.toISOString(), dateStr: fechaStr, samples: sample };
+        renderAuditSample();
+        showToast('success', sample.length + ' series para verificar');
+    }
+
+    function renderAuditSample(){
+        var list = document.getElementById('auditSampleList');
+        var finishBtn = document.getElementById('finishAuditBtn');
+        var now = new Date();
+        
+        if(!state.currentAudit || state.currentAudit.samples.length === 0){
+            document.getElementById('auditDate').textContent = now.toLocaleDateString('es-MX');
+            document.getElementById('auditSampleSize').textContent = '0';
+            list.innerHTML = '<div style="background:var(--info-bg);padding:20px;border-radius:12px;text-align:center"><p style="color:var(--info);font-weight:700">Sin muestra activa</p><p style="font-size:12px;color:var(--text-light)">Presiona generar muestra</p></div>';
+            finishBtn.classList.add('hidden');
+            return;
+        }
+        
+        document.getElementById('auditDate').textContent = state.currentAudit.dateStr;
+        document.getElementById('auditSampleSize').textContent = state.currentAudit.samples.length;
+        
+        var html = '';
+        state.currentAudit.samples.forEach(function(s, idx){
+            var typeLabel = s.type === 'recepcion' ? 'Recepcion' : 'Acomodo';
+            html += '<div style="background:white;border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08)">';
+            html += '<div style="padding:12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
+            html += '<span style="font-family:monospace;font-weight:700">'+s.code+'</span>';
+            html += '<span style="font-size:10px;padding:3px 8px;border-radius:10px;background:'+(s.type==='recepcion'?'var(--success-bg)':'var(--info-bg)')+';color:'+(s.type==='recepcion'?'var(--success)':'var(--info)')+'">'+typeLabel+'</span>';
+            html += '</div><div style="padding:12px">';
+            html += '<p style="font-size:13px;margin-bottom:8px">Ubicacion: <strong style="color:var(--primary)">'+s.expectedLocation+'</strong></p>';
+            html += '<p style="font-size:11px;color:var(--text-light)">Registro: '+s.sourceDate+' por '+s.sourceUser+'</p>';
+            
+            if(s.result !== null){
+                html += '<div style="padding:8px 12px;border-radius:8px;margin-top:8px;text-align:center;background:'+(s.result?'var(--success-bg)':'var(--error-bg)')+';color:'+(s.result?'var(--success)':'var(--error)')+';font-weight:600">'+(s.result?'ENCONTRADO':'NO ENCONTRADO')+'</div>';
+            }else{
+                html += '<div style="display:flex;gap:8px;margin-top:12px">';
+                html += '<button data-idx="'+idx+'" data-result="1" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--success);color:white;font-weight:700;cursor:pointer">Si</button>';
+                html += '<button data-idx="'+idx+'" data-result="0" style="flex:1;padding:10px;border-radius:8px;border:none;background:var(--error);color:white;font-weight:700;cursor:pointer">No</button>';
+                html += '</div>';
+            }
+            html += '</div></div>';
+        });
+        
+        list.innerHTML = html;
+        
+        list.querySelectorAll('button[data-idx]').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                var idx = parseInt(btn.dataset.idx);
+                var result = btn.dataset.result === '1';
+                state.currentAudit.samples[idx].result = result;
+                renderAuditSample();
+                showToast(result ? 'success' : 'warning', result ? 'Encontrado' : 'No encontrado');
+            });
+        });
+        
+        var allDone = state.currentAudit.samples.every(function(s){ return s.result !== null; });
+        if(allDone) finishBtn.classList.remove('hidden');
+        else finishBtn.classList.add('hidden');
+    }
+
+    function finishAudit(){
+        if(!state.currentAudit) return;
+        var total = state.currentAudit.samples.length;
+        var found = state.currentAudit.samples.filter(function(s){ return s.result === true; }).length;
+        var pct = total > 0 ? Math.round((found / total) * 100) : 0;
+        
+        state.auditResults.unshift({
+            id: state.currentAudit.id, date: state.currentAudit.date, dateStr: state.currentAudit.dateStr,
+            total: total, found: found, notFound: total - found, percentage: pct, samples: state.currentAudit.samples
+        });
+        state.currentAudit = null;
+        saveStorage();
+        showToast('success', 'Auditoria: ' + pct + '%');
+        renderAuditSample();
+        openModule('metric');
+    }
+
+    function renderMetric(){
+        var metricValue = document.getElementById('metricValue');
+        var metricBar = document.getElementById('metricBar');
+        var metricDetail = document.getElementById('metricDetail');
+        var historyList = document.getElementById('auditHistoryList');
+        
+        if(state.auditResults.length === 0){
+            metricValue.textContent = '--%';
+            metricValue.style.color = 'var(--text-light)';
+            metricBar.style.width = '0%';
+            metricDetail.textContent = 'Sin datos. Genera una muestra.';
+            historyList.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:12px;padding:20px">No hay auditorias</p>';
+            return;
+        }
+        
+        var recentCount = Math.min(state.auditResults.length, 4);
+        var sum = 0;
+        for(var i=0; i<recentCount; i++) sum += state.auditResults[i].percentage;
+        var avg = Math.round(sum / recentCount);
+        
+        metricValue.textContent = avg + '%';
+        metricBar.style.width = avg + '%';
+        
+        if(avg >= 90){ metricValue.style.color = 'var(--success)'; metricBar.style.background = 'var(--success)'; }
+        else if(avg >= 80){ metricValue.style.color = 'var(--warning)'; metricBar.style.background = 'var(--warning)'; }
+        else{ metricValue.style.color = 'var(--error)'; metricBar.style.background = 'var(--error)'; }
+        
+        var last = state.auditResults[0];
+        metricDetail.textContent = 'Ultima: ' + last.dateStr + ' | ' + last.found + '/' + last.total;
+        
+        var html = '';
+        var histCount = Math.min(state.auditResults.length, 10);
+        for(var j=0; j<histCount; j++){
+            var a = state.auditResults[j];
+            var color = a.percentage >= 90 ? 'var(--success)' : (a.percentage >= 80 ? 'var(--warning)' : 'var(--error)');
+            html += '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>'+a.dateStr+'</span><span style="font-weight:700;color:'+color+'">'+a.percentage+'% ('+a.found+'/'+a.total+')</span></div>';
+        }
+        historyList.innerHTML = html;
+    }
+
+    // ==================== CARGA MASIVA (EXCEL) ====================
+    var pendingExcelData = [];
+    
+    function resetCargaMasiva(){
+        pendingExcelData = [];
+        document.getElementById('fileInfo').classList.add('hidden');
+        document.getElementById('previewSection').classList.add('hidden');
+        document.getElementById('progressSection').classList.add('hidden');
+        document.getElementById('xlsxFileInput').value = '';
+    }
+    
+    function handleExcelFile(e){
+        var file = e.target.files[0];
+        if(!file) return;
+        
+        document.getElementById('fileName').textContent = file.name;
+        
+        var reader = new FileReader();
+        reader.onload = function(event){
+            try{
+                var data = new Uint8Array(event.target.result);
+                var workbook = XLSX.read(data, {type: 'array'});
+                var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                var jsonData = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                parseExcelData(jsonData);
+            }catch(err){
+                showToast('error', 'Error al leer archivo Excel');
+                console.error(err);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+    
+    function parseExcelData(rows){
+        pendingExcelData = [];
+        
+        // Buscar indices de columnas
+        var headerRow = rows[0] || [];
+        var serieIdx = -1, ubicacionIdx = -1, fechaIdx = -1;
+        
+        for(var i=0; i<headerRow.length; i++){
+            var h = String(headerRow[i]).toUpperCase().trim();
+            if(h === 'SERIE' || h === 'CODIGO' || h === 'CODE') serieIdx = i;
+            if(h === 'UBICACION' || h === 'UBICACIÓN' || h === 'LOCATION') ubicacionIdx = i;
+            if(h.indexOf('FECHA') !== -1 || h.indexOf('DATE') !== -1) fechaIdx = i;
+        }
+        
+        // Si no encontró headers, asumir orden: Serie, Ubicacion, Fecha
+        if(serieIdx === -1) serieIdx = 0;
+        if(ubicacionIdx === -1) ubicacionIdx = 1;
+        if(fechaIdx === -1) fechaIdx = 2;
+        
+        // Procesar filas (saltar header)
+        for(var r=1; r<rows.length; r++){
+            var row = rows[r];
+            if(!row || !row[serieIdx]) continue;
+            
+            var serieRaw = String(row[serieIdx]).trim().toUpperCase();
+            var ubicacion = row[ubicacionIdx] ? String(row[ubicacionIdx]).trim().toUpperCase() : '';
+            var fechaRaw = row[fechaIdx] || '';
+            
+            if(!ubicacion) continue;
+            
+            // Parsear codigo (puede ser completo o solo serie)
+            var parsed = parseCode(serieRaw);
+            if(!parsed){
+                // Intentar como solo serie numerica
+                var cleanSerie = serieRaw.replace(/\D/g, '');
+                if(cleanSerie.length >= 8 && cleanSerie.length <= 9){
+                    parsed = {
+                        prefix: 'SERIE',
+                        serie: cleanSerie.padStart(9, '0'),
+                        full: 'SERIE-' + cleanSerie.padStart(9, '0')
+                    };
+                }
+            }
+            
+            if(parsed){
+                // Parsear fecha
+                var fechaStr = '';
+                if(fechaRaw){
+                    if(typeof fechaRaw === 'number'){
+                        // Excel date serial
+                        var excelDate = new Date((fechaRaw - 25569) * 86400 * 1000);
+                        fechaStr = excelDate.toLocaleDateString('es-MX');
+                    }else{
+                        fechaStr = String(fechaRaw);
+                    }
+                }
+                
+                pendingExcelData.push({
+                    equipment: parsed,
+                    location: ubicacion,
+                    fechaOriginal: fechaStr
+                });
+            }
+        }
+        
+        document.getElementById('seriesCount').textContent = pendingExcelData.length;
+        document.getElementById('fileInfo').classList.remove('hidden');
+        
+        if(pendingExcelData.length > 0){
+            renderExcelPreview();
+            document.getElementById('previewSection').classList.remove('hidden');
+            document.getElementById('processCount').textContent = pendingExcelData.length;
+        }else{
+            document.getElementById('previewSection').classList.add('hidden');
+            showToast('error', 'No se encontraron series válidas');
+        }
+    }
+    
+    function renderExcelPreview(){
+        var list = document.getElementById('previewList');
+        var html = '';
+        var previewCount = Math.min(pendingExcelData.length, 10);
+        
+        for(var i=0; i<previewCount; i++){
+            var item = pendingExcelData[i];
+            html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px">';
+            html += '<span style="font-family:monospace;font-weight:600">'+item.equipment.full+'</span>';
+            html += '<span style="color:var(--primary)">'+item.location+'</span>';
+            if(item.fechaOriginal) html += '<span style="color:var(--text-light);font-size:10px">'+item.fechaOriginal+'</span>';
+            html += '</div>';
+        }
+        
+        if(pendingExcelData.length > 10){
+            html += '<p style="text-align:center;color:var(--text-light);font-size:11px;padding:8px">... y '+(pendingExcelData.length-10)+' más</p>';
+        }
+        
+        list.innerHTML = html;
+    }
+    
+    function processExcelFile(){
+        if(!pendingExcelData.length){
+            showToast('error', 'No hay datos para procesar');
+            return;
+        }
+        
+        if(!confirm('¿Procesar '+pendingExcelData.length+' series como Captura General?')){
+            return;
+        }
+        
+        document.getElementById('previewSection').classList.add('hidden');
+        document.getElementById('progressSection').classList.remove('hidden');
+        document.getElementById('progressTotal').textContent = pendingExcelData.length;
+        
+        var total = pendingExcelData.length;
+        var processed = 0;
+        var batchSize = 100;
+        var currentIndex = 0;
+        
+        var now = new Date();
+        var fechaHoy = now.toLocaleDateString('es-MX');
+        var horaHoy = now.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+        
+        function processBatch(){
+            var endIndex = Math.min(currentIndex + batchSize, total);
+            
+            for(var i=currentIndex; i<endIndex; i++){
+                var item = pendingExcelData[i];
+                
+                var mov = {
+                    id: now.getTime().toString(36) + '-' + i + '-' + Math.random().toString(36).substr(2,4),
+                    timestamp: now.toISOString(),
+                    fecha: item.fechaOriginal || fechaHoy,
+                    hora: horaHoy,
+                    type: 'acomodo',
+                    user: 'Captura General',
+                    equipment: item.equipment,
+                    location: item.location,
+                    synced: false,
+                    isBulkLoad: true,
+                    fechaOriginalUbicacion: item.fechaOriginal || fechaHoy
+                };
+                
+                state.movements.push(mov);
+                processed++;
+            }
+            
+            currentIndex = endIndex;
+            var percent = Math.round((processed / total) * 100);
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = processed;
+            
+            if(currentIndex < total){
+                setTimeout(processBatch, 10);
+            }else{
+                saveStorage();
+                updateStats();
+                pendingExcelData = [];
+                
+                setTimeout(function(){
+                    document.getElementById('progressSection').classList.add('hidden');
+                    document.getElementById('fileInfo').classList.add('hidden');
+                    document.getElementById('xlsxFileInput').value = '';
+                    showToast('success', processed + ' series cargadas correctamente');
+                }, 500);
+            }
+        }
+        
+        processBatch();
+    }
+
+    // ==================== DASHBOARD ====================
+    function renderDashboard(){
+        var dateInput = document.getElementById('dashboardDate');
+        if(!dateInput.value){
+            dateInput.value = new Date().toISOString().slice(0,10);
+        }
+        
+        var selectedDate = new Date(dateInput.value + 'T00:00:00');
+        var selectedDateStr = selectedDate.toDateString();
+        
+        var dayMovs = state.movements.filter(function(m){
+            return new Date(m.timestamp).toDateString() === selectedDateStr;
+        });
+        
+        var dayRecepcion = dayMovs.filter(function(m){ return m.type === 'recepcion'; }).length;
+        var dayAcomodo = dayMovs.filter(function(m){ return m.type === 'acomodo'; }).length;
+        var dayTraspaso = dayMovs.filter(function(m){ return m.type === 'traspaso'; }).length;
+        var dayEmbarque = dayMovs.filter(function(m){ return m.type === 'embarque'; }).length;
+        
+        document.getElementById('dashRecepcion').textContent = dayRecepcion;
+        document.getElementById('dashAcomodo').textContent = dayAcomodo;
+        document.getElementById('dashTraspaso').textContent = dayTraspaso;
+        document.getElementById('dashEmbarque').textContent = dayEmbarque;
+        document.getElementById('dashTotal').textContent = dayMovs.length;
+        
+        // Acumulado general
+        var totalRecepcion = state.movements.filter(function(m){ return m.type === 'recepcion'; }).length;
+        var totalAcomodo = state.movements.filter(function(m){ return m.type === 'acomodo'; }).length;
+        var totalTraspaso = state.movements.filter(function(m){ return m.type === 'traspaso'; }).length;
+        var totalEmbarque = state.movements.filter(function(m){ return m.type === 'embarque'; }).length;
+        
+        document.getElementById('dashTotalRecepcion').textContent = totalRecepcion;
+        document.getElementById('dashTotalAcomodo').textContent = totalAcomodo;
+        document.getElementById('dashTotalTraspaso').textContent = totalTraspaso;
+        document.getElementById('dashTotalEmbarque').textContent = totalEmbarque;
+        document.getElementById('dashTotalGeneral').textContent = state.movements.length;
+    }
+
+    // ==================== MIS MOVIMIENTOS EDIT/QR ====================
+    var misMovsQRScanner = null;
+    
+    function openMisMovsQRScanner(){
+        document.getElementById('misMovsQRModal').classList.add('show');
+        setTimeout(function(){
+            if(misMovsQRScanner) try{ misMovsQRScanner.stop(); }catch(e){}
+            misMovsQRScanner = new Html5Qrcode('mis-movs-qr-scanner');
+            misMovsQRScanner.start(
+                {facingMode:'environment'},
+                {fps:10, qrbox:{width:250, height:150}},
+                function(code){
+                    if(navigator.vibrate) navigator.vibrate(100);
+                    document.getElementById('misMovsSearch').value = code;
+                    closeMisMovsQRScanner();
+                    renderMyMovements(code);
+                },
+                function(){}
+            ).catch(function(){ showToast('error','Error cámara'); });
+        }, 300);
+    }
+    
+    function closeMisMovsQRScanner(){
+        if(misMovsQRScanner) try{ misMovsQRScanner.stop(); }catch(e){}
+        document.getElementById('misMovsQRModal').classList.remove('show');
+    }
+    
+    function openEditModal(movId){
+        var mov = state.movements.find(function(m){ return m.id === movId; });
+        if(!mov) return;
+        
+        document.getElementById('editMovId').value = movId;
+        document.getElementById('editCodigo').value = mov.equipment.full;
+        document.getElementById('editTipo').value = mov.type.charAt(0).toUpperCase() + mov.type.slice(1);
+        
+        // Mostrar/ocultar campos segun tipo
+        document.getElementById('editUbicacionGroup').classList.add('hidden');
+        document.getElementById('editBodegaGroup').classList.add('hidden');
+        document.getElementById('editReferenciaGroup').classList.add('hidden');
+        
+        if(mov.type === 'acomodo'){
+            document.getElementById('editUbicacionGroup').classList.remove('hidden');
+            document.getElementById('editUbicacion').value = mov.location || '';
+        }else if(mov.type === 'recepcion' || mov.type === 'traspaso'){
+            document.getElementById('editBodegaGroup').classList.remove('hidden');
+            document.getElementById('editBodega').value = mov.bodega || 'B6';
+        }else if(mov.type === 'embarque'){
+            document.getElementById('editReferenciaGroup').classList.remove('hidden');
+            document.getElementById('editReferencia').value = mov.referencia || '';
+        }
+        
+        document.getElementById('editModal').classList.add('show');
+    }
+    
+    function closeEditModal(){
+        document.getElementById('editModal').classList.remove('show');
+    }
+    
+    function saveEditMovement(){
+        var movId = document.getElementById('editMovId').value;
+        var mov = state.movements.find(function(m){ return m.id === movId; });
+        if(!mov) return;
+        
+        if(mov.type === 'acomodo'){
+            var newLoc = document.getElementById('editUbicacion').value.trim().toUpperCase();
+            if(!newLoc){ showToast('error','Ubicación requerida'); return; }
+            mov.location = newLoc;
+        }else if(mov.type === 'recepcion' || mov.type === 'traspaso'){
+            mov.bodega = document.getElementById('editBodega').value;
+        }else if(mov.type === 'embarque'){
+            mov.referencia = document.getElementById('editReferencia').value.trim();
+        }
+        
+        saveStorage();
+        closeEditModal();
+        renderMyMovements(document.getElementById('misMovsSearch').value);
+        showToast('success','Movimiento actualizado');
+    }
+
+})();
+</script>
+</body>
+</html>
