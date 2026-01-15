@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0052CC">
-    <title>Ubicaciones PT | Industronic</title>
+    <title>PT Control | Industronic</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -193,15 +193,17 @@
         <div class="login-container">
             <div class="login-card">
                 <div class="login-logo">
-                    <div class="login-logo-icon">!i</div>
+                    <div class="login-logo-icon">PT</div>
                 </div>
-                <h1 class="login-title">Ubicaciones PT</h1>
+                <h1 class="login-title">PT Control</h1>
                 <p class="login-subtitle">Selecciona tu tipo de acceso</p>
                 
                 <div id="roleSelection">
                     <div class="role-grid">
                         <div class="role-btn" id="roleUsuario"><div class="icon">👷</div><div class="name">Usuario</div><div class="desc">Operaciones</div></div>
-                        <div class="role-btn" id="roleConsulta"><div class="icon">🔍</div><div class="name">Consulta</div><div class="desc">Solo buscar</div></div>
+                        <div class="role-btn" id="roleConsulta"><div class="icon">🔍</div><div class="name">Consulta</div><div class="desc">Buscar + Reportes</div></div>
+                        <div class="role-btn" id="roleReparaciones"><div class="icon">🔧</div><div class="name">Reparaciones</div><div class="desc" style="color:var(--warning)">🔒 Clave</div></div>
+                        <div class="role-btn" id="roleCalidad"><div class="icon">✅</div><div class="name">Calidad</div><div class="desc" style="color:var(--warning)">🔒 Clave</div></div>
                         <div class="role-btn" id="roleAuditoria"><div class="icon">📋</div><div class="name">Auditoria</div><div class="desc" style="color:var(--warning)">🔒 Clave</div></div>
                         <div class="role-btn" id="roleSupervisor"><div class="icon">⭐</div><div class="name">Supervisor</div><div class="desc" style="color:var(--warning)">🔒 Clave</div></div>
                     </div>
@@ -210,6 +212,15 @@
                 <div id="userSelection" class="hidden">
                     <div class="user-list" id="userGrid"></div>
                     <div class="back-link" id="backToRolesBtn">← Cambiar tipo de acceso</div>
+                </div>
+                
+                <div id="bodegaReparacionesSection" class="hidden">
+                    <h3 style="font-size:14px;text-align:center;margin-bottom:12px">Selecciona Bodega</h3>
+                    <div style="display:flex;gap:12px;margin-bottom:16px">
+                        <button class="role-btn" id="bodegaB3" style="flex:1"><div class="icon">🏭</div><div class="name">Bodega 3</div></button>
+                        <button class="role-btn" id="bodegaB7" style="flex:1"><div class="icon">🏭</div><div class="name">Bodega 7</div></button>
+                    </div>
+                    <div class="back-link" id="backFromBodega">← Cambiar</div>
                 </div>
                 
                 <div id="passwordSection" class="hidden">
@@ -226,13 +237,13 @@
     <!-- MENU -->
     <div id="menuScreen" class="screen">
         <div class="header">
-            <div class="header-logo"><div class="logo-icon">!i</div><span>Ubicaciones PT</span></div>
+            <div class="header-logo"><div class="logo-icon">PT</div><span>PT Control</span></div>
             <div class="user-pill" id="logoutBtn"><span id="currentUserName">Usuario</span> ▼</div>
         </div>
         <div class="menu-container">
             <div class="welcome-banner">
                 <h2 id="welcomeTitle">Bienvenido</h2>
-                <p id="welcomeRole">Sistema de ubicaciones</p>
+                <p id="welcomeRole">Sistema de control PT</p>
                 <div class="stats-row">
                     <div class="stat-box"><div class="value" id="statToday">0</div><div class="label">Hoy</div></div>
                     <div class="stat-box"><div class="value" id="statPending">0</div><div class="label">Pendientes</div></div>
@@ -253,11 +264,19 @@
             <div id="consultasSection">
                 <div class="section-title">Consultas</div>
                 <div class="menu-grid">
-                    <div class="menu-card consulta" id="menuConsulta"><div class="menu-icon">🔍</div><div class="menu-title">Buscar Serie</div><div class="menu-desc">Historial completo</div></div>
+                    <div class="menu-card consulta" id="menuConsulta"><div class="menu-icon">🔍</div><div class="menu-title">Buscar</div><div class="menu-desc">Serie o ubicación</div></div>
                     <div class="menu-card historial" id="menuHistorial"><div class="menu-icon">📋</div><div class="menu-title">Historial</div><div class="menu-desc">Todos los movimientos</div></div>
                     <div class="menu-card mis-movs" id="menuMisMovs"><div class="menu-icon">✏️</div><div class="menu-title">Mis Movimientos</div><div class="menu-desc">Editar/Eliminar</div></div>
                     <div class="menu-card export" id="menuExport"><div class="menu-icon">📊</div><div class="menu-title">Exportar</div><div class="menu-desc">Descargar Excel</div></div>
                     <div class="menu-card traspaso" id="menuPendientes"><div class="menu-icon">⏳</div><div class="menu-title">Pendientes</div><div class="menu-desc">Sin acomodar</div></div>
+                </div>
+            </div>
+            
+            <div id="calidadSection" class="hidden">
+                <div class="section-title">Calidad</div>
+                <div class="menu-grid">
+                    <div class="menu-card recepcion" id="menuCalidadSalidas"><div class="menu-icon">✅</div><div class="menu-title">Calidad Salidas</div><div class="menu-desc">Verificar embarques</div></div>
+                    <div class="menu-card embarque" id="menuIncidencias"><div class="menu-icon">⚠️</div><div class="menu-title">Incidencias</div><div class="menu-desc">Reportar problemas</div></div>
                 </div>
             </div>
             
@@ -268,8 +287,26 @@
                     <div class="menu-card consulta" id="menuAuditSample"><div class="menu-icon">🎯</div><div class="menu-title">Muestreo</div><div class="menu-desc">Verificar fisico</div></div>
                     <div class="menu-card historial" id="menuMetric"><div class="menu-icon">📊</div><div class="menu-title">Metrico</div><div class="menu-desc">Confiabilidad</div></div>
                     <div class="menu-card acomodo" id="menuCargaMasiva"><div class="menu-icon">📤</div><div class="menu-title">Carga Masiva</div><div class="menu-desc">Subir inventario</div></div>
+                    <div class="menu-card traspaso" id="menuVerIncidencias"><div class="menu-icon">📝</div><div class="menu-title">Incidencias Calidad</div><div class="menu-desc">Ver reportes</div></div>
+                    <div class="menu-card embarque" id="menuVerCalidadSalidas"><div class="menu-icon">✅</div><div class="menu-title">Resultado Calidad</div><div class="menu-desc">Diferencias salidas</div></div>
                 </div>
             </div>
+            
+            <div id="reparacionesSection" class="hidden">
+                <div class="section-title">Reparaciones</div>
+                <div class="menu-grid">
+                    <div class="menu-card recepcion" id="menuLiberarReparacion"><div class="menu-icon">🔧</div><div class="menu-title">Liberar Equipo</div><div class="menu-desc">Enviar a PT</div></div>
+                    <div class="menu-card historial" id="menuHistorialReparaciones"><div class="menu-icon">📋</div><div class="menu-title">Historial</div><div class="menu-desc">Mis liberaciones</div></div>
+                </div>
+            </div>
+            
+            <div id="supervisorSection" class="hidden">
+                <div class="section-title">Control Interno</div>
+                <div class="menu-grid">
+                    <div class="menu-card acomodo" id="menuMuestreoInterno"><div class="menu-icon">🔎</div><div class="menu-title">Muestreo Interno</div><div class="menu-desc">Verificación propia</div></div>
+                </div>
+            </div>
+            
         </div>
     </div>
     
@@ -279,14 +316,10 @@
         <div class="scanner-body">
             <div class="config-card" style="margin-bottom:14px">
                 <div class="config-row">
-                    <span class="config-label">Desde:</span>
-                    <input type="date" class="form-input" id="dashboardDateFrom">
+                    <span class="config-label">Fecha:</span>
+                    <input type="date" class="form-input" id="dashboardDate">
+                    <button class="lock-btn" id="applyDashboardDate">Ver</button>
                 </div>
-                <div class="config-row">
-                    <span class="config-label">Hasta:</span>
-                    <input type="date" class="form-input" id="dashboardDateTo">
-                </div>
-                <button class="btn btn-primary mt-14" id="applyDashboardDate">Ver Resumen</button>
             </div>
             
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
@@ -309,12 +342,12 @@
             </div>
             
             <div class="config-card" style="text-align:center;background:linear-gradient(135deg,var(--primary),#0065FF)">
-                <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:600">TOTAL EN RANGO</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.8);font-weight:600">TOTAL MOVIMIENTOS</div>
                 <div id="dashTotal" style="font-size:40px;font-weight:800;color:white">0</div>
             </div>
             
             <div class="config-card" style="margin-top:14px">
-                <h4 style="font-size:12px;margin-bottom:10px">Acumulado General (Todo el histórico)</h4>
+                <h4 style="font-size:12px;margin-bottom:10px">Acumulado General</h4>
                 <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
                     <span>Total Recepciones:</span><strong id="dashTotalRecepcion">0</strong>
                 </div>
@@ -464,19 +497,25 @@
         <div class="scanner-header"><button class="back-btn" id="backAcomodo">←</button><h2 class="scanner-title">📍 Acomodo</h2></div>
         <div class="scanner-body">
             <div class="config-card">
+                <p style="font-size:11px;color:var(--text-light);margin-bottom:10px">1. Escribe/escanea ubicación → 2. Escanea serie → 3. Click "Agregar"</p>
                 <div class="form-group" style="margin-bottom:10px">
-                    <label>Ubicación destino</label>
+                    <label>Ubicación</label>
                     <div class="config-row">
                         <div class="location-dropdown"><input type="text" class="form-input" id="acomodoLocation" placeholder="Escribe o escanea QR"><div class="suggestions" id="locationSuggestions"></div></div>
                         <button class="lock-btn" id="scanLocationQRBtn">📷 QR</button>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label>Serie del equipo</label>
+                    <div class="config-row">
+                        <input type="text" class="form-input" id="acomodoSerieInput" placeholder="Escanea o escribe serie">
+                        <button class="lock-btn" id="acomodoScanSerieBtn">📷</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-14" id="acomodoAgregarBtn">+ Agregar a lista</button>
             </div>
-            <div class="input-tabs"><div class="input-tab active" id="acomodoTabScan">📷 Escanear Equipo</div><div class="input-tab" id="acomodoTabManual">⌨️ Manual</div></div>
-            <div id="acomodoScanView"><div class="scanner-box"><div class="scanner-region" id="acomodo-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea el código del equipo</span></div></div></div>
-            <div id="acomodoManualView" class="hidden"><div class="form-group"><label>Código del equipo</label><input type="text" class="form-input" id="acomodoManualInput" placeholder="Ej: 5208-070225310"></div><button class="btn btn-primary" id="acomodoAddBtn">+ Agregar</button></div>
             <div id="acomodoDuplicateAlert" class="alert-box hidden">⚠️ Este equipo ya existe en otra ubicación</div>
-            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Equipos a acomodar</h4><span class="scanned-count" id="acomodoCount">0</span></div><div class="scanned-items" id="acomodoItems"><div class="empty-list">Escanea equipos para agregarlos</div></div></div>
+            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Equipos a acomodar</h4><span class="scanned-count" id="acomodoCount">0</span></div><div class="scanned-items" id="acomodoItems"><div class="empty-list">Agrega equipos con su ubicación</div></div></div>
             <button class="btn btn-success" id="acomodoConfirmBtn" disabled>✓ Confirmar Acomodo</button>
         </div>
     </div>
@@ -487,8 +526,8 @@
         <div class="scanner-body">
             <div class="config-card">
                 <div class="config-row"><span class="config-label">Destino:</span><select class="config-select" id="traspasoBodega"><option value="B3">B3</option><option value="B5">B5</option><option value="B6">B6</option><option value="B7">B7</option></select><button class="lock-btn" id="traspasoLockBtn">🔓 Fijar</button></div>
-                <div class="config-row"><span class="config-label">Solicitó:</span><input type="text" class="form-input" id="traspasoSolicitante" placeholder="Nombre"></div>
-                <div class="config-row"><span class="config-label">Motivo:</span><input type="text" class="form-input" id="traspasoMotivo" placeholder="Motivo del traspaso"></div>
+                <div class="config-row"><span class="config-label">Solicitó:</span><input type="text" class="form-input" id="traspasoSolicitante" placeholder="Nombre"><button class="lock-btn" id="traspasoSolicitanteLockBtn">🔓</button></div>
+                <div class="config-row"><span class="config-label">Motivo:</span><input type="text" class="form-input" id="traspasoMotivo" placeholder="Motivo del traspaso"><button class="lock-btn" id="traspasoMotivoLockBtn">🔓</button></div>
             </div>
             <div class="input-tabs"><div class="input-tab active" id="traspasoTabScan">📷 Escanear</div><div class="input-tab" id="traspasoTabManual">⌨️ Manual</div></div>
             <div id="traspasoScanView"><div class="scanner-box"><div class="scanner-region" id="traspaso-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea códigos de barras</span></div></div></div>
@@ -503,6 +542,7 @@
         <div class="scanner-header"><button class="back-btn" id="backEmbarque">←</button><h2 class="scanner-title">📤 Embarque</h2></div>
         <div class="scanner-body">
             <div class="config-card">
+                <div class="config-row"><span class="config-label">Tipo salida:</span><select class="config-select" id="embarqueTipoSalida"><option value="">Cliente</option><option value="vallejo">Vallejo</option><option value="traslado">Traslado</option></select></div>
                 <div class="config-row"><span class="config-label">Referencia:</span><input type="text" class="form-input" id="embarqueReferencia" placeholder="Pedido / Folio"><button class="lock-btn" id="embarqueLockBtn">🔓 Fijar</button></div>
             </div>
             <div class="input-tabs"><div class="input-tab active" id="embarqueTabScan">📷 Escanear</div><div class="input-tab" id="embarqueTabManual">⌨️ Manual</div></div>
@@ -515,12 +555,19 @@
 
     <!-- CONSULTA -->
     <div id="consultaScreen" class="screen">
-        <div class="scanner-header"><button class="back-btn" id="backConsulta">←</button><h2 class="scanner-title">🔍 Buscar Serie</h2></div>
+        <div class="scanner-header"><button class="back-btn" id="backConsulta">←</button><h2 class="scanner-title">🔍 Buscar</h2></div>
         <div class="scanner-body">
             <div class="search-card">
-                <div class="search-row"><input type="text" class="form-input" id="consultaInput" placeholder="Escribe la serie..."><button class="search-btn" id="searchBtn">🔍</button></div>
+                <div class="config-row" style="margin-bottom:10px">
+                    <span class="config-label">Buscar por:</span>
+                    <select class="config-select" id="consultaTipo">
+                        <option value="serie">Serie</option>
+                        <option value="ubicacion">Ubicación</option>
+                    </select>
+                </div>
+                <div class="search-row"><input type="text" class="form-input" id="consultaInput" placeholder="Escribe serie o ubicación..."><button class="search-btn" id="searchBtn">🔍</button></div>
             </div>
-            <div id="consultaResults"><div class="empty-state"><p>Escribe un código para buscar su historial</p></div></div>
+            <div id="consultaResults"><div class="empty-state"><p>Busca por código de serie (con o sin prefijo) o por ubicación (ej: RACK1)</p></div></div>
         </div>
     </div>
     
@@ -553,58 +600,127 @@
     
     <!-- EXPORTAR -->
     <div id="exportScreen" class="screen">
-        <div class="scanner-header"><button class="back-btn" id="backExport">←</button><h2 class="scanner-title">📊 Exportar</h2></div>
+        <div class="scanner-header"><button class="back-btn" id="backExport">←</button><h2 class="scanner-title">📊 Exportar Reportes</h2></div>
         <div class="scanner-body">
-            <div class="config-card" style="margin-bottom:14px">
-                <p style="font-size:12px;font-weight:600;margin-bottom:10px">Filtrar por fecha:</p>
-                <div class="config-row">
-                    <span class="config-label">Desde:</span>
-                    <input type="date" class="form-input" id="exportDateFrom">
-                </div>
-                <div class="config-row">
-                    <span class="config-label">Hasta:</span>
-                    <input type="date" class="form-input" id="exportDateTo">
-                </div>
-            </div>
-            
             <p style="font-size:12px;color:var(--text-light);margin-bottom:14px">Selecciona el reporte a descargar</p>
             
-            <div class="config-card" style="cursor:pointer" id="exportMovsHoy">
+            <!-- MOVIMIENTOS CON FILTRO -->
+            <div class="config-card" style="cursor:pointer" id="exportMovsBtn">
                 <div style="display:flex;align-items:center;gap:12px">
                     <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
                     <div>
                         <div style="font-weight:700;font-size:14px">Movimientos</div>
-                        <div style="font-size:11px;color:var(--text-light)">Todos los movimientos en el rango seleccionado</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por rango de fechas</div>
                     </div>
                 </div>
             </div>
             
-            <div class="config-card" style="cursor:pointer" id="exportEmbarques">
-                <div style="display:flex;align-items:center;gap:12px">
-                    <div style="width:44px;height:44px;background:var(--error-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📤</div>
-                    <div>
-                        <div style="font-weight:700;font-size:14px">Embarques</div>
-                        <div style="font-size:11px;color:var(--text-light)">Solo embarques en el rango seleccionado</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="config-card" style="cursor:pointer" id="exportPendientes">
+            <!-- PENDIENTES CON FILTRO -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportPendientesBtn">
                 <div style="display:flex;align-items:center;gap:12px">
                     <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⏳</div>
                     <div>
                         <div style="font-weight:700;font-size:14px">Pendientes de Acomodo</div>
-                        <div style="font-size:11px;color:var(--text-light)">Equipos recibidos o traspasados sin ubicación</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por rango de fechas</div>
                     </div>
                 </div>
             </div>
             
-            <div class="config-card" style="cursor:pointer" id="exportInventario">
+            <!-- INVENTARIO CON FILTRO -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportInventarioBtn">
                 <div style="display:flex;align-items:center;gap:12px">
                     <div style="width:44px;height:44px;background:var(--info-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>
                     <div>
-                        <div style="font-weight:700;font-size:14px">Inventario Actual</div>
-                        <div style="font-size:11px;color:var(--text-light)">Todas las series con su ubicación actual</div>
+                        <div style="font-weight:700;font-size:14px">Inventario</div>
+                        <div style="font-size:11px;color:var(--text-light)">Actual o de días anteriores</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:12px">REPORTES ADICIONALES</div>
+                
+                <div class="config-card" style="cursor:pointer" id="exportEmbarquesBtn2">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:#e8f4fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📤</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Embarques</div>
+                            <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportIncidenciasBtn2">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⚠️</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Incidencias Calidad</div>
+                            <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportCalidadSalidasBtn2">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Calidad Salidas</div>
+                            <div style="font-size:11px;color:var(--text-light)">Resultados de verificación</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportMuestreosBtn2">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:#f3e8ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Muestreos Auditoría</div>
+                            <div style="font-size:11px;color:var(--text-light)">Historial de verificaciones</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportRecepcionesBtn">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📥</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Recepciones</div>
+                            <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportReparacionesBtn">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:#fef3c7;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔧</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Reparaciones</div>
+                            <div style="font-size:11px;color:var(--text-light)">Equipos liberados</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+                <div style="font-size:12px;font-weight:700;color:var(--error);margin-bottom:12px">⚠️ ALERTAS</div>
+                
+                <div class="config-card" style="cursor:pointer;border-left:4px solid var(--warning)" id="exportAlertasBtn">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔔</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Sin Movimiento >30 días</div>
+                            <div style="font-size:11px;color:var(--text-light)">Equipos estancados</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="cursor:pointer;margin-top:10px;border-left:4px solid var(--error)" id="exportObsolescenciaBtn">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="width:44px;height:44px;background:var(--error-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🚨</div>
+                        <div>
+                            <div style="font-weight:700;font-size:14px">Obsolescencia >90 días</div>
+                            <div style="font-size:11px;color:var(--text-light)">Sin embarcar</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -714,6 +830,380 @@
         <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px"><div class="scanner-box" style="width:100%;max-width:400px"><div class="scanner-region" id="location-qr-scanner"></div></div></div>
     </div>
 
+    <!-- CALIDAD SALIDAS -->
+    <div id="calidadSalidasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backCalidadSalidas">←</button><h2 class="scanner-title">✅ Calidad Salidas</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="config-row"><span class="config-label">Fecha:</span><input type="date" class="form-input" id="calidadFecha"><button class="lock-btn" id="calidadFechaLockBtn">🔓 Fijar</button></div>
+            </div>
+            <div class="input-tabs"><div class="input-tab active" id="calidadTabScan">📷 Escanear</div><div class="input-tab" id="calidadTabManual">⌨️ Manual</div></div>
+            <div id="calidadScanView"><div class="scanner-box"><div class="scanner-region" id="calidad-scanner"></div><div class="scan-status"><div class="dot"></div><span>Escanea códigos de hojas impresas</span></div></div></div>
+            <div id="calidadManualView" class="hidden"><div class="form-group"><label>Código del equipo</label><input type="text" class="form-input" id="calidadManualInput" placeholder="Ej: 5208-070225310"></div><button class="btn btn-primary" id="calidadAddBtn">+ Agregar</button></div>
+            <div class="scanned-list mt-14"><div class="scanned-list-header"><h4>Series escaneadas</h4><span class="scanned-count" id="calidadCount">0</span></div><div class="scanned-items" id="calidadItems"><div class="empty-list">Escanea series de hojas impresas</div></div></div>
+            <button class="btn btn-primary" id="calidadCompararBtn" disabled>🔍 Comparar con Embarques</button>
+            <div id="calidadResultados" class="hidden" style="margin-top:14px">
+                <div class="config-card" style="background:var(--success-bg)"><div style="font-weight:700;color:var(--success)">✅ Coinciden: <span id="calidadCoinciden">0</span></div></div>
+                <div class="config-card" style="background:var(--warning-bg)"><div style="font-weight:700;color:#92400e">⚠️ En hojas pero NO en sistema: <span id="calidadSoloHojas">0</span></div><div id="calidadSoloHojasList" style="font-size:11px;margin-top:6px"></div></div>
+                <div class="config-card" style="background:var(--error-bg)"><div style="font-weight:700;color:var(--error)">❌ En sistema pero NO en hojas: <span id="calidadSoloSistema">0</span></div><div id="calidadSoloSistemaList" style="font-size:11px;margin-top:6px"></div></div>
+                <button class="btn btn-success mt-14" id="calidadExportarBtn">📊 Exportar Reporte</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INCIDENCIAS -->
+    <div id="incidenciasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backIncidencias">←</button><h2 class="scanner-title">⚠️ Reportar Incidencia</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="form-group">
+                    <label>Serie del equipo</label>
+                    <div class="config-row"><input type="text" class="form-input" id="incidenciaSerie" placeholder="Escanea o escribe la serie"><button class="lock-btn" id="incidenciaScanBtn">📷</button></div>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de incidencia</label>
+                    <select class="config-select" id="incidenciaTipo">
+                        <option value="">Selecciona...</option>
+                        <option value="caida">Caída de equipo</option>
+                        <option value="caja">Cambio de caja</option>
+                        <option value="serie">Cambio de serie</option>
+                        <option value="danio">Daño físico</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea class="form-input" id="incidenciaDescripcion" rows="3" placeholder="Describe el problema..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Reporta a</label>
+                    <input type="text" class="form-input" id="incidenciaReportaA" placeholder="Nombre de quien recibe el reporte">
+                </div>
+                <button class="btn btn-success" id="incidenciaGuardarBtn">💾 Guardar Incidencia</button>
+            </div>
+            <div style="margin-top:14px">
+                <h4 style="font-size:13px;margin-bottom:10px">Mis incidencias recientes</h4>
+                <div id="misIncidenciasList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VER INCIDENCIAS (Auditoría/Supervisor) -->
+    <div id="verIncidenciasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backVerIncidencias">←</button><h2 class="scanner-title">📝 Ver Incidencias</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="incidenciasDateFrom"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="incidenciasDateTo"></div>
+                <button class="btn btn-primary mt-14" id="filtrarIncidenciasBtn">Filtrar</button>
+            </div>
+            <div id="todasIncidenciasList"></div>
+            <button class="btn btn-success mt-14" id="exportarIncidenciasBtn">📊 Exportar Incidencias</button>
+        </div>
+    </div>
+
+    <!-- VER CALIDAD SALIDAS (Auditoría/Supervisor) -->
+    <div id="verCalidadSalidasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backVerCalidadSalidas">←</button><h2 class="scanner-title">📋 Reportes Calidad</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="calidadReportesDateFrom"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="calidadReportesDateTo"></div>
+                <button class="btn btn-primary mt-14" id="filtrarCalidadReportesBtn">Filtrar</button>
+            </div>
+            <div id="calidadReportesList"></div>
+        </div>
+    </div>
+
+    <!-- MUESTREO INTERNO (Supervisor) -->
+    <div id="muestreoInternoScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backMuestreoInterno">←</button><h2 class="scanner-title">🔎 Muestreo Control Interno</h2></div>
+        <div class="scanner-body">
+            <div class="config-card">
+                <div class="config-row">
+                    <span class="config-label">Cantidad:</span>
+                    <select class="config-select" id="muestreoInternoCantidad">
+                        <option value="5">5 series</option>
+                        <option value="10">10 series</option>
+                        <option value="15">15 series</option>
+                        <option value="20">20 series</option>
+                        <option value="30">30 series</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary mt-14" id="generarMuestreoInternoBtn">🎲 Generar Muestreo</button>
+            </div>
+            <div id="muestreoInternoLista" class="hidden" style="margin-top:14px"></div>
+            <div id="muestreoInternoResultados" class="hidden" style="margin-top:14px">
+                <button class="btn btn-success" id="finalizarMuestreoInternoBtn">✓ Finalizar Muestreo</button>
+            </div>
+            <div style="margin-top:14px">
+                <h4 style="font-size:13px;margin-bottom:10px">Historial de muestreos</h4>
+                <div id="historialMuestreoInterno"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INCIDENCIA SCAN MODAL -->
+    <div id="incidenciaScanModal" class="qr-modal">
+        <div class="scanner-header" style="background:transparent;border:none">
+            <button class="back-btn" id="closeIncidenciaScan" style="background:rgba(255,255,255,0.2);color:white">←</button>
+            <h2 class="scanner-title" style="color:white">Escanear Serie</h2>
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px">
+            <div class="scanner-box" style="width:100%;max-width:400px">
+                <div class="scanner-region" id="incidencia-scanner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR EMBARQUES -->
+    <div id="exportEmbarquesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportEmbarques">←</button><h2 class="scanner-title">📤 Exportar Embarques</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportEmbarquesDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportEmbarquesHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarEmbarquesBtn">🔍 Filtrar</button>
+            </div>
+            <div id="embarquesResumen" class="hidden">
+                <div class="config-card" style="background:var(--info-bg);margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Embarques encontrados</strong><br><span style="font-size:11px;color:var(--text-light)" id="embarquesRangoFechas"></span></div>
+                        <div style="font-size:28px;font-weight:800;color:var(--info)" id="embarquesTotal">0</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+                    <div class="config-card" style="text-align:center;padding:10px"><div style="font-size:11px;color:var(--text-light)">Cliente</div><div style="font-size:18px;font-weight:700" id="embarquesCliente">0</div></div>
+                    <div class="config-card" style="text-align:center;padding:10px"><div style="font-size:11px;color:var(--text-light)">Vallejo</div><div style="font-size:18px;font-weight:700" id="embarquesVallejo">0</div></div>
+                    <div class="config-card" style="text-align:center;padding:10px"><div style="font-size:11px;color:var(--text-light)">Traslado</div><div style="font-size:18px;font-weight:700" id="embarquesTraslado">0</div></div>
+                </div>
+                <button class="btn btn-success" id="descargarEmbarquesBtn">📊 Descargar Excel</button>
+            </div>
+            <div id="embarquesLista" style="margin-top:14px;max-height:300px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR INCIDENCIAS -->
+    <div id="exportIncidenciasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportIncidencias">←</button><h2 class="scanner-title">⚠️ Exportar Incidencias</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportIncidenciasDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportIncidenciasHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarIncidenciasExportBtn">🔍 Filtrar</button>
+            </div>
+            <div id="incidenciasExportResumen" class="hidden">
+                <div class="config-card" style="background:var(--warning-bg);margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Incidencias encontradas</strong><br><span style="font-size:11px;color:var(--text-light)" id="incidenciasRangoFechas"></span></div>
+                        <div style="font-size:28px;font-weight:800;color:var(--warning)" id="incidenciasExportTotal">0</div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="descargarIncidenciasBtn">📊 Descargar Excel</button>
+            </div>
+            <div id="incidenciasExportLista" style="margin-top:14px;max-height:350px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR MUESTREOS AUDITORIA -->
+    <div id="exportMuestreosScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportMuestreos">←</button><h2 class="scanner-title">🎯 Muestreos Auditoría</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportMuestreosDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportMuestreosHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarMuestreosBtn">🔍 Filtrar</button>
+            </div>
+            <div id="muestreosAuditoriaLista"></div>
+            <button class="btn btn-success mt-14" id="descargarMuestreosBtn">📊 Descargar Excel</button>
+        </div>
+    </div>
+
+    <!-- LIBERAR REPARACION -->
+    <div id="liberarReparacionScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backLiberarReparacion">←</button><h2 class="scanner-title">🔧 Liberar Equipo</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="background:var(--info-bg);margin-bottom:14px">
+                <div style="font-size:12px"><strong>Origen:</strong> <span id="reparacionBodegaActual">-</span></div>
+            </div>
+            
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="form-group" style="margin-bottom:10px">
+                    <label style="font-size:12px;font-weight:600">Ubicación destino</label>
+                    <select class="config-select" id="reparacionUbicacionDestino">
+                        <option value="">Selecciona...</option>
+                        <option value="B3">B3</option>
+                        <option value="B5">B5</option>
+                        <option value="B6">B6</option>
+                        <option value="B7">B7</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="font-size:12px;font-weight:600">Comentario (opcional)</label>
+                    <input type="text" class="form-input" id="reparacionComentario" placeholder="Ej: Reparación completa, cambio de tarjeta...">
+                </div>
+            </div>
+            
+            <div class="tabs"><div class="tab active" id="reparacionTabScan">📷 Escanear</div><div class="tab" id="reparacionTabManual">⌨️ Manual</div></div>
+            
+            <div id="reparacionScanSection">
+                <div class="scanner-box"><div class="scanner-region" id="reparacion-scanner"></div></div>
+            </div>
+            
+            <div id="reparacionManualSection" class="hidden">
+                <div class="manual-input-section">
+                    <input type="text" class="form-input" id="reparacionManualInput" placeholder="Escribe la serie...">
+                    <button class="btn btn-primary" id="reparacionAddBtn">Agregar</button>
+                </div>
+            </div>
+            
+            <div class="scanned-list" id="reparacionScannedList"></div>
+            <div class="confirm-bar"><span id="reparacionCount">0</span> equipos<button class="btn btn-success" id="confirmReparacion">✓ Liberar a PT</button></div>
+        </div>
+    </div>
+
+    <!-- HISTORIAL REPARACIONES -->
+    <div id="historialReparacionesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backHistorialReparaciones">←</button><h2 class="scanner-title">📋 Mis Liberaciones</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Fecha:</span><input type="date" class="form-input" id="histReparacionesFecha"></div>
+                <button class="btn btn-primary mt-14" id="filtrarHistReparacionesBtn">Ver</button>
+            </div>
+            <div id="historialReparacionesList"></div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR MOVIMIENTOS CON FILTRO -->
+    <div id="exportMovimientosScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportMovimientos">←</button><h2 class="scanner-title">📅 Exportar Movimientos</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportMovsDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportMovsHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarMovsExportBtn">🔍 Filtrar</button>
+            </div>
+            <div id="movsExportResumen" class="hidden">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+                    <div class="config-card" style="text-align:center;padding:8px;background:var(--success-bg)"><div style="font-size:10px">Recepción</div><div style="font-size:18px;font-weight:700" id="movsRecepcion">0</div></div>
+                    <div class="config-card" style="text-align:center;padding:8px;background:var(--info-bg)"><div style="font-size:10px">Acomodo</div><div style="font-size:18px;font-weight:700" id="movsAcomodo">0</div></div>
+                    <div class="config-card" style="text-align:center;padding:8px;background:var(--warning-bg)"><div style="font-size:10px">Traspaso</div><div style="font-size:18px;font-weight:700" id="movsTraspaso">0</div></div>
+                    <div class="config-card" style="text-align:center;padding:8px;background:var(--error-bg)"><div style="font-size:10px">Embarque</div><div style="font-size:18px;font-weight:700" id="movsEmbarque">0</div></div>
+                </div>
+                <button class="btn btn-success" id="descargarMovsBtn">📊 Descargar Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR PENDIENTES CON FILTRO -->
+    <div id="exportPendientesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportPendientes">←</button><h2 class="scanner-title">⏳ Exportar Pendientes</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportPendientesDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportPendientesHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarPendientesExportBtn">🔍 Filtrar</button>
+            </div>
+            <div id="pendientesExportResumen" class="hidden">
+                <div class="config-card" style="background:var(--warning-bg);margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Pendientes encontrados</strong></div>
+                        <div style="font-size:28px;font-weight:800;color:var(--warning)" id="pendientesExportTotal">0</div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="descargarPendientesBtn">📊 Descargar Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR INVENTARIO CON FILTRO -->
+    <div id="exportInventarioScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportInventario">←</button><h2 class="scanner-title">📦 Exportar Inventario</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <p style="font-size:12px;color:var(--text-light);margin-bottom:12px">Selecciona qué inventario descargar:</p>
+                <button class="btn btn-primary" id="exportInventarioHoyBtn" style="width:100%;margin-bottom:10px">📦 Inventario Actual (Hoy)</button>
+                <div style="text-align:center;font-size:11px;color:var(--text-light);margin:10px 0">— o selecciona fecha —</div>
+                <div class="config-row"><span class="config-label">Fecha:</span><input type="date" class="form-input" id="exportInventarioFecha"></div>
+                <button class="btn btn-secondary mt-14" id="exportInventarioFechaBtn">📦 Inventario de esa fecha</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR RECEPCIONES -->
+    <div id="exportRecepcionesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportRecepciones">←</button><h2 class="scanner-title">📥 Exportar Recepciones</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportRecepcionesDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportRecepcionesHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarRecepcionesExportBtn">🔍 Filtrar</button>
+            </div>
+            <div id="recepcionesExportResumen" class="hidden">
+                <div class="config-card" style="background:var(--success-bg);margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Recepciones encontradas</strong></div>
+                        <div style="font-size:28px;font-weight:800;color:var(--success)" id="recepcionesExportTotal">0</div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="descargarRecepcionesBtn">📊 Descargar Excel</button>
+            </div>
+            <div id="recepcionesExportLista" style="margin-top:14px;max-height:300px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR REPARACIONES -->
+    <div id="exportReparacionesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportReparaciones">←</button><h2 class="scanner-title">🔧 Exportar Reparaciones</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportReparacionesDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportReparacionesHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarReparacionesExportBtn">🔍 Filtrar</button>
+            </div>
+            <div id="reparacionesExportResumen" class="hidden">
+                <div class="config-card" style="background:#fef3c7;margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Equipos liberados</strong></div>
+                        <div style="font-size:28px;font-weight:800;color:#d97706" id="reparacionesExportTotal">0</div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="descargarReparacionesBtn">📊 Descargar Excel</button>
+            </div>
+            <div id="reparacionesExportLista" style="margin-top:14px;max-height:300px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR ALERTAS >30 DIAS -->
+    <div id="exportAlertasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportAlertas">←</button><h2 class="scanner-title">🔔 Alertas >30 días</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="background:var(--warning-bg);margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div><strong>Equipos sin movimiento</strong><br><span style="font-size:11px">Más de 30 días</span></div>
+                    <div style="font-size:28px;font-weight:800;color:var(--warning)" id="alertasTotal">0</div>
+                </div>
+            </div>
+            <button class="btn btn-success" id="descargarAlertasBtn">📊 Descargar Excel</button>
+            <div id="alertasLista" style="margin-top:14px;max-height:350px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <!-- EXPORTAR OBSOLESCENCIA >90 DIAS -->
+    <div id="exportObsolescenciaScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportObsolescencia">←</button><h2 class="scanner-title">🚨 Obsolescencia >90 días</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="background:var(--error-bg);margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div><strong>Equipos sin embarcar</strong><br><span style="font-size:11px">Más de 90 días</span></div>
+                    <div style="font-size:28px;font-weight:800;color:var(--error)" id="obsolescenciaTotal">0</div>
+                </div>
+            </div>
+            <button class="btn btn-success" id="descargarObsolescenciaBtn">📊 Descargar Excel</button>
+            <div id="obsolescenciaLista" style="margin-top:14px;max-height:350px;overflow-y:auto"></div>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div id="toast" class="toast"><span id="toastMessage">Mensaje</span></div>
     <div id="pendingBadge" class="pending-badge">⏳ <span id="pendingCount">0</span> pendientes</div>
@@ -747,16 +1237,18 @@
     let state = {
         currentUser: null,
         currentRole: null,
+        currentBodegaReparaciones: null,
         movements: [],
+        reparaciones: [],
         pendingSync: [],
         scanners: {},
-        scannedItems: {recepcion:[],acomodo:[],traspaso:[],embarque:[]},
+        scannedItems: {recepcion:[],acomodo:[],traspaso:[],embarque:[],reparacion:[]},
         locks: {recepcion:false,traspaso:false,embarque:false},
         locationQRScanner: null,
         currentFilter: 'all',
         auditResults: [],
         currentAudit: null,
-        passwords: { auditoria: '7918', supervisor: '2026' }
+        passwords: { auditoria: '7918', supervisor: '2026', calidad: '1234', reparaciones: 'REP' }
     };
 
     // ==================== DOM READY ====================
@@ -777,13 +1269,20 @@
         // Roles
         document.getElementById('roleUsuario').addEventListener('click', function(){ selectRole('usuario'); });
         document.getElementById('roleConsulta').addEventListener('click', function(){ selectRole('consulta'); });
+        document.getElementById('roleReparaciones').addEventListener('click', function(){ selectRole('reparaciones'); });
+        document.getElementById('roleCalidad').addEventListener('click', function(){ selectRole('calidad'); });
         document.getElementById('roleAuditoria').addEventListener('click', function(){ selectRole('auditoria'); });
         document.getElementById('roleSupervisor').addEventListener('click', function(){ selectRole('supervisor'); });
         document.getElementById('backToRolesBtn').addEventListener('click', backToRoles);
         document.getElementById('backFromPassword').addEventListener('click', backToRoles);
+        document.getElementById('backFromBodega').addEventListener('click', backToRoles);
         document.getElementById('passwordBtn').addEventListener('click', validatePassword);
         document.getElementById('passwordInput').addEventListener('keypress', function(e){ if(e.key==='Enter') validatePassword(); });
         document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        // Bodega Reparaciones
+        document.getElementById('bodegaB3').addEventListener('click', function(){ selectBodegaReparaciones('B3'); });
+        document.getElementById('bodegaB7').addEventListener('click', function(){ selectBodegaReparaciones('B7'); });
 
         // Menu
         document.getElementById('menuRecepcion').addEventListener('click', function(){ openModule('recepcion'); });
@@ -799,6 +1298,17 @@
         document.getElementById('menuAuditSample').addEventListener('click', function(){ openModule('auditSample'); });
         document.getElementById('menuMetric').addEventListener('click', function(){ openModule('metric'); });
         document.getElementById('menuCargaMasiva').addEventListener('click', function(){ openModule('cargaMasiva'); });
+        
+        // Módulos Reparaciones
+        if(document.getElementById('menuLiberarReparacion')) document.getElementById('menuLiberarReparacion').addEventListener('click', function(){ openModule('liberarReparacion'); });
+        if(document.getElementById('menuHistorialReparaciones')) document.getElementById('menuHistorialReparaciones').addEventListener('click', function(){ openModule('historialReparaciones'); });
+        
+        // Nuevos módulos Calidad
+        if(document.getElementById('menuCalidadSalidas')) document.getElementById('menuCalidadSalidas').addEventListener('click', function(){ openModule('calidadSalidas'); });
+        if(document.getElementById('menuIncidencias')) document.getElementById('menuIncidencias').addEventListener('click', function(){ openModule('incidencias'); });
+        if(document.getElementById('menuVerIncidencias')) document.getElementById('menuVerIncidencias').addEventListener('click', function(){ openModule('verIncidencias'); });
+        if(document.getElementById('menuVerCalidadSalidas')) document.getElementById('menuVerCalidadSalidas').addEventListener('click', function(){ openModule('verCalidadSalidas'); });
+        if(document.getElementById('menuMuestreoInterno')) document.getElementById('menuMuestreoInterno').addEventListener('click', function(){ openModule('muestreoInterno'); });
 
         // Back buttons
         document.getElementById('backRecepcion').addEventListener('click', goBack);
@@ -814,17 +1324,109 @@
         document.getElementById('backExport').addEventListener('click', goBack);
         document.getElementById('backAuditSample').addEventListener('click', goBack);
         document.getElementById('backMetric').addEventListener('click', goBack);
+        
+        // Nuevos back buttons exportar
+        if(document.getElementById('backExportEmbarques')) document.getElementById('backExportEmbarques').addEventListener('click', goBack);
+        if(document.getElementById('backExportMuestreos')) document.getElementById('backExportMuestreos').addEventListener('click', goBack);
+        if(document.getElementById('backExportIncidencias')) document.getElementById('backExportIncidencias').addEventListener('click', goBack);
+        
+        // Botones exportar embarques
+        if(document.getElementById('filtrarEmbarquesBtn')) document.getElementById('filtrarEmbarquesBtn').addEventListener('click', filtrarEmbarques);
+        if(document.getElementById('descargarEmbarquesBtn')) document.getElementById('descargarEmbarquesBtn').addEventListener('click', descargarEmbarques);
+        
+        // Botones exportar incidencias
+        if(document.getElementById('filtrarIncidenciasExportBtn')) document.getElementById('filtrarIncidenciasExportBtn').addEventListener('click', filtrarIncidenciasExport);
+        if(document.getElementById('descargarIncidenciasBtn')) document.getElementById('descargarIncidenciasBtn').addEventListener('click', descargarIncidenciasExcel);
+        
+        // Botones exportar muestreos
+        if(document.getElementById('filtrarMuestreosBtn')) document.getElementById('filtrarMuestreosBtn').addEventListener('click', filtrarMuestreosAuditoria);
+        if(document.getElementById('descargarMuestreosBtn')) document.getElementById('descargarMuestreosBtn').addEventListener('click', descargarMuestreosAuditoria);
+        
+        // Nuevos back buttons
+        if(document.getElementById('backCalidadSalidas')) document.getElementById('backCalidadSalidas').addEventListener('click', goBack);
+        if(document.getElementById('backIncidencias')) document.getElementById('backIncidencias').addEventListener('click', goBack);
+        if(document.getElementById('backVerIncidencias')) document.getElementById('backVerIncidencias').addEventListener('click', goBack);
+        if(document.getElementById('backVerCalidadSalidas')) document.getElementById('backVerCalidadSalidas').addEventListener('click', goBack);
+        if(document.getElementById('backMuestreoInterno')) document.getElementById('backMuestreoInterno').addEventListener('click', goBack);
+        
         document.getElementById('generateSampleBtn').addEventListener('click', generateAuditSample);
         document.getElementById('finishAuditBtn').addEventListener('click', finishAudit);
         document.getElementById('applyHistoryFilters').addEventListener('click', applyHistoryFilters);
         document.getElementById('applyPendientesFilter').addEventListener('click', renderPendientesList);
         document.getElementById('applyDashboardDate').addEventListener('click', renderDashboard);
         
-        // Export buttons
-        document.getElementById('exportMovsHoy').addEventListener('click', exportMovimientos);
-        document.getElementById('exportEmbarques').addEventListener('click', exportEmbarques);
-        document.getElementById('exportPendientes').addEventListener('click', exportPendientes);
-        document.getElementById('exportInventario').addEventListener('click', exportInventario);
+        // Traspaso lock buttons adicionales
+        if(document.getElementById('traspasoSolicitanteLockBtn')) document.getElementById('traspasoSolicitanteLockBtn').addEventListener('click', function(){ toggleLockField('traspasoSolicitante'); });
+        if(document.getElementById('traspasoMotivoLockBtn')) document.getElementById('traspasoMotivoLockBtn').addEventListener('click', function(){ toggleLockField('traspasoMotivo'); });
+        
+        // Calidad Salidas
+        if(document.getElementById('calidadFechaLockBtn')) document.getElementById('calidadFechaLockBtn').addEventListener('click', function(){ toggleLockField('calidadFecha'); });
+        if(document.getElementById('calidadTabScan')) document.getElementById('calidadTabScan').addEventListener('click', function(){ switchTab('calidad','scan'); });
+        if(document.getElementById('calidadTabManual')) document.getElementById('calidadTabManual').addEventListener('click', function(){ switchTab('calidad','manual'); });
+        if(document.getElementById('calidadAddBtn')) document.getElementById('calidadAddBtn').addEventListener('click', function(){ addManualCalidad(); });
+        if(document.getElementById('calidadCompararBtn')) document.getElementById('calidadCompararBtn').addEventListener('click', compararCalidadSalidas);
+        if(document.getElementById('calidadExportarBtn')) document.getElementById('calidadExportarBtn').addEventListener('click', exportarCalidadSalidas);
+        
+        // Incidencias
+        if(document.getElementById('incidenciaScanBtn')) document.getElementById('incidenciaScanBtn').addEventListener('click', openIncidenciaScan);
+        if(document.getElementById('closeIncidenciaScan')) document.getElementById('closeIncidenciaScan').addEventListener('click', closeIncidenciaScan);
+        if(document.getElementById('incidenciaGuardarBtn')) document.getElementById('incidenciaGuardarBtn').addEventListener('click', guardarIncidencia);
+        if(document.getElementById('filtrarIncidenciasBtn')) document.getElementById('filtrarIncidenciasBtn').addEventListener('click', filtrarIncidencias);
+        if(document.getElementById('exportarIncidenciasBtn')) document.getElementById('exportarIncidenciasBtn').addEventListener('click', exportarIncidencias);
+        if(document.getElementById('filtrarCalidadReportesBtn')) document.getElementById('filtrarCalidadReportesBtn').addEventListener('click', filtrarCalidadReportes);
+        
+        // Muestreo Interno
+        if(document.getElementById('generarMuestreoInternoBtn')) document.getElementById('generarMuestreoInternoBtn').addEventListener('click', generarMuestreoInterno);
+        if(document.getElementById('finalizarMuestreoInternoBtn')) document.getElementById('finalizarMuestreoInternoBtn').addEventListener('click', finalizarMuestreoInterno);
+        
+        // Export buttons - nuevos con filtros
+        if(document.getElementById('exportMovsBtn')) document.getElementById('exportMovsBtn').addEventListener('click', function(){ openModule('exportMovimientos'); });
+        if(document.getElementById('exportPendientesBtn')) document.getElementById('exportPendientesBtn').addEventListener('click', function(){ openModule('exportPendientes'); });
+        if(document.getElementById('exportInventarioBtn')) document.getElementById('exportInventarioBtn').addEventListener('click', function(){ openModule('exportInventario'); });
+        
+        // Nuevos botones de exportar en sección Export
+        if(document.getElementById('exportEmbarquesBtn2')) document.getElementById('exportEmbarquesBtn2').addEventListener('click', function(){ openModule('exportEmbarques'); });
+        if(document.getElementById('exportIncidenciasBtn2')) document.getElementById('exportIncidenciasBtn2').addEventListener('click', function(){ openModule('exportIncidencias'); });
+        if(document.getElementById('exportCalidadSalidasBtn2')) document.getElementById('exportCalidadSalidasBtn2').addEventListener('click', function(){ openModule('verCalidadSalidas'); });
+        if(document.getElementById('exportMuestreosBtn2')) document.getElementById('exportMuestreosBtn2').addEventListener('click', function(){ openModule('exportMuestreos'); });
+        if(document.getElementById('exportReparacionesBtn')) document.getElementById('exportReparacionesBtn').addEventListener('click', function(){ openModule('exportReparaciones'); });
+        if(document.getElementById('exportAlertasBtn')) document.getElementById('exportAlertasBtn').addEventListener('click', function(){ openModule('exportAlertas'); });
+        if(document.getElementById('exportObsolescenciaBtn')) document.getElementById('exportObsolescenciaBtn').addEventListener('click', function(){ openModule('exportObsolescencia'); });
+        
+        // Back buttons nuevos
+        if(document.getElementById('backLiberarReparacion')) document.getElementById('backLiberarReparacion').addEventListener('click', goBack);
+        if(document.getElementById('backHistorialReparaciones')) document.getElementById('backHistorialReparaciones').addEventListener('click', goBack);
+        if(document.getElementById('backExportMovimientos')) document.getElementById('backExportMovimientos').addEventListener('click', goBack);
+        if(document.getElementById('backExportPendientes')) document.getElementById('backExportPendientes').addEventListener('click', goBack);
+        if(document.getElementById('backExportInventario')) document.getElementById('backExportInventario').addEventListener('click', goBack);
+        if(document.getElementById('backExportReparaciones')) document.getElementById('backExportReparaciones').addEventListener('click', goBack);
+        if(document.getElementById('backExportAlertas')) document.getElementById('backExportAlertas').addEventListener('click', goBack);
+        if(document.getElementById('backExportObsolescencia')) document.getElementById('backExportObsolescencia').addEventListener('click', goBack);
+        
+        // Filtros de exportar
+        if(document.getElementById('filtrarMovsExportBtn')) document.getElementById('filtrarMovsExportBtn').addEventListener('click', filtrarMovimientosExport);
+        if(document.getElementById('descargarMovsBtn')) document.getElementById('descargarMovsBtn').addEventListener('click', descargarMovimientosExcel);
+        if(document.getElementById('filtrarPendientesExportBtn')) document.getElementById('filtrarPendientesExportBtn').addEventListener('click', filtrarPendientesExport);
+        if(document.getElementById('descargarPendientesBtn')) document.getElementById('descargarPendientesBtn').addEventListener('click', descargarPendientesExcel);
+        if(document.getElementById('exportInventarioHoyBtn')) document.getElementById('exportInventarioHoyBtn').addEventListener('click', exportarInventarioHoy);
+        if(document.getElementById('exportInventarioFechaBtn')) document.getElementById('exportInventarioFechaBtn').addEventListener('click', exportarInventarioFecha);
+        if(document.getElementById('filtrarReparacionesExportBtn')) document.getElementById('filtrarReparacionesExportBtn').addEventListener('click', filtrarReparacionesExport);
+        if(document.getElementById('descargarReparacionesBtn')) document.getElementById('descargarReparacionesBtn').addEventListener('click', descargarReparacionesExcel);
+        if(document.getElementById('descargarAlertasBtn')) document.getElementById('descargarAlertasBtn').addEventListener('click', descargarAlertasExcel);
+        if(document.getElementById('descargarObsolescenciaBtn')) document.getElementById('descargarObsolescenciaBtn').addEventListener('click', descargarObsolescenciaExcel);
+        
+        // Recepciones export
+        if(document.getElementById('exportRecepcionesBtn')) document.getElementById('exportRecepcionesBtn').addEventListener('click', function(){ openModule('exportRecepciones'); });
+        if(document.getElementById('backExportRecepciones')) document.getElementById('backExportRecepciones').addEventListener('click', goBack);
+        if(document.getElementById('filtrarRecepcionesExportBtn')) document.getElementById('filtrarRecepcionesExportBtn').addEventListener('click', filtrarRecepcionesExport);
+        if(document.getElementById('descargarRecepcionesBtn')) document.getElementById('descargarRecepcionesBtn').addEventListener('click', descargarRecepcionesExcel);
+        
+        // Reparaciones
+        if(document.getElementById('reparacionTabScan')) document.getElementById('reparacionTabScan').addEventListener('click', function(){ switchTabReparacion('scan'); });
+        if(document.getElementById('reparacionTabManual')) document.getElementById('reparacionTabManual').addEventListener('click', function(){ switchTabReparacion('manual'); });
+        if(document.getElementById('reparacionAddBtn')) document.getElementById('reparacionAddBtn').addEventListener('click', function(){ addManualReparacion(); });
+        if(document.getElementById('confirmReparacion')) document.getElementById('confirmReparacion').addEventListener('click', confirmarReparacion);
+        if(document.getElementById('filtrarHistReparacionesBtn')) document.getElementById('filtrarHistReparacionesBtn').addEventListener('click', filtrarHistorialReparaciones);
         
         // Carga Masiva (Excel)
         document.getElementById('selectFileBtn').addEventListener('click', function(){ document.getElementById('xlsxFileInput').click(); });
@@ -841,8 +1443,6 @@
         // Tabs
         document.getElementById('recepcionTabScan').addEventListener('click', function(){ switchTab('recepcion','scan'); });
         document.getElementById('recepcionTabManual').addEventListener('click', function(){ switchTab('recepcion','manual'); });
-        document.getElementById('acomodoTabScan').addEventListener('click', function(){ switchTab('acomodo','scan'); });
-        document.getElementById('acomodoTabManual').addEventListener('click', function(){ switchTab('acomodo','manual'); });
         document.getElementById('traspasoTabScan').addEventListener('click', function(){ switchTab('traspaso','scan'); });
         document.getElementById('traspasoTabManual').addEventListener('click', function(){ switchTab('traspaso','manual'); });
         document.getElementById('embarqueTabScan').addEventListener('click', function(){ switchTab('embarque','scan'); });
@@ -855,19 +1455,22 @@
 
         // Add buttons
         document.getElementById('recepcionAddBtn').addEventListener('click', function(){ addManual('recepcion'); });
-        document.getElementById('acomodoAddBtn').addEventListener('click', function(){ addManual('acomodo'); });
         document.getElementById('traspasoAddBtn').addEventListener('click', function(){ addManual('traspaso'); });
         document.getElementById('embarqueAddBtn').addEventListener('click', function(){ addManual('embarque'); });
+        
+        // Acomodo nuevo flujo
+        if(document.getElementById('acomodoAgregarBtn')) document.getElementById('acomodoAgregarBtn').addEventListener('click', agregarAcomodoMultiple);
+        if(document.getElementById('acomodoScanSerieBtn')) document.getElementById('acomodoScanSerieBtn').addEventListener('click', openAcomodoSerieScan);
+        if(document.getElementById('acomodoSerieInput')) document.getElementById('acomodoSerieInput').addEventListener('keypress', function(e){ if(e.key==='Enter') agregarAcomodoMultiple(); });
 
         // Manual inputs enter
         document.getElementById('recepcionManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('recepcion'); });
-        document.getElementById('acomodoManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('acomodo'); });
         document.getElementById('traspasoManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('traspaso'); });
         document.getElementById('embarqueManualInput').addEventListener('keypress', function(e){ if(e.key==='Enter') addManual('embarque'); });
 
         // Confirm buttons
         document.getElementById('recepcionConfirmBtn').addEventListener('click', confirmRecepcion);
-        document.getElementById('acomodoConfirmBtn').addEventListener('click', confirmAcomodo);
+        document.getElementById('acomodoConfirmBtn').addEventListener('click', confirmAcomodoMultiple);
         document.getElementById('traspasoConfirmBtn').addEventListener('click', confirmTraspaso);
         document.getElementById('embarqueConfirmBtn').addEventListener('click', confirmEmbarque);
 
@@ -924,14 +1527,25 @@
         if(role === 'consulta'){
             state.currentUser = 'Consulta';
             document.getElementById('currentUserName').textContent = 'Consulta';
+            document.getElementById('welcomeTitle').textContent = 'Consulta';
+            document.getElementById('welcomeRole').textContent = 'Buscar + Reportes';
             applyRolePermissions();
             showScreen('menuScreen');
             showToast('success','Modo consulta activado');
-        }else if(role === 'auditoria' || role === 'supervisor'){
+        }else if(role === 'reparaciones'){
             document.getElementById('roleSelection').classList.add('hidden');
             document.getElementById('userSelection').classList.add('hidden');
             document.getElementById('passwordSection').classList.remove('hidden');
-            document.getElementById('passwordTitle').textContent = role === 'auditoria' ? 'Clave Auditoria' : 'Clave Supervisor';
+            document.getElementById('passwordTitle').textContent = 'Clave Reparaciones';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordInput').focus();
+        }else if(role === 'calidad' || role === 'auditoria' || role === 'supervisor'){
+            document.getElementById('roleSelection').classList.add('hidden');
+            document.getElementById('userSelection').classList.add('hidden');
+            document.getElementById('passwordSection').classList.remove('hidden');
+            var titles = {calidad:'Clave Calidad', auditoria:'Clave Auditoria', supervisor:'Clave Supervisor'};
+            document.getElementById('passwordTitle').textContent = titles[role];
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordError').style.display = 'none';
             document.getElementById('passwordInput').focus();
@@ -941,10 +1555,34 @@
         }
     }
     
+    function selectBodegaReparaciones(bodega){
+        state.currentBodegaReparaciones = bodega;
+        state.currentUser = 'Reparaciones ' + bodega;
+        document.getElementById('currentUserName').textContent = 'Rep. ' + bodega;
+        document.getElementById('welcomeTitle').textContent = 'Reparaciones';
+        document.getElementById('welcomeRole').textContent = 'Bodega: ' + bodega;
+        document.getElementById('reparacionBodegaActual').textContent = bodega;
+        applyRolePermissions();
+        showScreen('menuScreen');
+        showToast('success','Reparaciones ' + bodega + ' activado');
+    }
+    
     function validatePassword(){
-        var pass = document.getElementById('passwordInput').value;
-        if(pass === state.passwords[state.currentRole]){
-            state.currentUser = state.currentRole === 'auditoria' ? 'Auditoria' : 'Supervisor';
+        var pass = document.getElementById('passwordInput').value.toUpperCase();
+        var storedPass = state.passwords[state.currentRole];
+        if(pass === storedPass || pass === storedPass.toUpperCase()){
+            if(state.currentRole === 'reparaciones'){
+                // Mostrar selección de bodega
+                document.getElementById('passwordSection').classList.add('hidden');
+                document.getElementById('bodegaReparacionesSection').classList.remove('hidden');
+                return;
+            }else if(state.currentRole === 'calidad'){
+                state.currentUser = 'Calidad';
+            }else if(state.currentRole === 'auditoria'){
+                state.currentUser = 'Auditoria';
+            }else{
+                state.currentUser = 'Supervisor';
+            }
             document.getElementById('currentUserName').textContent = state.currentUser;
             document.getElementById('welcomeTitle').textContent = 'Bienvenido';
             document.getElementById('welcomeRole').textContent = 'Acceso: ' + state.currentUser;
@@ -990,39 +1628,62 @@
 
     function applyRolePermissions(){
         var ops = document.getElementById('operationsSection');
+        var consultasSec = document.getElementById('consultasSection');
         var hist = document.getElementById('menuHistorial');
         var myMovs = document.getElementById('menuMisMovs');
         var exp = document.getElementById('menuExport');
         var admin = document.getElementById('adminSection');
         var muestreo = document.getElementById('menuAuditSample');
+        var calidadSec = document.getElementById('calidadSection');
+        var supervisorSec = document.getElementById('supervisorSection');
+        var reparacionesSec = document.getElementById('reparacionesSection');
+        
+        // Ocultar todo por defecto
+        ops.classList.add('hidden');
+        if(consultasSec) consultasSec.classList.add('hidden');
+        hist.classList.add('hidden');
+        myMovs.classList.add('hidden');
+        exp.classList.add('hidden');
+        admin.classList.add('hidden');
+        if(calidadSec) calidadSec.classList.add('hidden');
+        if(supervisorSec) supervisorSec.classList.add('hidden');
+        if(reparacionesSec) reparacionesSec.classList.add('hidden');
         
         if(state.currentRole === 'consulta'){
-            ops.classList.add('hidden');
-            hist.classList.add('hidden');
-            myMovs.classList.add('hidden');
-            exp.classList.add('hidden');
-            admin.classList.add('hidden');
+            // Consulta: buscar + exportar reportes
+            if(consultasSec) consultasSec.classList.remove('hidden');
+            exp.classList.remove('hidden');
         }else if(state.currentRole === 'usuario'){
             ops.classList.remove('hidden');
-            hist.classList.add('hidden');
+            if(consultasSec) consultasSec.classList.remove('hidden');
             myMovs.classList.remove('hidden');
-            exp.classList.add('hidden');
-            admin.classList.add('hidden');
+        }else if(state.currentRole === 'reparaciones'){
+            // Reparaciones: liberar equipos, consulta, reportes
+            if(consultasSec) consultasSec.classList.remove('hidden');
+            if(reparacionesSec) reparacionesSec.classList.remove('hidden');
+            exp.classList.remove('hidden');
+        }else if(state.currentRole === 'calidad'){
+            // Calidad: consulta, pendientes, módulos de calidad
+            if(consultasSec) consultasSec.classList.remove('hidden');
+            if(calidadSec) calidadSec.classList.remove('hidden');
         }else if(state.currentRole === 'auditoria'){
-            // Auditoria: todo acceso incluyendo muestreo
+            // Auditoria: todo incluyendo muestreo y ver calidad/incidencias
             ops.classList.remove('hidden');
+            if(consultasSec) consultasSec.classList.remove('hidden');
             hist.classList.remove('hidden');
-            myMovs.classList.add('hidden');
             exp.classList.remove('hidden');
             admin.classList.remove('hidden');
+            if(calidadSec) calidadSec.classList.remove('hidden');
             muestreo.classList.remove('hidden');
         }else if(state.currentRole === 'supervisor'){
-            // Supervisor: todo EXCEPTO muestreo
+            // Supervisor: todo EXCEPTO muestreo auditoría, pero SÍ muestreo interno
             ops.classList.remove('hidden');
+            if(consultasSec) consultasSec.classList.remove('hidden');
             hist.classList.remove('hidden');
-            myMovs.classList.add('hidden');
             exp.classList.remove('hidden');
             admin.classList.remove('hidden');
+            if(calidadSec) calidadSec.classList.remove('hidden');
+            if(supervisorSec) supervisorSec.classList.remove('hidden');
             muestreo.classList.add('hidden');
         }
     }
@@ -1031,8 +1692,11 @@
         stopScanners();
         state.currentUser = null;
         state.currentRole = null;
+        state.currentBodegaReparaciones = null;
         document.getElementById('roleSelection').classList.remove('hidden');
         document.getElementById('userSelection').classList.add('hidden');
+        document.getElementById('passwordSection').classList.add('hidden');
+        document.getElementById('bodegaReparacionesSection').classList.add('hidden');
         showScreen('loginScreen');
     }
 
@@ -1042,32 +1706,24 @@
         document.getElementById(id).classList.add('active');
     }
 
-    function openModule(m){
-        showScreen(m+'Screen');
-        if(['recepcion','acomodo','traspaso','embarque'].indexOf(m) !== -1){
-            setTimeout(function(){ startScanner(m); }, 300);
-        }
-        if(m === 'historial') applyHistoryFilters();
-        if(m === 'misMovimientos') renderMyMovements();
-        if(m === 'pendientes') renderPendientesList();
-        if(m === 'dashboard') renderDashboard();
-        if(m === 'auditSample') renderAuditSample();
-        if(m === 'metric') renderMetric();
-        if(m === 'cargaMasiva') resetCargaMasiva();
-    }
-
     function goBack(){
         stopScanners();
-        ['recepcion','acomodo','traspaso','embarque'].forEach(function(m){
+        ['recepcion','traspaso','embarque'].forEach(function(m){
             state.scannedItems[m] = [];
             updateList(m);
         });
+        acomodoMultipleItems = [];
+        if(document.getElementById('acomodoItems')) renderAcomodoMultipleList();
         showScreen('menuScreen');
         updateStats();
     }
 
     // ==================== SCANNER ====================
     function startScanner(m){
+        if(typeof Html5Qrcode === 'undefined'){
+            console.warn('Html5Qrcode no cargado');
+            return;
+        }
         var id = m + '-scanner';
         var el = document.getElementById(id);
         if(!el) return;
@@ -1080,7 +1736,7 @@
             {fps:10,qrbox:{width:250,height:150}},
             function(code){ onScan(m, code); },
             function(){}
-        ).catch(function(e){ showToast('error','Error cámara'); });
+        ).catch(function(e){ console.log('Error cámara:', e); });
     }
 
     function stopScanners(){
@@ -1094,6 +1750,7 @@
 
     function onScan(m, code){
         if(navigator.vibrate) navigator.vibrate(100);
+        playBeep();
         
         // Validar ubicacion para acomodo
         if(m === 'acomodo'){
@@ -1184,23 +1841,26 @@
 
     // ==================== LOCATION QR ====================
     function scanLocationQR(){
+        if(typeof Html5Qrcode === 'undefined'){ showToast('warning','Cámara no disponible'); return; }
         document.getElementById('locationQRModal').classList.add('show');
         setTimeout(function(){
-            if(state.locationQRScanner){
-                try{ state.locationQRScanner.stop(); }catch(e){}
-            }
-            state.locationQRScanner = new Html5Qrcode('location-qr-scanner');
-            state.locationQRScanner.start(
-                {facingMode:'environment'},
-                {fps:10,qrbox:{width:250,height:250}},
-                function(code){
-                    if(navigator.vibrate) navigator.vibrate(100);
-                    document.getElementById('acomodoLocation').value = code.toUpperCase();
-                    closeLocationQR();
-                    showToast('success','Ubicación: '+code);
-                },
-                function(){}
-            ).catch(function(){ showToast('error','Error cámara'); });
+            try{
+                if(state.locationQRScanner){
+                    try{ state.locationQRScanner.stop(); }catch(e){}
+                }
+                state.locationQRScanner = new Html5Qrcode('location-qr-scanner');
+                state.locationQRScanner.start(
+                    {facingMode:'environment'},
+                    {fps:10,qrbox:{width:250,height:250}},
+                    function(code){
+                        if(navigator.vibrate) navigator.vibrate(100);
+                        document.getElementById('acomodoLocation').value = code.toUpperCase();
+                        closeLocationQR();
+                        showToast('success','Ubicación: '+code);
+                    },
+                    function(){}
+                ).catch(function(){});
+            }catch(e){}
         }, 300);
     }
 
@@ -1343,6 +2003,7 @@
         if(!items.length) return;
         
         items.forEach(function(i){ saveMovement('recepcion', i, {bodega:b}); });
+        playBeep();
         showToast('success', items.length + ' equipos recibidos en ' + b);
         state.scannedItems.recepcion = [];
         updateList('recepcion');
@@ -1356,6 +2017,7 @@
         if(!items.length) return;
         
         items.forEach(function(i){ saveMovement('acomodo', i, {location:loc}); });
+        playBeep();
         showToast('success', items.length + ' equipos en ' + loc);
         state.scannedItems.acomodo = [];
         updateList('acomodo');
@@ -1370,6 +2032,7 @@
         if(!items.length) return;
         
         items.forEach(function(i){ saveMovement('traspaso', i, {bodega:b, solicitante:sol, motivo:mot}); });
+        playBeep();
         showToast('success', items.length + ' equipos a ' + b);
         state.scannedItems.traspaso = [];
         updateList('traspaso');
@@ -1382,10 +2045,12 @@
 
     function confirmEmbarque(){
         var ref = document.getElementById('embarqueReferencia').value;
+        var tipoSalida = document.getElementById('embarqueTipoSalida').value || 'cliente';
         var items = state.scannedItems.embarque;
         if(!items.length) return;
         
-        items.forEach(function(i){ saveMovement('embarque', i, {referencia:ref}); });
+        items.forEach(function(i){ saveMovement('embarque', i, {referencia:ref, tipoSalida:tipoSalida}); });
+        playBeep();
         showToast('success', items.length + ' equipos embarcados');
         state.scannedItems.embarque = [];
         updateList('embarque');
@@ -1417,13 +2082,44 @@
     }
 
     // ==================== SEARCH ====================
+    // Función auxiliar para búsqueda flexible de serie (CAMBIO 1, 9)
+    function flexibleSerieMatch(movimiento, query){
+        var q = query.replace(/[^0-9]/g, ''); // Solo números
+        var full = movimiento.equipment.full.toUpperCase();
+        var serie = movimiento.equipment.serie;
+        
+        // Coincidencia exacta con código completo
+        if(full.indexOf(query.toUpperCase()) !== -1) return true;
+        
+        // Coincidencia solo con números de serie (8-9 dígitos)
+        if(q.length >= 8 && q.length <= 9){
+            if(serie.indexOf(q) !== -1) return true;
+            // También buscar si la serie termina con esos dígitos
+            if(serie.slice(-q.length) === q) return true;
+        }
+        
+        return false;
+    }
+    
     function searchSerie(){
         var q = document.getElementById('consultaInput').value.trim().toUpperCase();
+        var tipo = document.getElementById('consultaTipo').value;
         var res = document.getElementById('consultaResults');
-        if(!q){ showToast('warning','Escribe un código'); return; }
         
+        if(!q){ showToast('warning','Escribe un valor para buscar'); return; }
+        
+        if(tipo === 'ubicacion'){
+            // CAMBIO 2: Búsqueda por ubicación
+            searchByUbicacion(q, res);
+        }else{
+            // Búsqueda por serie (flexible)
+            searchBySerieFlexible(q, res);
+        }
+    }
+    
+    function searchBySerieFlexible(q, res){
         var matches = state.movements.filter(function(m){
-            return m.equipment.full.indexOf(q) !== -1 || m.equipment.serie.indexOf(q) !== -1;
+            return flexibleSerieMatch(m, q);
         });
         
         if(!matches.length){
@@ -1456,6 +2152,54 @@
         });
         
         html += '</div></div>';
+        res.innerHTML = html;
+    }
+    
+    // CAMBIO 2: Búsqueda por ubicación
+    function searchByUbicacion(q, res){
+        // Obtener último estado de cada equipo
+        var equipmentStatus = {};
+        state.movements.forEach(function(m){
+            var code = m.equipment.full;
+            if(!equipmentStatus[code] || new Date(m.timestamp) > new Date(equipmentStatus[code].timestamp)){
+                equipmentStatus[code] = m;
+            }
+        });
+        
+        // Filtrar equipos que están en ubicaciones que coinciden
+        var matches = [];
+        for(var code in equipmentStatus){
+            var m = equipmentStatus[code];
+            // Solo equipos con acomodo (tienen ubicación) y no embarcados
+            if(m.type === 'acomodo' && m.location){
+                // Búsqueda parcial o exacta
+                if(m.location.toUpperCase().indexOf(q) !== -1){
+                    matches.push(m);
+                }
+            }
+        }
+        
+        if(!matches.length){
+            res.innerHTML = '<div class="empty-state"><p>No hay equipos en ubicación "'+q+'"</p></div>';
+            return;
+        }
+        
+        // Ordenar por ubicación
+        matches.sort(function(a,b){ return a.location.localeCompare(b.location); });
+        
+        var html = '<div class="config-card" style="background:var(--info-bg);margin-bottom:14px">';
+        html += '<div style="font-weight:700;color:var(--info)">📍 '+matches.length+' equipos encontrados en "'+q+'"</div></div>';
+        
+        matches.forEach(function(m){
+            html += '<div class="history-item">';
+            html += '<div class="history-icon acomodo">📍</div>';
+            html += '<div class="history-content">';
+            html += '<div class="history-code">'+m.equipment.full+'</div>';
+            html += '<div class="history-details">Ubicación: <strong>'+m.location+'</strong></div>';
+            html += '<div class="history-meta"><span>Acomodado: '+m.fecha+'</span><span>'+m.user+'</span></div>';
+            html += '</div></div>';
+        });
+        
         res.innerHTML = html;
     }
     
@@ -1703,83 +2447,30 @@
         showToast('success','Archivo descargado');
     }
     
-    function getExportDateRange(){
-        var from = document.getElementById('exportDateFrom').value;
-        var to = document.getElementById('exportDateTo').value;
-        
-        var fromDate = from ? new Date(from + 'T00:00:00') : null;
-        var toDate = to ? new Date(to + 'T23:59:59') : null;
-        
-        // Si no hay fechas, usar hoy
-        if(!fromDate && !toDate){
-            var today = new Date();
-            fromDate = new Date(today.toDateString());
-            toDate = new Date(today.toDateString());
-            toDate.setHours(23,59,59);
-        }
-        
-        return { from: fromDate, to: toDate };
-    }
-    
-    function filterByDateRange(movements, range){
-        return movements.filter(function(m){
-            var mDate = new Date(m.timestamp);
-            var pass = true;
-            if(range.from) pass = pass && mDate >= range.from;
-            if(range.to) pass = pass && mDate <= range.to;
-            return pass;
+    function exportMovimientosHoy(){
+        var today = new Date().toDateString();
+        var todayMovs = state.movements.filter(function(m){
+            return new Date(m.timestamp).toDateString() === today;
         });
-    }
-    
-    function exportMovimientos(){
-        var range = getExportDateRange();
-        var filtered = filterByDateRange(state.movements, range);
         
-        if(!filtered.length){
-            showToast('warning','No hay movimientos en el rango seleccionado');
+        if(!todayMovs.length){
+            showToast('warning','No hay movimientos de hoy');
             return;
         }
         
         var typeNames = {recepcion:'Recepcion',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
-        var fromStr = range.from ? range.from.toLocaleDateString('es-MX') : 'Inicio';
-        var toStr = range.to ? range.to.toLocaleDateString('es-MX') : 'Fin';
+        var csv = 'MOVIMIENTOS DEL DIA - ' + new Date().toLocaleDateString('es-MX') + '\n\n';
+        csv += 'Hora,Tipo,Usuario,Codigo,Ubicacion/Bodega,Referencia\n';
         
-        var csv = 'MOVIMIENTOS - ' + fromStr + ' a ' + toStr + '\n\n';
-        csv += 'Fecha,Hora,Tipo,Usuario,Codigo,Prefijo,Serie,Ubicacion,Bodega,Referencia\n';
-        
-        filtered.forEach(function(m){
-            csv += '"'+m.fecha+'","'+m.hora+'","'+typeNames[m.type]+'","'+m.user+'","'+m.equipment.full+'","'+m.equipment.prefix+'","'+m.equipment.serie+'","'+(m.location||'')+'","'+(m.bodega||'')+'","'+(m.referencia||'')+'"\n';
+        todayMovs.forEach(function(m){
+            var ubicacion = m.location || m.bodega || '';
+            var ref = m.referencia || m.motivo || '';
+            csv += '"'+m.hora+'","'+typeNames[m.type]+'","'+m.user+'","'+m.equipment.full+'","'+ubicacion+'","'+ref+'"\n';
         });
         
-        csv += '\nTotal: ' + filtered.length + ' movimientos';
+        csv += '\nTotal: ' + todayMovs.length + ' movimientos';
         
-        downloadCSV(csv, 'movimientos_'+new Date().toISOString().slice(0,10)+'.csv');
-    }
-    
-    function exportEmbarques(){
-        var range = getExportDateRange();
-        var filtered = filterByDateRange(state.movements, range).filter(function(m){
-            return m.type === 'embarque';
-        });
-        
-        if(!filtered.length){
-            showToast('warning','No hay embarques en el rango seleccionado');
-            return;
-        }
-        
-        var fromStr = range.from ? range.from.toLocaleDateString('es-MX') : 'Inicio';
-        var toStr = range.to ? range.to.toLocaleDateString('es-MX') : 'Fin';
-        
-        var csv = 'EMBARQUES - ' + fromStr + ' a ' + toStr + '\n\n';
-        csv += 'Fecha,Hora,Usuario,Codigo,Prefijo,Serie,Referencia\n';
-        
-        filtered.forEach(function(m){
-            csv += '"'+m.fecha+'","'+m.hora+'","'+m.user+'","'+m.equipment.full+'","'+m.equipment.prefix+'","'+m.equipment.serie+'","'+(m.referencia||'')+'"\n';
-        });
-        
-        csv += '\nTotal: ' + filtered.length + ' embarques';
-        
-        downloadCSV(csv, 'embarques_'+new Date().toISOString().slice(0,10)+'.csv');
+        downloadCSV(csv, 'movimientos_hoy_'+new Date().toISOString().slice(0,10)+'.csv');
     }
     
     function exportPendientes(){
@@ -2390,37 +3081,28 @@
 
     // ==================== DASHBOARD ====================
     function renderDashboard(){
-        var fromInput = document.getElementById('dashboardDateFrom');
-        var toInput = document.getElementById('dashboardDateTo');
-        
-        // Si no hay fechas, usar hoy
-        if(!fromInput.value && !toInput.value){
-            var today = new Date().toISOString().slice(0,10);
-            fromInput.value = today;
-            toInput.value = today;
+        var dateInput = document.getElementById('dashboardDate');
+        if(!dateInput.value){
+            dateInput.value = new Date().toISOString().slice(0,10);
         }
         
-        var fromDate = fromInput.value ? new Date(fromInput.value + 'T00:00:00') : null;
-        var toDate = toInput.value ? new Date(toInput.value + 'T23:59:59') : null;
+        var selectedDate = new Date(dateInput.value + 'T00:00:00');
+        var selectedDateStr = selectedDate.toDateString();
         
-        var rangeMovs = state.movements.filter(function(m){
-            var mDate = new Date(m.timestamp);
-            var pass = true;
-            if(fromDate) pass = pass && mDate >= fromDate;
-            if(toDate) pass = pass && mDate <= toDate;
-            return pass;
+        var dayMovs = state.movements.filter(function(m){
+            return new Date(m.timestamp).toDateString() === selectedDateStr;
         });
         
-        var rangeRecepcion = rangeMovs.filter(function(m){ return m.type === 'recepcion'; }).length;
-        var rangeAcomodo = rangeMovs.filter(function(m){ return m.type === 'acomodo'; }).length;
-        var rangeTraspaso = rangeMovs.filter(function(m){ return m.type === 'traspaso'; }).length;
-        var rangeEmbarque = rangeMovs.filter(function(m){ return m.type === 'embarque'; }).length;
+        var dayRecepcion = dayMovs.filter(function(m){ return m.type === 'recepcion'; }).length;
+        var dayAcomodo = dayMovs.filter(function(m){ return m.type === 'acomodo'; }).length;
+        var dayTraspaso = dayMovs.filter(function(m){ return m.type === 'traspaso'; }).length;
+        var dayEmbarque = dayMovs.filter(function(m){ return m.type === 'embarque'; }).length;
         
-        document.getElementById('dashRecepcion').textContent = rangeRecepcion;
-        document.getElementById('dashAcomodo').textContent = rangeAcomodo;
-        document.getElementById('dashTraspaso').textContent = rangeTraspaso;
-        document.getElementById('dashEmbarque').textContent = rangeEmbarque;
-        document.getElementById('dashTotal').textContent = rangeMovs.length;
+        document.getElementById('dashRecepcion').textContent = dayRecepcion;
+        document.getElementById('dashAcomodo').textContent = dayAcomodo;
+        document.getElementById('dashTraspaso').textContent = dayTraspaso;
+        document.getElementById('dashEmbarque').textContent = dayEmbarque;
+        document.getElementById('dashTotal').textContent = dayMovs.length;
         
         // Acumulado general
         var totalRecepcion = state.movements.filter(function(m){ return m.type === 'recepcion'; }).length;
@@ -2439,21 +3121,24 @@
     var misMovsQRScanner = null;
     
     function openMisMovsQRScanner(){
+        if(typeof Html5Qrcode === 'undefined'){ showToast('warning','Cámara no disponible'); return; }
         document.getElementById('misMovsQRModal').classList.add('show');
         setTimeout(function(){
-            if(misMovsQRScanner) try{ misMovsQRScanner.stop(); }catch(e){}
-            misMovsQRScanner = new Html5Qrcode('mis-movs-qr-scanner');
-            misMovsQRScanner.start(
-                {facingMode:'environment'},
-                {fps:10, qrbox:{width:250, height:150}},
-                function(code){
-                    if(navigator.vibrate) navigator.vibrate(100);
-                    document.getElementById('misMovsSearch').value = code;
-                    closeMisMovsQRScanner();
-                    renderMyMovements(code);
-                },
-                function(){}
-            ).catch(function(){ showToast('error','Error cámara'); });
+            try{
+                if(misMovsQRScanner) try{ misMovsQRScanner.stop(); }catch(e){}
+                misMovsQRScanner = new Html5Qrcode('mis-movs-qr-scanner');
+                misMovsQRScanner.start(
+                    {facingMode:'environment'},
+                    {fps:10, qrbox:{width:250, height:150}},
+                    function(code){
+                        if(navigator.vibrate) navigator.vibrate(100);
+                        document.getElementById('misMovsSearch').value = code;
+                        closeMisMovsQRScanner();
+                        renderMyMovements(code);
+                    },
+                    function(){}
+                ).catch(function(){});
+            }catch(e){}
         }, 300);
     }
     
@@ -2512,6 +3197,1050 @@
         closeEditModal();
         renderMyMovements(document.getElementById('misMovsSearch').value);
         showToast('success','Movimiento actualizado');
+    }
+
+    // ==================== ACOMODO MÚLTIPLE ====================
+    var acomodoMultipleItems = []; // {equipment, location}
+    var acomodoSerieScanner = null;
+
+    function agregarAcomodoMultiple(){
+        var loc = document.getElementById('acomodoLocation').value.trim().toUpperCase();
+        var serieInput = document.getElementById('acomodoSerieInput').value.trim().toUpperCase();
+        
+        if(!loc){ showToast('error','Escribe la ubicación'); return; }
+        if(!serieInput){ showToast('error','Escribe o escanea la serie'); return; }
+        
+        var parsed = parseCode(serieInput);
+        if(!parsed){ showToast('error','Código no válido'); return; }
+        
+        // Verificar duplicado en lista actual
+        if(acomodoMultipleItems.some(function(i){ return i.equipment.full === parsed.full; })){
+            showToast('warning','Esta serie ya está en la lista');
+            return;
+        }
+        
+        acomodoMultipleItems.push({
+            equipment: parsed,
+            location: loc
+        });
+        
+        playBeep();
+        renderAcomodoMultipleList();
+        document.getElementById('acomodoSerieInput').value = '';
+        // No limpiar ubicación para permitir agregar varias a la misma
+    }
+    
+    function renderAcomodoMultipleList(){
+        var container = document.getElementById('acomodoItems');
+        var count = document.getElementById('acomodoCount');
+        var btn = document.getElementById('acomodoConfirmBtn');
+        
+        count.textContent = acomodoMultipleItems.length;
+        btn.disabled = acomodoMultipleItems.length === 0;
+        
+        if(!acomodoMultipleItems.length){
+            container.innerHTML = '<div class="empty-list">Agrega equipos con su ubicación</div>';
+            return;
+        }
+        
+        var html = '';
+        acomodoMultipleItems.forEach(function(item, idx){
+            html += '<div class="scanned-item" style="flex-direction:column;align-items:flex-start;gap:4px">';
+            html += '<div style="display:flex;justify-content:space-between;width:100%">';
+            html += '<span class="code">'+item.equipment.full+'</span>';
+            html += '<button class="remove-btn" onclick="removeAcomodoItem('+idx+')">×</button>';
+            html += '</div>';
+            html += '<span style="font-size:11px;color:var(--primary)">📍 '+item.location+'</span>';
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+    window.removeAcomodoItem = function(idx){
+        acomodoMultipleItems.splice(idx, 1);
+        renderAcomodoMultipleList();
+    };
+    
+    function confirmAcomodoMultiple(){
+        if(!acomodoMultipleItems.length) return;
+        
+        acomodoMultipleItems.forEach(function(item){
+            saveMovement('acomodo', item.equipment, {location: item.location});
+        });
+        
+        playBeep();
+        showToast('success', acomodoMultipleItems.length + ' equipos acomodados');
+        acomodoMultipleItems = [];
+        renderAcomodoMultipleList();
+        document.getElementById('acomodoLocation').value = '';
+        document.getElementById('acomodoSerieInput').value = '';
+    }
+    
+    function openAcomodoSerieScan(){
+        if(typeof Html5Qrcode === 'undefined'){ showToast('warning','Cámara no disponible'); return; }
+        // Usar el scanner existente de QR para series
+        var modal = document.createElement('div');
+        modal.id = 'acomodoSerieScanModal';
+        modal.className = 'qr-modal show';
+        modal.innerHTML = '<div class="scanner-header" style="background:transparent;border:none"><button class="back-btn" onclick="closeAcomodoSerieScan()" style="background:rgba(255,255,255,0.2);color:white">←</button><h2 class="scanner-title" style="color:white">Escanear Serie</h2></div><div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px"><div class="scanner-box" style="width:100%;max-width:400px"><div class="scanner-region" id="acomodo-serie-scanner"></div></div></div>';
+        document.body.appendChild(modal);
+        
+        setTimeout(function(){
+            try{
+                acomodoSerieScanner = new Html5Qrcode('acomodo-serie-scanner');
+                acomodoSerieScanner.start(
+                    {facingMode:'environment'},
+                    {fps:10,qrbox:{width:250,height:150}},
+                    function(code){
+                        playBeep();
+                        document.getElementById('acomodoSerieInput').value = code;
+                        closeAcomodoSerieScan();
+                    },
+                    function(){}
+                ).catch(function(){});
+            }catch(e){}
+        }, 300);
+    }
+    window.closeAcomodoSerieScan = function(){
+        if(acomodoSerieScanner) try{ acomodoSerieScanner.stop(); }catch(e){}
+        var modal = document.getElementById('acomodoSerieScanModal');
+        if(modal) modal.remove();
+    };
+
+    // ==================== CAMBIO 4: SONIDO CONFIRMACIÓN ====================
+    function playBeep(){
+        try{
+            var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            var oscillator = audioCtx.createOscillator();
+            var gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.frequency.value = 1200;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.15);
+        }catch(e){}
+        if(navigator.vibrate) navigator.vibrate(100);
+    }
+
+    // ==================== CAMBIO 5: TOGGLE LOCK FIELD ====================
+    function toggleLockField(fieldId){
+        var input = document.getElementById(fieldId);
+        var btn = document.getElementById(fieldId + 'LockBtn');
+        if(!input || !btn) return;
+        if(btn.classList.contains('locked')){
+            btn.classList.remove('locked');
+            btn.textContent = '🔓';
+            input.disabled = false;
+        }else{
+            btn.classList.add('locked');
+            btn.textContent = '🔒';
+            input.disabled = true;
+        }
+    }
+
+    // ==================== CAMBIO 7: CALIDAD SALIDAS ====================
+    var calidadScannedItems = [];
+    var calidadScanner = null;
+    var calidadLastResult = null;
+
+    function loadCalidadScannedItems(){
+        var today = new Date().toISOString().slice(0,10);
+        var saved = JSON.parse(localStorage.getItem('calidadScannedItems') || '{}');
+        if(saved.fecha === today && saved.items){
+            calidadScannedItems = saved.items;
+        }else{
+            calidadScannedItems = [];
+        }
+    }
+    
+    function saveCalidadScannedItems(){
+        var today = new Date().toISOString().slice(0,10);
+        localStorage.setItem('calidadScannedItems', JSON.stringify({
+            fecha: today,
+            items: calidadScannedItems
+        }));
+    }
+
+    function initCalidadScanner(){
+        loadCalidadScannedItems();
+        renderCalidadList();
+        if(calidadScanner) return;
+        if(typeof Html5Qrcode === 'undefined') return;
+        setTimeout(function(){
+            try{
+                calidadScanner = new Html5Qrcode('calidad-scanner');
+                calidadScanner.start(
+                    {facingMode:'environment'},
+                    {fps:10,qrbox:{width:250,height:150}},
+                    function(code){
+                        var parsed = parseCode(code);
+                        if(parsed && !calidadScannedItems.some(function(i){return i.full===parsed.full;})){
+                            calidadScannedItems.push(parsed);
+                            saveCalidadScannedItems();
+                            playBeep();
+                            renderCalidadList();
+                        }
+                    },
+                    function(){}
+                ).catch(function(){});
+            }catch(e){}
+        },300);
+    }
+
+    function addManualCalidad(){
+        var input = document.getElementById('calidadManualInput');
+        var code = input.value.trim().toUpperCase();
+        if(!code) return;
+        var parsed = parseCode(code);
+        if(!parsed){ showToast('error','Código no válido'); return; }
+        if(calidadScannedItems.some(function(i){return i.full===parsed.full;})){ showToast('warning','Ya escaneado'); return; }
+        calidadScannedItems.push(parsed);
+        saveCalidadScannedItems();
+        playBeep();
+        renderCalidadList();
+        input.value = '';
+    }
+
+    function renderCalidadList(){
+        var container = document.getElementById('calidadItems');
+        var count = document.getElementById('calidadCount');
+        var btn = document.getElementById('calidadCompararBtn');
+        count.textContent = calidadScannedItems.length;
+        btn.disabled = calidadScannedItems.length === 0;
+        if(!calidadScannedItems.length){
+            container.innerHTML = '<div class="empty-list">Escanea series de hojas impresas</div>';
+            return;
+        }
+        var html = '';
+        calidadScannedItems.forEach(function(item, idx){
+            html += '<div class="scanned-item"><span class="code">'+item.full+'</span>';
+            html += '<button class="remove-btn" onclick="removeCalidadItem('+idx+')">×</button></div>';
+        });
+        container.innerHTML = html;
+    }
+    window.removeCalidadItem = function(idx){
+        calidadScannedItems.splice(idx, 1);
+        saveCalidadScannedItems();
+        renderCalidadList();
+    };
+
+    function compararCalidadSalidas(){
+        var fecha = document.getElementById('calidadFecha').value;
+        if(!fecha){ fecha = new Date().toISOString().slice(0,10); document.getElementById('calidadFecha').value = fecha; }
+        var embarquesDelDia = state.movements.filter(function(m){ return m.type === 'embarque' && m.timestamp.slice(0,10) === fecha; });
+        var seriesHojas = calidadScannedItems.map(function(i){ return i.serie; });
+        var seriesSistema = embarquesDelDia.map(function(m){ return m.equipment.serie; });
+        var coinciden = [], soloHojas = [], soloSistema = [];
+        seriesHojas.forEach(function(s){ if(seriesSistema.indexOf(s) !== -1) coinciden.push(s); else soloHojas.push(s); });
+        seriesSistema.forEach(function(s){ if(seriesHojas.indexOf(s) === -1) soloSistema.push(s); });
+        document.getElementById('calidadCoinciden').textContent = coinciden.length;
+        document.getElementById('calidadSoloHojas').textContent = soloHojas.length;
+        document.getElementById('calidadSoloSistema').textContent = soloSistema.length;
+        document.getElementById('calidadSoloHojasList').innerHTML = soloHojas.length ? soloHojas.join(', ') : '-';
+        document.getElementById('calidadSoloSistemaList').innerHTML = soloSistema.length ? soloSistema.join(', ') : '-';
+        document.getElementById('calidadResultados').classList.remove('hidden');
+        calidadLastResult = {fecha:fecha,timestamp:new Date().toISOString(),user:state.currentUser,totalHojas:seriesHojas.length,totalSistema:seriesSistema.length,coinciden:coinciden,soloHojas:soloHojas,soloSistema:soloSistema};
+        var reportes = JSON.parse(localStorage.getItem('calidadReportes') || '[]');
+        reportes.unshift(calidadLastResult);
+        localStorage.setItem('calidadReportes', JSON.stringify(reportes.slice(0,100)));
+        playBeep();
+        showToast('success','Comparación completada');
+    }
+
+    function exportarCalidadSalidas(){
+        if(!calidadLastResult){ showToast('warning','Primero realiza una comparación'); return; }
+        var r = calidadLastResult;
+        var csv = 'REPORTE CALIDAD SALIDAS\nFecha Embarques:,'+r.fecha+'\nGenerado:,'+new Date(r.timestamp).toLocaleString('es-MX')+'\nUsuario:,'+r.user+'\n\nRESUMEN\nTotal en hojas:,'+r.totalHojas+'\nTotal en sistema:,'+r.totalSistema+'\nCoinciden:,'+r.coinciden.length+'\nSolo en hojas:,'+r.soloHojas.length+'\nSolo en sistema:,'+r.soloSistema.length+'\n\n';
+        if(r.soloHojas.length){ csv += 'SERIES SOLO EN HOJAS\n'; r.soloHojas.forEach(function(s){ csv += s + '\n'; }); csv += '\n'; }
+        if(r.soloSistema.length){ csv += 'SERIES SOLO EN SISTEMA\n'; r.soloSistema.forEach(function(s){ csv += s + '\n'; }); }
+        downloadCSV(csv, 'calidad_salidas_'+r.fecha+'.csv');
+    }
+
+    function filtrarCalidadReportes(){
+        var desde = document.getElementById('calidadReportesDateFrom').value;
+        var hasta = document.getElementById('calidadReportesDateTo').value;
+        var reportes = JSON.parse(localStorage.getItem('calidadReportes') || '[]');
+        var filtered = reportes.filter(function(r){ var f = r.fecha; return (!desde || f >= desde) && (!hasta || f <= hasta); });
+        var container = document.getElementById('calidadReportesList');
+        if(!filtered.length){ container.innerHTML = '<div class="empty-state"><p>No hay reportes</p></div>'; return; }
+        var html = '';
+        filtered.forEach(function(r){
+            var pct = r.totalHojas > 0 ? Math.round((r.coinciden.length / r.totalHojas) * 100) : 0;
+            var color = r.soloHojas.length === 0 && r.soloSistema.length === 0 ? 'var(--success)' : 'var(--warning)';
+            html += '<div class="config-card" style="margin-bottom:12px">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+            html += '<div><strong>'+r.fecha+'</strong><br><span style="font-size:11px;color:var(--text-light)">'+r.user+' - '+(new Date(r.timestamp).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}))+'</span></div>';
+            html += '<div style="text-align:right;color:'+color+';font-weight:700;font-size:18px">'+pct+'%</div>';
+            html += '</div>';
+            html += '<div style="display:flex;gap:10px;margin-top:8px;font-size:12px">';
+            html += '<span style="color:var(--success)">✅ '+r.coinciden.length+' OK</span>';
+            html += '<span style="color:var(--warning)">⚠️ '+r.soloHojas.length+' solo hojas</span>';
+            html += '<span style="color:var(--error)">❌ '+r.soloSistema.length+' solo sistema</span>';
+            html += '</div>';
+            if(r.soloHojas.length > 0){
+                html += '<div style="margin-top:8px;padding:8px;background:var(--warning-bg);border-radius:6px;font-size:11px">';
+                html += '<strong style="color:#92400e">En hojas pero NO en sistema:</strong><br>';
+                html += '<span style="font-family:monospace">'+r.soloHojas.join(', ')+'</span>';
+                html += '</div>';
+            }
+            if(r.soloSistema.length > 0){
+                html += '<div style="margin-top:8px;padding:8px;background:var(--error-bg);border-radius:6px;font-size:11px">';
+                html += '<strong style="color:var(--error)">En sistema pero NO en hojas:</strong><br>';
+                html += '<span style="font-family:monospace">'+r.soloSistema.join(', ')+'</span>';
+                html += '</div>';
+            }
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    // ==================== CAMBIO 10: INCIDENCIAS ====================
+    var incidenciaScanner = null;
+
+    function openIncidenciaScan(){
+        if(typeof Html5Qrcode === 'undefined'){ showToast('warning','Cámara no disponible'); return; }
+        document.getElementById('incidenciaScanModal').classList.add('show');
+        setTimeout(function(){
+            try{
+                if(incidenciaScanner) try{ incidenciaScanner.stop(); }catch(e){}
+                incidenciaScanner = new Html5Qrcode('incidencia-scanner');
+                incidenciaScanner.start({facingMode:'environment'},{fps:10,qrbox:{width:250,height:150}},function(code){ playBeep(); document.getElementById('incidenciaSerie').value = code; closeIncidenciaScan(); },function(){}).catch(function(){});
+            }catch(e){}
+        },300);
+    }
+
+    function closeIncidenciaScan(){
+        if(incidenciaScanner) try{ incidenciaScanner.stop(); }catch(e){}
+        document.getElementById('incidenciaScanModal').classList.remove('show');
+    }
+
+    function guardarIncidencia(){
+        var serie = document.getElementById('incidenciaSerie').value.trim();
+        var tipo = document.getElementById('incidenciaTipo').value;
+        var descripcion = document.getElementById('incidenciaDescripcion').value.trim();
+        var reportaA = document.getElementById('incidenciaReportaA').value.trim();
+        if(!serie){ showToast('error','Ingresa la serie'); return; }
+        if(!tipo){ showToast('error','Selecciona tipo'); return; }
+        if(!descripcion){ showToast('error','Describe el problema'); return; }
+        var incidencia = {id:Date.now().toString(36)+Math.random().toString(36).substr(2),timestamp:new Date().toISOString(),fecha:new Date().toLocaleDateString('es-MX'),hora:new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}),serie:serie.toUpperCase(),tipo:tipo,descripcion:descripcion,reportaA:reportaA,user:state.currentUser,comentarios:[]};
+        var incidencias = JSON.parse(localStorage.getItem('incidencias') || '[]');
+        incidencias.unshift(incidencia);
+        localStorage.setItem('incidencias', JSON.stringify(incidencias));
+        playBeep();
+        showToast('success','Incidencia guardada');
+        document.getElementById('incidenciaSerie').value = '';
+        document.getElementById('incidenciaTipo').value = '';
+        document.getElementById('incidenciaDescripcion').value = '';
+        document.getElementById('incidenciaReportaA').value = '';
+        renderMisIncidencias();
+    }
+
+    function renderMisIncidencias(){
+        var container = document.getElementById('misIncidenciasList');
+        if(!container) return;
+        var incidencias = JSON.parse(localStorage.getItem('incidencias') || '[]');
+        var mis = incidencias.filter(function(i){ return i.user === state.currentUser; }).slice(0,10);
+        if(!mis.length){ container.innerHTML = '<div class="empty-state"><p>No tienes incidencias</p></div>'; return; }
+        var tipoNames = {caida:'Caída',caja:'Cambio caja',serie:'Cambio serie',danio:'Daño físico',otro:'Otro'};
+        var html = '';
+        mis.forEach(function(i){ html += '<div class="config-card" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between"><strong>'+i.serie+'</strong><span style="font-size:11px;color:var(--text-light)">'+i.fecha+'</span></div><div style="font-size:12px;color:var(--warning)">'+tipoNames[i.tipo]+'</div></div>'; });
+        container.innerHTML = html;
+    }
+
+    function filtrarIncidencias(){
+        var desde = document.getElementById('incidenciasDateFrom').value;
+        var hasta = document.getElementById('incidenciasDateTo').value;
+        var incidencias = JSON.parse(localStorage.getItem('incidencias') || '[]');
+        var filtered = incidencias.filter(function(i){ var f = i.timestamp.slice(0,10); return (!desde || f >= desde) && (!hasta || f <= hasta); });
+        var container = document.getElementById('todasIncidenciasList');
+        if(!filtered.length){ container.innerHTML = '<div class="empty-state"><p>No hay incidencias</p></div>'; return; }
+        var tipoNames = {caida:'Caída',caja:'Cambio caja',serie:'Cambio serie',danio:'Daño físico',otro:'Otro'};
+        var html = '';
+        filtered.forEach(function(i){ html += '<div class="config-card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between"><div><strong>'+i.serie+'</strong><br><span style="font-size:11px;color:var(--warning)">'+tipoNames[i.tipo]+'</span></div><div style="text-align:right;font-size:11px;color:var(--text-light)">'+i.fecha+' '+i.hora+'<br>'+i.user+'</div></div><div style="font-size:12px;margin-top:6px;padding:8px;background:var(--bg-light);border-radius:6px">'+i.descripcion+'</div></div>'; });
+        container.innerHTML = html;
+    }
+
+    function exportarIncidencias(){
+        var incidencias = JSON.parse(localStorage.getItem('incidencias') || '[]');
+        if(!incidencias.length){ showToast('warning','No hay incidencias'); return; }
+        var tipoNames = {caida:'Caída',caja:'Cambio caja',serie:'Cambio serie',danio:'Daño físico',otro:'Otro'};
+        var csv = 'REPORTE DE INCIDENCIAS\n\nFecha,Hora,Serie,Tipo,Descripcion,Reporta A,Usuario\n';
+        incidencias.forEach(function(i){ csv += '"'+i.fecha+'","'+i.hora+'","'+i.serie+'","'+tipoNames[i.tipo]+'","'+i.descripcion.replace(/"/g,"'")+'","'+(i.reportaA||'')+'","'+i.user+'"\n'; });
+        downloadCSV(csv, 'incidencias_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+
+    // ==================== CAMBIO 11: MUESTREO INTERNO ====================
+    var muestreoInternoItems = [];
+    var muestreoInternoActual = null;
+
+    function generarMuestreoInterno(){
+        var cantidad = parseInt(document.getElementById('muestreoInternoCantidad').value);
+        var equipmentStatus = {};
+        state.movements.forEach(function(m){ var code = m.equipment.full; if(!equipmentStatus[code]) equipmentStatus[code] = {lastMove:null,equipment:m.equipment}; equipmentStatus[code].lastMove = m; });
+        var inventario = [];
+        for(var code in equipmentStatus){ var eq = equipmentStatus[code]; if(eq.lastMove.type === 'acomodo') inventario.push({equipment:eq.equipment,location:eq.lastMove.location}); }
+        if(inventario.length < cantidad){ showToast('warning','Solo hay '+inventario.length+' equipos'); cantidad = Math.min(cantidad, inventario.length); }
+        if(cantidad === 0){ showToast('error','No hay inventario'); return; }
+        var shuffled = inventario.sort(function(){ return 0.5 - Math.random(); });
+        muestreoInternoItems = shuffled.slice(0, cantidad).map(function(item){ return {equipment:item.equipment,location:item.location,status:null}; });
+        muestreoInternoActual = {fecha:new Date().toLocaleDateString('es-MX'),timestamp:new Date().toISOString(),cantidad:cantidad};
+        renderMuestreoInternoLista();
+        document.getElementById('muestreoInternoLista').classList.remove('hidden');
+        document.getElementById('muestreoInternoResultados').classList.remove('hidden');
+        playBeep();
+    }
+
+    function renderMuestreoInternoLista(){
+        var container = document.getElementById('muestreoInternoLista');
+        var html = '<div class="config-card"><h4 style="margin-bottom:10px">Series a verificar ('+muestreoInternoItems.length+')</h4>';
+        muestreoInternoItems.forEach(function(item, idx){
+            var statusColor = item.status === 'ok' ? 'var(--success)' : item.status === 'no_encontrado' ? 'var(--error)' : item.status === 'ubicacion_incorrecta' ? 'var(--warning)' : 'var(--text-light)';
+            var statusIcon = item.status === 'ok' ? '✅' : item.status === 'no_encontrado' ? '❌' : item.status === 'ubicacion_incorrecta' ? '📍' : '⬜';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">';
+            html += '<div><strong style="font-family:monospace">'+item.equipment.full+'</strong><br><span style="font-size:11px;color:var(--text-light)">'+item.location+'</span></div>';
+            html += '<div style="display:flex;gap:4px">';
+            html += '<button onclick="marcarMuestreoInterno('+idx+',\'ok\')" style="padding:6px 10px;border:none;border-radius:6px;cursor:pointer;background:'+(item.status==='ok'?'var(--success-bg)':'var(--bg-light)')+'">✅</button>';
+            html += '<button onclick="marcarMuestreoInterno('+idx+',\'no_encontrado\')" style="padding:6px 10px;border:none;border-radius:6px;cursor:pointer;background:'+(item.status==='no_encontrado'?'var(--error-bg)':'var(--bg-light)')+'">❌</button>';
+            html += '<button onclick="marcarMuestreoInterno('+idx+',\'ubicacion_incorrecta\')" style="padding:6px 10px;border:none;border-radius:6px;cursor:pointer;background:'+(item.status==='ubicacion_incorrecta'?'var(--warning-bg)':'var(--bg-light)')+'">📍</button>';
+            html += '</div></div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+    window.marcarMuestreoInterno = function(idx, status){
+        muestreoInternoItems[idx].status = status;
+        playBeep();
+        renderMuestreoInternoLista();
+    };
+
+    function finalizarMuestreoInterno(){
+        var ok = muestreoInternoItems.filter(function(i){ return i.status === 'ok'; }).length;
+        var noEnc = muestreoInternoItems.filter(function(i){ return i.status === 'no_encontrado'; }).length;
+        var ubInc = muestreoInternoItems.filter(function(i){ return i.status === 'ubicacion_incorrecta'; }).length;
+        var pendientes = muestreoInternoItems.filter(function(i){ return !i.status; }).length;
+        if(pendientes > 0){ showToast('warning','Faltan '+pendientes+' por verificar'); return; }
+        var resultado = {fecha:muestreoInternoActual.fecha,timestamp:muestreoInternoActual.timestamp,total:muestreoInternoItems.length,ok:ok,noEncontrado:noEnc,ubicacionIncorrecta:ubInc,items:muestreoInternoItems.map(function(i){return {serie:i.equipment.full,ubicacion:i.location,status:i.status};})};
+        var historial = JSON.parse(localStorage.getItem('muestreoInternoHistorial') || '[]');
+        historial.unshift(resultado);
+        localStorage.setItem('muestreoInternoHistorial', JSON.stringify(historial.slice(0,50)));
+        showToast('success','Muestreo guardado: '+ok+'/'+muestreoInternoItems.length+' OK');
+        muestreoInternoItems = [];
+        document.getElementById('muestreoInternoLista').classList.add('hidden');
+        document.getElementById('muestreoInternoResultados').classList.add('hidden');
+        renderHistorialMuestreoInterno();
+    }
+
+    function renderHistorialMuestreoInterno(){
+        var container = document.getElementById('historialMuestreoInterno');
+        if(!container) return;
+        var historial = JSON.parse(localStorage.getItem('muestreoInternoHistorial') || '[]');
+        if(!historial.length){ container.innerHTML = '<div class="empty-state"><p>No hay muestreos</p></div>'; return; }
+        var html = '';
+        historial.slice(0,10).forEach(function(r){
+            var pct = Math.round((r.ok / r.total) * 100);
+            var color = pct >= 95 ? 'var(--success)' : pct >= 90 ? 'var(--warning)' : 'var(--error)';
+            html += '<div class="config-card" style="margin-bottom:12px">';
+            html += '<div style="display:flex;justify-content:space-between"><div><strong>'+r.fecha+'</strong><br><span style="font-size:11px;color:var(--text-light)">'+r.total+' verificados</span></div><div style="text-align:right;color:'+color+';font-weight:700;font-size:18px">'+pct+'%</div></div>';
+            html += '<div style="display:flex;gap:10px;margin-top:6px;font-size:11px">';
+            html += '<span style="color:var(--success)">✅ '+r.ok+' OK</span>';
+            html += '<span style="color:var(--error)">❌ '+r.noEncontrado+' no enc.</span>';
+            html += '<span style="color:var(--warning)">📍 '+r.ubicacionIncorrecta+' ub.inc.</span>';
+            html += '</div>';
+            // Detalle de incorrectas
+            var incorrectas = r.items ? r.items.filter(function(i){ return i.status !== 'ok'; }) : [];
+            if(incorrectas.length > 0){
+                html += '<div style="margin-top:8px;padding:8px;background:var(--error-bg);border-radius:6px;font-size:11px">';
+                html += '<strong style="color:var(--error)">Detalle incorrectas:</strong>';
+                incorrectas.forEach(function(i){
+                    var statusIcon = i.status === 'no_encontrado' ? '❌' : '📍';
+                    var statusText = i.status === 'no_encontrado' ? 'No encontrado' : 'Ubicación incorrecta';
+                    html += '<div style="margin-top:4px">'+statusIcon+' <span style="font-family:monospace">'+i.serie+'</span> ('+i.ubicacion+') - '+statusText+'</div>';
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    // ==================== EXPORTAR EMBARQUES ====================
+    var embarquesFiltrados = [];
+    
+    function filtrarEmbarques(){
+        var desde = document.getElementById('exportEmbarquesDesde').value;
+        var hasta = document.getElementById('exportEmbarquesHasta').value;
+        
+        if(!desde || !hasta){
+            showToast('warning','Selecciona rango de fechas');
+            return;
+        }
+        
+        embarquesFiltrados = state.movements.filter(function(m){
+            if(m.type !== 'embarque') return false;
+            var fecha = m.timestamp.slice(0,10);
+            return fecha >= desde && fecha <= hasta;
+        });
+        
+        // Contar por tipo
+        var cliente = 0, vallejo = 0, traslado = 0;
+        embarquesFiltrados.forEach(function(m){
+            var tipo = (m.tipoSalida || 'cliente').toLowerCase();
+            if(tipo === 'vallejo') vallejo++;
+            else if(tipo === 'traslado') traslado++;
+            else cliente++;
+        });
+        
+        document.getElementById('embarquesTotal').textContent = embarquesFiltrados.length;
+        document.getElementById('embarquesCliente').textContent = cliente;
+        document.getElementById('embarquesVallejo').textContent = vallejo;
+        document.getElementById('embarquesTraslado').textContent = traslado;
+        document.getElementById('embarquesRangoFechas').textContent = desde + ' a ' + hasta;
+        document.getElementById('embarquesResumen').classList.remove('hidden');
+        
+        // Mostrar lista
+        var container = document.getElementById('embarquesLista');
+        if(!embarquesFiltrados.length){
+            container.innerHTML = '<div class="empty-state"><p>No hay embarques en este rango</p></div>';
+            return;
+        }
+        
+        var html = '';
+        embarquesFiltrados.slice(0,50).forEach(function(m){
+            var tipo = (m.tipoSalida || 'cliente').toUpperCase();
+            html += '<div class="config-card" style="margin-bottom:6px;padding:10px">';
+            html += '<div style="display:flex;justify-content:space-between">';
+            html += '<div><span style="font-family:monospace;font-weight:700">'+m.equipment.full+'</span><br>';
+            html += '<span style="font-size:11px;color:var(--text-light)">'+m.fecha+' '+m.hora+' • '+m.user+'</span></div>';
+            html += '<div style="text-align:right"><span style="font-size:10px;background:var(--info-bg);padding:2px 6px;border-radius:4px">'+tipo+'</span><br>';
+            html += '<span style="font-size:11px;color:var(--text-light)">'+(m.referencia||'-')+'</span></div>';
+            html += '</div></div>';
+        });
+        if(embarquesFiltrados.length > 50) html += '<p style="text-align:center;font-size:11px;color:var(--text-light)">Mostrando 50 de '+embarquesFiltrados.length+'</p>';
+        container.innerHTML = html;
+    }
+    
+    function descargarEmbarques(){
+        if(!embarquesFiltrados.length){
+            showToast('warning','No hay embarques para descargar');
+            return;
+        }
+        
+        var csv = 'REPORTE DE EMBARQUES\n';
+        csv += 'Desde:,' + document.getElementById('exportEmbarquesDesde').value + '\n';
+        csv += 'Hasta:,' + document.getElementById('exportEmbarquesHasta').value + '\n';
+        csv += 'Total:,' + embarquesFiltrados.length + '\n\n';
+        csv += 'Fecha,Hora,Serie,Prefijo,Tipo Salida,Referencia,Usuario\n';
+        
+        embarquesFiltrados.forEach(function(m){
+            csv += '"'+m.fecha+'","'+m.hora+'","'+m.equipment.serie+'","'+m.equipment.prefix+'","'+(m.tipoSalida||'cliente')+'","'+(m.referencia||'')+'","'+m.user+'"\n';
+        });
+        
+        downloadCSV(csv, 'embarques_'+document.getElementById('exportEmbarquesDesde').value+'_'+document.getElementById('exportEmbarquesHasta').value+'.csv');
+    }
+
+    // ==================== EXPORTAR MUESTREOS AUDITORIA ====================
+    var muestreosFiltrados = [];
+    
+    function filtrarMuestreosAuditoria(){
+        var desde = document.getElementById('exportMuestreosDesde').value;
+        var hasta = document.getElementById('exportMuestreosHasta').value;
+        
+        muestreosFiltrados = state.auditResults.filter(function(r){
+            var fecha = r.date;
+            if(desde && fecha < desde) return false;
+            if(hasta && fecha > hasta) return false;
+            return true;
+        });
+        
+        var container = document.getElementById('muestreosAuditoriaLista');
+        if(!muestreosFiltrados.length){
+            container.innerHTML = '<div class="empty-state"><p>No hay muestreos en este rango</p></div>';
+            return;
+        }
+        
+        var html = '';
+        muestreosFiltrados.forEach(function(r){
+            var pct = r.total > 0 ? Math.round((r.found / r.total) * 100) : 0;
+            var color = pct >= 95 ? 'var(--success)' : pct >= 90 ? 'var(--warning)' : 'var(--error)';
+            html += '<div class="config-card" style="margin-bottom:10px">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+            html += '<div><strong>'+r.date+'</strong><br><span style="font-size:11px;color:var(--text-light)">'+r.total+' verificados</span></div>';
+            html += '<div style="text-align:right;color:'+color+';font-weight:700;font-size:18px">'+pct+'%</div>';
+            html += '</div>';
+            html += '<div style="display:flex;gap:10px;margin-top:6px;font-size:11px">';
+            html += '<span style="color:var(--success)">✅ '+r.found+' encontrados</span>';
+            html += '<span style="color:var(--error)">❌ '+r.notFound+' no encontrados</span>';
+            html += '</div>';
+            if(r.notFoundItems && r.notFoundItems.length > 0){
+                html += '<div style="margin-top:8px;padding:8px;background:var(--error-bg);border-radius:6px;font-size:11px">';
+                html += '<strong style="color:var(--error)">No encontrados:</strong><br>';
+                html += '<span style="font-family:monospace">'+r.notFoundItems.join(', ')+'</span>';
+                html += '</div>';
+            }
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+    
+    function descargarMuestreosAuditoria(){
+        if(!muestreosFiltrados.length){
+            showToast('warning','No hay muestreos para descargar');
+            return;
+        }
+        
+        var csv = 'REPORTE DE MUESTREOS AUDITORIA\n\n';
+        csv += 'Fecha,Total,Encontrados,No Encontrados,Porcentaje,No Encontrados (Detalle)\n';
+        
+        muestreosFiltrados.forEach(function(r){
+            var pct = r.total > 0 ? Math.round((r.found / r.total) * 100) : 0;
+            var noEnc = r.notFoundItems ? r.notFoundItems.join(' | ') : '';
+            csv += '"'+r.date+'",'+r.total+','+r.found+','+r.notFound+','+pct+'%,"'+noEnc+'"\n';
+        });
+        
+        downloadCSV(csv, 'muestreos_auditoria_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+
+    // ==================== EXPORTAR INCIDENCIAS ====================
+    var incidenciasFiltradas = [];
+    
+    function filtrarIncidenciasExport(){
+        var desde = document.getElementById('exportIncidenciasDesde').value;
+        var hasta = document.getElementById('exportIncidenciasHasta').value;
+        
+        if(!desde || !hasta){
+            showToast('warning','Selecciona rango de fechas');
+            return;
+        }
+        
+        var todas = JSON.parse(localStorage.getItem('ubicaciones_incidencias') || '[]');
+        incidenciasFiltradas = todas.filter(function(i){
+            var fecha = i.fecha;
+            return fecha >= desde && fecha <= hasta;
+        });
+        
+        document.getElementById('incidenciasExportTotal').textContent = incidenciasFiltradas.length;
+        document.getElementById('incidenciasRangoFechas').textContent = desde + ' a ' + hasta;
+        document.getElementById('incidenciasExportResumen').classList.remove('hidden');
+        
+        // Mostrar lista
+        var container = document.getElementById('incidenciasExportLista');
+        if(!incidenciasFiltradas.length){
+            container.innerHTML = '<div class="empty-state"><p>No hay incidencias en este rango</p></div>';
+            return;
+        }
+        
+        var tipos = {caida:'Caída',caja:'Cambio Caja',serie:'Cambio Serie',danio:'Daño',otro:'Otro'};
+        var html = '';
+        incidenciasFiltradas.forEach(function(i){
+            html += '<div class="config-card" style="margin-bottom:8px;padding:10px;border-left:4px solid var(--warning)">';
+            html += '<div style="display:flex;justify-content:space-between">';
+            html += '<div><strong style="font-family:monospace">'+i.serie+'</strong><br>';
+            html += '<span style="font-size:11px;color:var(--text-light)">'+i.fecha+' '+i.hora+'</span></div>';
+            html += '<div style="text-align:right"><span style="font-size:10px;background:var(--warning-bg);padding:2px 6px;border-radius:4px">'+(tipos[i.tipo]||i.tipo)+'</span></div>';
+            html += '</div>';
+            if(i.descripcion) html += '<div style="font-size:11px;margin-top:4px;color:var(--text-light)">'+i.descripcion+'</div>';
+            html += '</div>';
+        });
+        container.innerHTML = html;
+    }
+    
+    function descargarIncidenciasExcel(){
+        if(!incidenciasFiltradas.length){
+            showToast('warning','No hay incidencias para descargar');
+            return;
+        }
+        
+        var tipos = {caida:'Caída de equipo',caja:'Cambio de caja',serie:'Cambio de serie',danio:'Daño físico',otro:'Otro'};
+        var csv = 'REPORTE DE INCIDENCIAS CALIDAD\n';
+        csv += 'Desde:,' + document.getElementById('exportIncidenciasDesde').value + '\n';
+        csv += 'Hasta:,' + document.getElementById('exportIncidenciasHasta').value + '\n';
+        csv += 'Total:,' + incidenciasFiltradas.length + '\n\n';
+        csv += 'Fecha,Hora,Serie,Tipo,Descripcion,Reporta A,Usuario\n';
+        
+        incidenciasFiltradas.forEach(function(i){
+            csv += '"'+i.fecha+'","'+i.hora+'","'+i.serie+'","'+(tipos[i.tipo]||i.tipo)+'","'+(i.descripcion||'').replace(/"/g,"'")+'","'+(i.reportaA||'')+'","'+i.user+'"\n';
+        });
+        
+        downloadCSV(csv, 'incidencias_'+document.getElementById('exportIncidenciasDesde').value+'_'+document.getElementById('exportIncidenciasHasta').value+'.csv');
+    }
+
+    // ==================== CAMBIO 3: SOPORTE ESCÁNER ZEBRA TC22/TC27 ====================
+    // El escáner Zebra envía el código como entrada de teclado seguido de Enter
+    // Detectamos entrada rápida de texto (típico de escáner) y procesamos
+    var barcodeBuffer = '';
+    var barcodeTimeout = null;
+
+    document.addEventListener('keypress', function(e){
+        // Si estamos en un input de texto, dejamos que funcione normal
+        var activeEl = document.activeElement;
+        var isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+        
+        // Detectar Enter después de entrada rápida (típico de escáner)
+        if(e.key === 'Enter' && barcodeBuffer.length >= 8){
+            e.preventDefault();
+            processZebraScan(barcodeBuffer);
+            barcodeBuffer = '';
+            return;
+        }
+        
+        // Acumular caracteres
+        if(e.key.length === 1){
+            barcodeBuffer += e.key;
+            clearTimeout(barcodeTimeout);
+            barcodeTimeout = setTimeout(function(){ barcodeBuffer = ''; }, 100);
+        }
+    });
+
+    function processZebraScan(code){
+        var screen = document.querySelector('.screen.active');
+        if(!screen) return;
+        var screenId = screen.id;
+        
+        // Determinar qué hacer según la pantalla activa
+        if(screenId === 'recepcionScreen'){
+            var parsed = parseCode(code);
+            if(parsed && !state.scannedItems.recepcion.some(function(i){return i.full===parsed.full;})){
+                state.scannedItems.recepcion.push(parsed);
+                playBeep();
+                updateList('recepcion');
+            }
+        }else if(screenId === 'acomodoScreen'){
+            var parsed = parseCode(code);
+            if(parsed && !state.scannedItems.acomodo.some(function(i){return i.full===parsed.full;})){
+                state.scannedItems.acomodo.push(parsed);
+                playBeep();
+                updateList('acomodo');
+            }
+        }else if(screenId === 'traspasoScreen'){
+            var parsed = parseCode(code);
+            if(parsed && !state.scannedItems.traspaso.some(function(i){return i.full===parsed.full;})){
+                state.scannedItems.traspaso.push(parsed);
+                playBeep();
+                updateList('traspaso');
+            }
+        }else if(screenId === 'embarqueScreen'){
+            var parsed = parseCode(code);
+            if(parsed && !state.scannedItems.embarque.some(function(i){return i.full===parsed.full;})){
+                state.scannedItems.embarque.push(parsed);
+                playBeep();
+                updateList('embarque');
+            }
+        }else if(screenId === 'calidadSalidasScreen'){
+            var parsed = parseCode(code);
+            if(parsed && !calidadScannedItems.some(function(i){return i.full===parsed.full;})){
+                calidadScannedItems.push(parsed);
+                playBeep();
+                renderCalidadList();
+            }
+        }else if(screenId === 'consultaScreen'){
+            document.getElementById('consultaInput').value = code;
+            searchSerie();
+        }else if(screenId === 'liberarReparacionScreen'){
+            var parsed = parseCode(code);
+            if(parsed && !state.scannedItems.reparacion.some(function(i){return i.full===parsed.full;})){
+                state.scannedItems.reparacion.push(parsed);
+                playBeep();
+                renderReparacionList();
+            }
+        }
+    }
+
+    // ==================== REPARACIONES ====================
+    function renderReparacionList(){
+        var list = document.getElementById('reparacionScannedList');
+        var items = state.scannedItems.reparacion;
+        document.getElementById('reparacionCount').textContent = items.length;
+        if(!items.length){ list.innerHTML = '<div class="empty-state"><p>Escanea equipos</p></div>'; return; }
+        var html = '';
+        items.forEach(function(item, idx){ html += '<div class="scanned-item"><div class="item-info"><span class="item-serie">'+item.full+'</span></div><button class="item-remove" onclick="removeRepItem('+idx+')">✕</button></div>'; });
+        list.innerHTML = html;
+    }
+    window.removeRepItem = function(idx){ state.scannedItems.reparacion.splice(idx,1); renderReparacionList(); };
+    
+    function switchTabReparacion(tab){
+        var scanTab = document.getElementById('reparacionTabScan');
+        var manualTab = document.getElementById('reparacionTabManual');
+        var scanSec = document.getElementById('reparacionScanSection');
+        var manualSec = document.getElementById('reparacionManualSection');
+        if(tab === 'scan'){
+            scanTab.classList.add('active');
+            manualTab.classList.remove('active');
+            scanSec.classList.remove('hidden');
+            manualSec.classList.add('hidden');
+        }else{
+            scanTab.classList.remove('active');
+            manualTab.classList.add('active');
+            scanSec.classList.add('hidden');
+            manualSec.classList.remove('hidden');
+        }
+    }
+    
+    function addManualReparacion(){
+        var input = document.getElementById('reparacionManualInput');
+        var code = input.value.trim().toUpperCase();
+        if(!code) return;
+        var parsed = parseCode(code);
+        if(!parsed){ showToast('error','Serie inválida'); return; }
+        if(state.scannedItems.reparacion.some(function(i){return i.full===parsed.full;})){ showToast('warning','Ya escaneado'); return; }
+        state.scannedItems.reparacion.push(parsed);
+        input.value = '';
+        renderReparacionList();
+        showToast('success','Agregado');
+    }
+    
+    function confirmarReparacion(){
+        var items = state.scannedItems.reparacion;
+        if(!items.length){ showToast('warning','Escanea equipos'); return; }
+        var ubicDestino = document.getElementById('reparacionUbicacionDestino').value;
+        if(!ubicDestino){ showToast('warning','Selecciona ubicación destino'); return; }
+        var comentario = document.getElementById('reparacionComentario').value.trim();
+        var now = new Date();
+        var reps = JSON.parse(localStorage.getItem('ptcontrol_reparaciones') || '[]');
+        items.forEach(function(item){
+            reps.push({ 
+                id: Date.now()+Math.random(), 
+                serie: item.full, 
+                prefix: item.prefix, 
+                bodegaOrigen: state.currentBodegaReparaciones,
+                ubicacionDestino: ubicDestino,
+                comentario: comentario,
+                user: state.currentUser, 
+                fecha: now.toISOString().slice(0,10), 
+                hora: now.toTimeString().slice(0,5), 
+                timestamp: now.toISOString(),
+                origen: 'reparacion'
+            });
+        });
+        localStorage.setItem('ptcontrol_reparaciones', JSON.stringify(reps));
+        showToast('success', items.length + ' equipos liberados a ' + ubicDestino);
+        state.scannedItems.reparacion = [];
+        document.getElementById('reparacionComentario').value = '';
+        renderReparacionList();
+        goBack();
+    }
+    
+    function filtrarHistorialReparaciones(){
+        var fecha = document.getElementById('histReparacionesFecha').value || new Date().toISOString().slice(0,10);
+        var todas = JSON.parse(localStorage.getItem('ptcontrol_reparaciones') || '[]');
+        var filt = todas.filter(function(r){ return r.fecha === fecha; });
+        var container = document.getElementById('historialReparacionesList');
+        if(!filt.length){ container.innerHTML = '<div class="empty-state"><p>Sin liberaciones</p></div>'; return; }
+        var html = '';
+        filt.forEach(function(r){ 
+            html += '<div class="config-card" style="margin-bottom:8px;padding:10px">';
+            html += '<div style="display:flex;justify-content:space-between"><strong style="font-family:monospace">'+r.serie+'</strong><span style="font-size:11px">'+r.hora+'</span></div>';
+            html += '<div style="font-size:11px;color:var(--text-light)">'+r.bodegaOrigen+' → '+r.ubicacionDestino+'</div>';
+            if(r.comentario) html += '<div style="font-size:10px;color:var(--info);margin-top:4px">'+r.comentario+'</div>';
+            html += '</div>'; 
+        });
+        container.innerHTML = html;
+    }
+
+    // ==================== EXPORTAR CON FILTROS ====================
+    var movsFiltrados=[], pendFiltrados=[], repFiltradas=[];
+    
+    function filtrarMovimientosExport(){
+        var desde = document.getElementById('exportMovsDesde').value, hasta = document.getElementById('exportMovsHasta').value;
+        if(!desde||!hasta){ showToast('warning','Selecciona rango'); return; }
+        movsFiltrados = state.movements.filter(function(m){ var f=m.timestamp.slice(0,10); return f>=desde && f<=hasta; });
+        var r=0,a=0,t=0,e=0;
+        movsFiltrados.forEach(function(m){ if(m.type==='recepcion')r++; else if(m.type==='acomodo')a++; else if(m.type==='traspaso')t++; else if(m.type==='embarque')e++; });
+        document.getElementById('movsRecepcion').textContent=r; document.getElementById('movsAcomodo').textContent=a;
+        document.getElementById('movsTraspaso').textContent=t; document.getElementById('movsEmbarque').textContent=e;
+        document.getElementById('movsExportResumen').classList.remove('hidden');
+    }
+    
+    function descargarMovimientosExcel(){
+        if(!movsFiltrados.length){ showToast('warning','Sin movimientos'); return; }
+        var csv='Fecha,Hora,Tipo,Serie,Prefijo,Usuario,Bodega,Ubicacion\n';
+        movsFiltrados.forEach(function(m){ csv+='"'+m.fecha+'","'+m.hora+'","'+m.type+'","'+m.equipment.serie+'","'+m.equipment.prefix+'","'+m.user+'","'+(m.bodega||'')+'","'+(m.location||'')+'"\n'; });
+        downloadCSV(csv,'movimientos_'+document.getElementById('exportMovsDesde').value+'.csv');
+    }
+    
+    function filtrarPendientesExport(){
+        var desde = document.getElementById('exportPendientesDesde').value, hasta = document.getElementById('exportPendientesHasta').value;
+        if(!desde||!hasta){ showToast('warning','Selecciona rango'); return; }
+        var recibidos = state.movements.filter(function(m){ return (m.type==='recepcion'||m.type==='traspaso') && m.timestamp.slice(0,10)>=desde && m.timestamp.slice(0,10)<=hasta; });
+        var acomodados = state.movements.filter(function(m){ return m.type==='acomodo'; }).map(function(m){ return m.equipment.full; });
+        var embarcados = state.movements.filter(function(m){ return m.type==='embarque'; }).map(function(m){ return m.equipment.full; });
+        pendFiltrados = recibidos.filter(function(m){ return acomodados.indexOf(m.equipment.full)===-1 && embarcados.indexOf(m.equipment.full)===-1; });
+        document.getElementById('pendientesExportTotal').textContent = pendFiltrados.length;
+        document.getElementById('pendientesExportResumen').classList.remove('hidden');
+    }
+    
+    function descargarPendientesExcel(){
+        if(!pendFiltrados.length){ showToast('warning','Sin pendientes'); return; }
+        var csv='Fecha,Hora,Serie,Prefijo,Tipo,Usuario\n';
+        pendFiltrados.forEach(function(m){ csv+='"'+m.fecha+'","'+m.hora+'","'+m.equipment.serie+'","'+m.equipment.prefix+'","'+m.type+'","'+m.user+'"\n'; });
+        downloadCSV(csv,'pendientes_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+    
+    function exportarInventarioHoy(){ exportInventario(); }
+    function exportarInventarioFecha(){
+        var fecha = document.getElementById('exportInventarioFecha').value;
+        if(!fecha){ showToast('warning','Selecciona fecha'); return; }
+        // Reconstruir inventario a esa fecha
+        var movsHastaFecha = state.movements.filter(function(m){ return m.timestamp.slice(0,10) <= fecha; });
+        var inv = {};
+        movsHastaFecha.forEach(function(m){
+            if(m.type==='embarque'){ delete inv[m.equipment.full]; }
+            else if(m.type==='acomodo'){ inv[m.equipment.full] = { serie: m.equipment.full, prefix: m.equipment.prefix, location: m.location, fecha: m.fecha }; }
+            else if(m.type==='recepcion'||m.type==='traspaso'){ if(!inv[m.equipment.full]) inv[m.equipment.full] = { serie: m.equipment.full, prefix: m.equipment.prefix, location: 'PENDIENTE', fecha: m.fecha }; }
+        });
+        var items = Object.values(inv);
+        if(!items.length){ showToast('warning','Sin inventario'); return; }
+        var csv='Serie,Prefijo,Ubicacion,Fecha Registro\n';
+        items.forEach(function(i){ csv+='"'+i.serie+'","'+i.prefix+'","'+i.location+'","'+i.fecha+'"\n'; });
+        downloadCSV(csv,'inventario_'+fecha+'.csv');
+        showToast('success','Inventario al '+fecha);
+    }
+    
+    // Recepciones Export
+    var recFiltradas = [];
+    function filtrarRecepcionesExport(){
+        var desde = document.getElementById('exportRecepcionesDesde').value, hasta = document.getElementById('exportRecepcionesHasta').value;
+        if(!desde||!hasta){ showToast('warning','Selecciona rango'); return; }
+        recFiltradas = state.movements.filter(function(m){ 
+            return m.type==='recepcion' && m.timestamp.slice(0,10)>=desde && m.timestamp.slice(0,10)<=hasta; 
+        });
+        document.getElementById('recepcionesExportTotal').textContent = recFiltradas.length;
+        document.getElementById('recepcionesExportResumen').classList.remove('hidden');
+        var container = document.getElementById('recepcionesExportLista');
+        if(!recFiltradas.length){ container.innerHTML = '<div class="empty-state"><p>Sin recepciones</p></div>'; return; }
+        var html = '';
+        recFiltradas.forEach(function(r){ 
+            html += '<div class="config-card" style="margin-bottom:6px;padding:8px">';
+            html += '<div style="display:flex;justify-content:space-between"><strong style="font-family:monospace">'+r.equipment.full+'</strong><span style="font-size:11px">'+r.hora+'</span></div>';
+            html += '<div style="font-size:11px;color:var(--text-light)">'+r.fecha+' • '+(r.bodega||'-')+' • '+r.user+'</div>';
+            html += '</div>'; 
+        });
+        container.innerHTML = html;
+    }
+    
+    function descargarRecepcionesExcel(){
+        if(!recFiltradas.length){ showToast('warning','Sin recepciones'); return; }
+        var csv='Fecha,Hora,Serie,Prefijo,Bodega,Usuario\n';
+        recFiltradas.forEach(function(r){ csv+='"'+r.fecha+'","'+r.hora+'","'+r.equipment.serie+'","'+r.equipment.prefix+'","'+(r.bodega||'')+'","'+r.user+'"\n'; });
+        downloadCSV(csv,'recepciones_'+document.getElementById('exportRecepcionesDesde').value+'.csv');
+    }
+    
+    function filtrarReparacionesExport(){
+        var desde = document.getElementById('exportReparacionesDesde').value, hasta = document.getElementById('exportReparacionesHasta').value;
+        if(!desde||!hasta){ showToast('warning','Selecciona rango'); return; }
+        var todas = JSON.parse(localStorage.getItem('ptcontrol_reparaciones') || '[]');
+        repFiltradas = todas.filter(function(r){ return r.fecha>=desde && r.fecha<=hasta; });
+        document.getElementById('reparacionesExportTotal').textContent = repFiltradas.length;
+        document.getElementById('reparacionesExportResumen').classList.remove('hidden');
+        var container = document.getElementById('reparacionesExportLista');
+        if(!repFiltradas.length){ container.innerHTML = '<div class="empty-state"><p>Sin reparaciones</p></div>'; return; }
+        var html = '';
+        repFiltradas.forEach(function(r){ 
+            html += '<div class="config-card" style="margin-bottom:6px;padding:8px">';
+            html += '<strong style="font-family:monospace">'+r.serie+'</strong>';
+            html += '<div style="font-size:11px;color:var(--text-light)">'+r.fecha+' '+r.hora+' • '+(r.bodegaOrigen||r.bodega)+' → '+(r.ubicacionDestino||'-')+'</div>';
+            if(r.comentario) html += '<div style="font-size:10px;color:var(--info)">'+r.comentario+'</div>';
+            html += '</div>'; 
+        });
+        container.innerHTML = html;
+    }
+    
+    function descargarReparacionesExcel(){
+        if(!repFiltradas.length){ showToast('warning','Sin reparaciones'); return; }
+        var csv='Fecha,Hora,Serie,Bodega Origen,Ubicacion Destino,Comentario,Usuario\n';
+        repFiltradas.forEach(function(r){ csv+='"'+r.fecha+'","'+r.hora+'","'+r.serie+'","'+(r.bodegaOrigen||r.bodega)+'","'+(r.ubicacionDestino||'')+'","'+(r.comentario||'')+'","'+r.user+'"\n'; });
+        downloadCSV(csv,'reparaciones_'+document.getElementById('exportReparacionesDesde').value+'.csv');
+    }
+
+    // ==================== ALERTAS Y OBSOLESCENCIA ====================
+    function calcularAlertas(){
+        var hoy = new Date();
+        var inv = {};
+        state.movements.forEach(function(m){
+            if(m.type==='embarque'){ delete inv[m.equipment.full]; }
+            else { inv[m.equipment.full] = { serie: m.equipment.full, ultimoMov: m.timestamp, tipo: m.type, ubicacion: m.location || 'N/A' }; }
+        });
+        var alertas = [];
+        Object.values(inv).forEach(function(item){
+            var dias = Math.floor((hoy - new Date(item.ultimoMov)) / (1000*60*60*24));
+            if(dias > 30){ item.dias = dias; alertas.push(item); }
+        });
+        return alertas.sort(function(a,b){ return b.dias - a.dias; });
+    }
+    
+    function calcularObsolescencia(){
+        var hoy = new Date();
+        var ultimoEmbarque = {};
+        var enInventario = {};
+        state.movements.forEach(function(m){
+            if(m.type==='embarque'){ ultimoEmbarque[m.equipment.full] = m.timestamp; delete enInventario[m.equipment.full]; }
+            else { enInventario[m.equipment.full] = { serie: m.equipment.full, entrada: m.timestamp, ubicacion: m.location || 'N/A' }; }
+        });
+        var obsoletos = [];
+        Object.values(enInventario).forEach(function(item){
+            var dias = Math.floor((hoy - new Date(item.entrada)) / (1000*60*60*24));
+            if(dias > 90){ item.dias = dias; obsoletos.push(item); }
+        });
+        return obsoletos.sort(function(a,b){ return b.dias - a.dias; });
+    }
+    
+    function openModule(m){
+        showScreen(m+'Screen');
+        if(['recepcion','acomodo','traspaso','embarque'].indexOf(m) !== -1){ setTimeout(function(){ startScanner(m); }, 300); }
+        if(m === 'historial') applyHistoryFilters();
+        if(m === 'misMovimientos') renderMyMovements();
+        if(m === 'pendientes') renderPendientesList();
+        if(m === 'dashboard') renderDashboard();
+        if(m === 'auditSample') renderAuditSample();
+        if(m === 'metric') renderMetric();
+        if(m === 'cargaMasiva') resetCargaMasiva();
+        if(m === 'acomodo'){ acomodoMultipleItems = []; renderAcomodoMultipleList(); }
+        if(m === 'calidadSalidas'){ loadCalidadScannedItems(); renderCalidadList(); document.getElementById('calidadResultados').classList.add('hidden'); initCalidadScanner(); }
+        if(m === 'incidencias') renderMisIncidencias();
+        if(m === 'verIncidencias') filtrarIncidencias();
+        if(m === 'verCalidadSalidas') filtrarCalidadReportes();
+        if(m === 'muestreoInterno') renderHistorialMuestreoInterno();
+        if(m === 'liberarReparacion'){ state.scannedItems.reparacion = []; renderReparacionList(); }
+        if(m === 'historialReparaciones') filtrarHistorialReparaciones();
+        if(m === 'exportAlertas') renderAlertas();
+        if(m === 'exportObsolescencia') renderObsolescencia();
+    }
+    
+    function renderAlertas(){
+        var alertas = calcularAlertas();
+        document.getElementById('alertasTotal').textContent = alertas.length;
+        var container = document.getElementById('alertasLista');
+        if(!alertas.length){ container.innerHTML = '<div class="empty-state"><p>Sin alertas</p></div>'; return; }
+        var html = '';
+        alertas.forEach(function(a){ html += '<div class="config-card" style="margin-bottom:6px;padding:10px;border-left:4px solid var(--warning)"><div style="display:flex;justify-content:space-between"><strong style="font-family:monospace">'+a.serie+'</strong><span style="color:var(--warning);font-weight:700">'+a.dias+' días</span></div><div style="font-size:11px;color:var(--text-light)">'+a.ubicacion+' • Último: '+a.tipo+'</div></div>'; });
+        container.innerHTML = html;
+    }
+    
+    function renderObsolescencia(){
+        var obsoletos = calcularObsolescencia();
+        document.getElementById('obsolescenciaTotal').textContent = obsoletos.length;
+        var container = document.getElementById('obsolescenciaLista');
+        if(!obsoletos.length){ container.innerHTML = '<div class="empty-state"><p>Sin obsoletos</p></div>'; return; }
+        var html = '';
+        obsoletos.forEach(function(o){ html += '<div class="config-card" style="margin-bottom:6px;padding:10px;border-left:4px solid var(--error)"><div style="display:flex;justify-content:space-between"><strong style="font-family:monospace">'+o.serie+'</strong><span style="color:var(--error);font-weight:700">'+o.dias+' días</span></div><div style="font-size:11px;color:var(--text-light)">'+o.ubicacion+'</div></div>'; });
+        container.innerHTML = html;
+    }
+    
+    function descargarAlertasExcel(){
+        var alertas = calcularAlertas();
+        if(!alertas.length){ showToast('warning','Sin alertas'); return; }
+        var csv='Serie,Dias Sin Movimiento,Ubicacion,Ultimo Movimiento\n';
+        alertas.forEach(function(a){ csv+='"'+a.serie+'",'+a.dias+',"'+a.ubicacion+'","'+a.tipo+'"\n'; });
+        downloadCSV(csv,'alertas_30dias_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+    
+    function descargarObsolescenciaExcel(){
+        var obsoletos = calcularObsolescencia();
+        if(!obsoletos.length){ showToast('warning','Sin obsoletos'); return; }
+        var csv='Serie,Dias Sin Embarque,Ubicacion\n';
+        obsoletos.forEach(function(o){ csv+='"'+o.serie+'",'+o.dias+',"'+o.ubicacion+'"\n'; });
+        downloadCSV(csv,'obsolescencia_90dias_'+new Date().toISOString().slice(0,10)+'.csv');
     }
 
 })();
