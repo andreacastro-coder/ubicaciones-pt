@@ -280,6 +280,7 @@
                 <div class="menu-grid">
                     <div class="menu-card recepcion" id="menuCalidadSalidas"><div class="menu-icon">✅</div><div class="menu-title">Calidad Salidas</div><div class="menu-desc">Verificar embarques</div></div>
                     <div class="menu-card embarque" id="menuIncidencias"><div class="menu-icon">⚠️</div><div class="menu-title">Incidencias</div><div class="menu-desc">Reportar problemas</div></div>
+                    <div class="menu-card traspaso" id="menuInventarioBaterias"><div class="menu-icon">⚡</div><div class="menu-title">Inv. Baterías</div><div class="menu-desc">Control de baterías</div></div>
                 </div>
             </div>
             
@@ -730,11 +731,22 @@
                 </div>
             </div>
             
+            <!-- 11. INVENTARIO BATERÍAS -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px;border-left:4px solid #6366f1" id="exportBateriasBtn">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:#eef2ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⚡</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Inventario Baterías</div>
+                        <div style="font-size:11px;color:var(--text-light)">Control de baterías</div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- SECCIÓN ALERTAS -->
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
                 <div style="font-size:12px;font-weight:700;color:var(--error);margin-bottom:12px">⚠️ ALERTAS</div>
                 
-                <!-- 11. ALERTAS >30 -->
+                <!-- 12. ALERTAS >30 -->
                 <div class="config-card" style="cursor:pointer;border-left:4px solid var(--warning)" id="exportAlertasBtn">
                     <div style="display:flex;align-items:center;gap:12px">
                         <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔔</div>
@@ -745,7 +757,7 @@
                     </div>
                 </div>
                 
-                <!-- 12. OBSOLESCENCIA -->
+                <!-- 13. OBSOLESCENCIA -->
                 <div class="config-card" style="cursor:pointer;margin-top:10px;border-left:4px solid var(--error)" id="exportObsolescenciaBtn">
                     <div style="display:flex;align-items:center;gap:12px">
                         <div style="width:44px;height:44px;background:var(--error-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🚨</div>
@@ -1236,6 +1248,32 @@
         </div>
     </div>
 
+    <!-- EXPORTAR BATERÍAS -->
+    <div id="exportBateriasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportBaterias">←</button><h2 class="scanner-title">⚡ Inventario Baterías</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Filtrar por fecha:</span><input type="date" class="form-input" id="exportBatFecha"></div>
+                <div class="config-row"><span class="config-label">Buscar serie:</span><input type="text" class="form-input" id="exportBatBuscar" placeholder="Buscar..."></div>
+                <button class="btn btn-primary mt-14" id="filtrarExportBatBtn">🔍 Filtrar</button>
+            </div>
+            <div id="exportBatResumen" class="hidden">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                    <div class="config-card" style="text-align:center;background:#eef2ff;padding:12px">
+                        <div style="font-size:24px;font-weight:800;color:#6366f1" id="exportBatRegistros">0</div>
+                        <div style="font-size:10px;color:#6366f1">Registros</div>
+                    </div>
+                    <div class="config-card" style="text-align:center;background:var(--success-bg);padding:12px">
+                        <div style="font-size:24px;font-weight:800;color:var(--success)" id="exportBatTotal">0</div>
+                        <div style="font-size:10px;color:var(--success)">Total Baterías</div>
+                    </div>
+                </div>
+                <button class="btn btn-success" id="descargarExportBatBtn">📊 Descargar Excel</button>
+            </div>
+            <div id="exportBatLista" style="margin-top:14px;max-height:350px;overflow-y:auto"></div>
+        </div>
+    </div>
+
     <!-- EXPORTAR TRASPASOS -->
     <div id="exportTraspasosScreen" class="screen">
         <div class="scanner-header"><button class="back-btn" id="backExportTraspasos">←</button><h2 class="scanner-title">🔄 Exportar Traspasos</h2></div>
@@ -1367,6 +1405,117 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- INVENTARIO BATERÍAS (CALIDAD) -->
+    <div id="inventarioBateriasScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backInventarioBaterias">←</button><h2 class="scanner-title">⚡ Inventario Baterías</h2></div>
+        <div class="scanner-body">
+            <!-- Tabs -->
+            <div class="input-tabs" style="margin-bottom:14px">
+                <div class="input-tab active" id="tabBatRegistrar">📝 Registrar</div>
+                <div class="input-tab" id="tabBatInventario">📦 Inventario</div>
+            </div>
+            
+            <!-- TAB REGISTRAR -->
+            <div id="seccionBatRegistrar">
+                <!-- Campos de información (PRIMERO) -->
+                <div class="config-card" style="margin-bottom:14px">
+                    <div class="config-row">
+                        <span class="config-label">Cantidad de Tarimas</span>
+                        <input type="number" class="form-input" id="batCantidadTarimas" min="1" value="1" style="width:80px;text-align:center">
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Baterías por Tarima</span>
+                        <input type="number" class="form-input" id="batPorTarima" min="1" value="1" style="width:80px;text-align:center">
+                    </div>
+                    <div class="config-row" style="background:var(--success-bg);padding:8px;border-radius:8px;margin-top:8px">
+                        <span class="config-label" style="font-weight:700">Total Baterías</span>
+                        <span style="font-size:20px;font-weight:800;color:var(--success)" id="batTotalCalc">1</span>
+                    </div>
+                </div>
+                
+                <div class="config-card" style="margin-bottom:14px">
+                    <div class="config-row">
+                        <span class="config-label">Modelo</span>
+                        <input type="text" class="form-input" id="batModelo" placeholder="Ej: LI-ION 48V">
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Marca</span>
+                        <input type="text" class="form-input" id="batMarca" placeholder="Ej: CATL, BYD">
+                    </div>
+                </div>
+                
+                <div class="config-card" style="margin-bottom:14px">
+                    <div class="config-row">
+                        <span class="config-label">Ubicación (Rack)</span>
+                        <div class="location-dropdown" style="flex:1;position:relative">
+                            <input type="text" class="form-input" id="batUbicacion" placeholder="Escribe ubicación..." style="width:100%">
+                            <div class="suggestions" id="batLocationSuggestions"></div>
+                        </div>
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Comentarios</span>
+                        <textarea class="form-input" id="batComentarios" rows="2" placeholder="Observaciones..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Serie Batería (AL FINAL) -->
+                <div class="config-card" style="margin-bottom:14px;border:2px solid var(--primary)">
+                    <label class="config-label" style="color:var(--primary);font-weight:700;margin-bottom:8px;display:block">Serie Batería</label>
+                    <input type="text" class="form-input" id="batSerieInput" placeholder="Escribe la serie aquí..." style="width:100%;font-family:monospace;font-size:16px;padding:12px;margin-bottom:8px;background:#fff;border:2px solid var(--border)">
+                    <button class="btn btn-primary" id="batEscanearBtn" style="width:100%">📷 Escanear QR</button>
+                    <p style="font-size:10px;color:var(--text-light);margin-top:8px">Formatos: BAT-, BATLIT-, Baterias-</p>
+                </div>
+                
+                <button class="btn btn-success" id="batGuardarBtn" style="width:100%">💾 Guardar Registro</button>
+            </div>
+            
+            <!-- TAB INVENTARIO -->
+            <div id="seccionBatInventario" class="hidden">
+                <!-- Filtros -->
+                <div class="config-card" style="margin-bottom:14px">
+                    <div class="config-row">
+                        <span class="config-label">Filtrar por fecha:</span>
+                        <input type="date" class="form-input" id="batFiltroFecha">
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Buscar serie:</span>
+                        <input type="text" class="form-input" id="batFiltroBuscar" placeholder="Buscar...">
+                    </div>
+                    <button class="btn btn-primary mt-14" id="batFiltrarBtn">🔍 Filtrar</button>
+                </div>
+                
+                <!-- Resumen -->
+                <div id="batResumenInventario" class="hidden">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                        <div class="config-card" style="text-align:center;background:var(--info-bg);padding:12px">
+                            <div style="font-size:24px;font-weight:800;color:var(--info)" id="batTotalRegistros">0</div>
+                            <div style="font-size:10px;color:var(--info)">Registros</div>
+                        </div>
+                        <div class="config-card" style="text-align:center;background:var(--success-bg);padding:12px">
+                            <div style="font-size:24px;font-weight:800;color:var(--success)" id="batTotalBaterias">0</div>
+                            <div style="font-size:10px;color:var(--success)">Total Baterías</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" id="batExportarBtn" style="width:100%;margin-bottom:14px">📊 Exportar Excel</button>
+                </div>
+                
+                <!-- Lista de registros -->
+                <div id="batListaInventario" style="max-height:400px;overflow-y:auto">
+                    <p style="text-align:center;color:var(--text-light)">Sin registros</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scanner Modal para Baterías -->
+    <div id="batScannerModal" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:1000;display:flex;flex-direction:column">
+        <div style="padding:16px;display:flex;justify-content:space-between;align-items:center">
+            <h3 style="color:white;margin:0">📷 Escanear Batería</h3>
+            <button id="batScannerClose" style="background:var(--error);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:14px">✕ Cerrar</button>
+        </div>
+        <div id="batScannerReader" style="flex:1;max-height:60vh"></div>
     </div>
 
     <!-- TOAST -->
@@ -1502,6 +1651,22 @@ try {
         if(document.getElementById('menuVerCalidadSalidas')) document.getElementById('menuVerCalidadSalidas').addEventListener('click', function(){ openModule('verCalidadSalidas'); });
         if(document.getElementById('menuMuestreoInterno')) document.getElementById('menuMuestreoInterno').addEventListener('click', function(){ openModule('muestreoInterno'); });
         if(document.getElementById('menuEmpacadosVs')) document.getElementById('menuEmpacadosVs').addEventListener('click', function(){ openModule('empacadosVsRecepciones'); });
+        if(document.getElementById('menuInventarioBaterias')) document.getElementById('menuInventarioBaterias').addEventListener('click', function(){ openModule('inventarioBaterias'); });
+
+        // Inventario Baterías
+        if(document.getElementById('backInventarioBaterias')) document.getElementById('backInventarioBaterias').addEventListener('click', goBack);
+        if(document.getElementById('tabBatRegistrar')) document.getElementById('tabBatRegistrar').addEventListener('click', function(){ switchTabBaterias('registrar'); });
+        if(document.getElementById('tabBatInventario')) document.getElementById('tabBatInventario').addEventListener('click', function(){ switchTabBaterias('inventario'); });
+        if(document.getElementById('batEscanearBtn')) document.getElementById('batEscanearBtn').addEventListener('click', abrirScannerBaterias);
+        if(document.getElementById('batScannerClose')) document.getElementById('batScannerClose').addEventListener('click', cerrarScannerBaterias);
+        if(document.getElementById('batSerieInput')) document.getElementById('batSerieInput').addEventListener('keyup', function(e){ if(e.key==='Enter') guardarRegistroBateria(); });
+        if(document.getElementById('batCantidadTarimas')) document.getElementById('batCantidadTarimas').addEventListener('input', calcularTotalBaterias);
+        if(document.getElementById('batPorTarima')) document.getElementById('batPorTarima').addEventListener('input', calcularTotalBaterias);
+        if(document.getElementById('batGuardarBtn')) document.getElementById('batGuardarBtn').addEventListener('click', guardarRegistroBateria);
+        if(document.getElementById('batFiltrarBtn')) document.getElementById('batFiltrarBtn').addEventListener('click', filtrarInventarioBaterias);
+        if(document.getElementById('batExportarBtn')) document.getElementById('batExportarBtn').addEventListener('click', exportarInventarioBaterias);
+        if(document.getElementById('batUbicacion')) document.getElementById('batUbicacion').addEventListener('input', function(e){ filterBatLocs(e.target.value); });
+        if(document.getElementById('batUbicacion')) document.getElementById('batUbicacion').addEventListener('focus', showBatLocs);
 
         // Back buttons
         document.getElementById('backRecepcion').addEventListener('click', goBack);
@@ -1585,6 +1750,7 @@ try {
         if(document.getElementById('exportReparacionesBtn')) document.getElementById('exportReparacionesBtn').addEventListener('click', function(){ openModule('exportReparaciones'); });
         if(document.getElementById('exportAlertasBtn')) document.getElementById('exportAlertasBtn').addEventListener('click', function(){ openModule('exportAlertas'); });
         if(document.getElementById('exportObsolescenciaBtn')) document.getElementById('exportObsolescenciaBtn').addEventListener('click', function(){ openModule('exportObsolescencia'); });
+        if(document.getElementById('exportBateriasBtn')) document.getElementById('exportBateriasBtn').addEventListener('click', function(){ openModule('exportBaterias'); });
         
         // Back buttons nuevos
         if(document.getElementById('backLiberarReparacion')) document.getElementById('backLiberarReparacion').addEventListener('click', goBack);
@@ -1595,8 +1761,14 @@ try {
         if(document.getElementById('backExportReparaciones')) document.getElementById('backExportReparaciones').addEventListener('click', goBack);
         if(document.getElementById('backExportAlertas')) document.getElementById('backExportAlertas').addEventListener('click', goBack);
         if(document.getElementById('backExportObsolescencia')) document.getElementById('backExportObsolescencia').addEventListener('click', goBack);
+        if(document.getElementById('backExportBaterias')) document.getElementById('backExportBaterias').addEventListener('click', goBack);
+        if(document.getElementById('filtrarExportBatBtn')) document.getElementById('filtrarExportBatBtn').addEventListener('click', filtrarExportBaterias);
+        if(document.getElementById('descargarExportBatBtn')) document.getElementById('descargarExportBatBtn').addEventListener('click', descargarExportBaterias);
         if(document.getElementById('backExportTraspasos')) document.getElementById('backExportTraspasos').addEventListener('click', goBack);
         if(document.getElementById('backEmpacadosVs')) document.getElementById('backEmpacadosVs').addEventListener('click', goBack);
+        
+        // Borrar Todo (Auditoría)
+        if(document.getElementById('menuBorrarTodo')) document.getElementById('menuBorrarTodo').addEventListener('click', borrarTodoDatos);
         
         // Exportar Traspasos
         if(document.getElementById('exportTraspasosBtn')) document.getElementById('exportTraspasosBtn').addEventListener('click', function(){ openModule('exportTraspasos'); });
@@ -2674,6 +2846,7 @@ try {
         
         var typeNames = {recepcion:'Recepción',acomodo:'Acomodo',traspaso:'Traspaso',embarque:'Embarque'};
         var icons = {recepcion:'📥',acomodo:'📍',traspaso:'🔄',embarque:'📤'};
+        var puedeEliminar = (state.currentRole === 'supervisor' || state.currentRole === 'auditoria');
         
         var html = '<p style="font-size:11px;color:var(--text-light);margin-bottom:10px">Mostrando '+Math.min(f.length,100)+' de '+f.length+' resultados</p>';
         f.slice(0,100).forEach(function(m){
@@ -2683,16 +2856,42 @@ try {
             else if(m.type==='traspaso') det = '→ '+m.bodega+(m.motivo?' ('+m.motivo+')':'');
             else if(m.type==='embarque') det = 'Ref: '+(m.referencia||'-');
             
-            html += '<div class="history-item"><div class="history-icon '+m.type+'">'+icons[m.type]+'</div>';
+            html += '<div class="history-item" style="position:relative"><div class="history-icon '+m.type+'">'+icons[m.type]+'</div>';
             html += '<div class="history-content"><div class="history-code">'+m.equipment.full+'</div>';
             html += '<div class="history-details">'+typeNames[m.type]+' '+det+'</div>';
             html += '<div class="history-meta"><span>'+m.fecha+' '+m.hora+'</span><span>'+m.user+'</span>';
             if(!m.synced) html += '<span style="color:var(--warning)">⏳</span>';
-            html += '</div></div></div>';
+            html += '</div></div>';
+            // Botón eliminar solo para Supervisor/Auditoría
+            if(puedeEliminar){
+                html += '<button onclick="eliminarMovimientoHistorial(\''+m.id+'\')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--error);color:white;border:none;border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer">🗑️</button>';
+            }
+            html += '</div>';
         });
         
         list.innerHTML = html;
     }
+    
+    // Función global para eliminar movimiento
+    window.eliminarMovimientoHistorial = function(id){
+        if(!confirm('¿Eliminar este movimiento?\n\nEsta acción no se puede deshacer.')) return;
+        
+        // Buscar y eliminar del array
+        var idx = state.movements.findIndex(function(m){ return m.id == id; });
+        if(idx === -1){ showToast('error','Movimiento no encontrado'); return; }
+        
+        var movEliminado = state.movements[idx];
+        state.movements.splice(idx, 1);
+        
+        // Guardar en localStorage
+        localStorage.setItem('ptcontrol_movements', JSON.stringify(state.movements));
+        
+        // Sincronizar con Firebase
+        saveToFirebase();
+        
+        showToast('success','Movimiento eliminado: '+movEliminado.equipment.full);
+        applyHistoryFilters();
+    };
     
     function renderHistory(filter){
         state.currentFilter = filter;
@@ -4630,6 +4829,8 @@ try {
         if(m === 'exportObsolescencia') renderObsolescencia();
         if(m === 'exportTraspasos') initExportTraspasos();
         if(m === 'empacadosVsRecepciones') initEmpacadosVsRecepciones();
+        if(m === 'inventarioBaterias') initInventarioBaterias();
+        if(m === 'exportBaterias') initExportBaterias();
     }
     
     function renderAlertas(){
@@ -5023,6 +5224,8 @@ try {
         var confirmar = confirm('¿ESTÁS SEGURA?\n\nEsto borrará:\n• Todos los movimientos\n• Todas las reparaciones\n• Todas las incidencias\n• Todos los muestreos\n• Todos los reportes de calidad\n\nEsta acción NO se puede deshacer.');
         if(!confirmar) return;
         
+        showToast('info','Borrando datos...');
+        
         // Borrar localStorage
         localStorage.removeItem('ptcontrol_movements');
         localStorage.removeItem('ptcontrol_pendingSync');
@@ -5033,26 +5236,35 @@ try {
         localStorage.removeItem('auditResults');
         localStorage.removeItem('muestreoInternoHistorial');
         localStorage.removeItem('dashboardEmpacadosHistorial');
+        localStorage.removeItem('inventarioBaterias');
         
-        // Borrar Firebase (si existe)
-        if(typeof db !== 'undefined' && db){
-            try {
-                // Borrar colecciones de Firebase
-                var colecciones = ['movements', 'reparaciones', 'incidencias', 'auditResults', 'calidadSalidas'];
-                colecciones.forEach(function(col){
-                    db.collection('ptcontrol').doc(col).delete().catch(function(){});
-                });
-            } catch(e){ console.log('Error limpiando Firebase:', e); }
-        }
-        
-        // Limpiar estado
+        // Limpiar estado inmediatamente
         state.movements = [];
         state.pendingSync = [];
+        state.auditResults = [];
         
-        showToast('success','Todos los datos han sido eliminados');
-        
-        // Recargar página
-        setTimeout(function(){ location.reload(); }, 1500);
+        // Borrar Firebase (si existe)
+        if(db){
+            // Borrar documento principal de movimientos
+            db.collection('ptcontrol').doc('data').set({
+                movements: [],
+                reparaciones: [],
+                incidencias: [],
+                auditResults: [],
+                lastUpdate: new Date().toISOString()
+            }).then(function(){
+                console.log('✅ Firebase limpiado');
+                showToast('success','Todos los datos han sido eliminados');
+                setTimeout(function(){ location.reload(); }, 1000);
+            }).catch(function(e){
+                console.log('Error limpiando Firebase:', e);
+                showToast('success','Datos locales eliminados');
+                setTimeout(function(){ location.reload(); }, 1000);
+            });
+        } else {
+            showToast('success','Todos los datos han sido eliminados');
+            setTimeout(function(){ location.reload(); }, 1000);
+        }
     }
 
     // ==================== DASHBOARD EMPACADOS VS RECEPCIONES ====================
@@ -5225,6 +5437,391 @@ try {
         XLSX.utils.book_append_sheet(wb, ws, 'Dashboard');
         
         XLSX.writeFile(wb, 'dashboard_empacados_vs_recepciones_'+new Date().toISOString().slice(0,10)+'.xlsx');
+        showToast('success','Excel descargado');
+    }
+
+    // ==================== INVENTARIO BATERÍAS ====================
+    var batScanner = null;
+    var batRegistroActual = null;
+    var batInventarioFiltrado = [];
+    
+    function initInventarioBaterias(){
+        // Reset campos
+        document.getElementById('batSerieInput').value = '';
+        document.getElementById('batCantidadTarimas').value = 1;
+        document.getElementById('batPorTarima').value = 1;
+        document.getElementById('batModelo').value = '';
+        document.getElementById('batMarca').value = '';
+        document.getElementById('batUbicacion').value = '';
+        document.getElementById('batComentarios').value = '';
+        calcularTotalBaterias();
+        switchTabBaterias('registrar');
+        
+        // Poner fecha de hoy en filtro
+        document.getElementById('batFiltroFecha').value = new Date().toISOString().slice(0,10);
+    }
+    
+    // Filtrar ubicaciones para baterías (igual que acomodo)
+    function filterBatLocs(q){
+        var s = document.getElementById('batLocationSuggestions');
+        if(!q){ s.classList.remove('show'); return; }
+        var filtered = CONFIG.locations.filter(function(l){
+            return l.toLowerCase().indexOf(q.toLowerCase()) !== -1;
+        }).slice(0, 10);
+        
+        if(filtered.length){
+            var html = '';
+            filtered.forEach(function(l){
+                html += '<div class="suggestion-item" data-loc="'+l+'">'+l+'</div>';
+            });
+            s.innerHTML = html;
+            s.classList.add('show');
+            s.querySelectorAll('.suggestion-item').forEach(function(item){
+                item.addEventListener('click', function(){
+                    document.getElementById('batUbicacion').value = item.dataset.loc;
+                    s.classList.remove('show');
+                });
+            });
+        }else{
+            s.innerHTML = '<div class="suggestion-item" style="color:var(--text-light)">No encontrado</div>';
+            s.classList.add('show');
+        }
+    }
+    
+    function showBatLocs(){
+        filterBatLocs(document.getElementById('batUbicacion').value);
+    }
+    
+    function switchTabBaterias(tab){
+        var tabReg = document.getElementById('tabBatRegistrar');
+        var tabInv = document.getElementById('tabBatInventario');
+        var secReg = document.getElementById('seccionBatRegistrar');
+        var secInv = document.getElementById('seccionBatInventario');
+        
+        if(tab === 'registrar'){
+            tabReg.classList.add('active');
+            tabInv.classList.remove('active');
+            secReg.classList.remove('hidden');
+            secInv.classList.add('hidden');
+        } else {
+            tabReg.classList.remove('active');
+            tabInv.classList.add('active');
+            secReg.classList.add('hidden');
+            secInv.classList.remove('hidden');
+            filtrarInventarioBaterias();
+        }
+    }
+    
+    function calcularTotalBaterias(){
+        var tarimas = parseInt(document.getElementById('batCantidadTarimas').value) || 0;
+        var porTarima = parseInt(document.getElementById('batPorTarima').value) || 0;
+        var total = tarimas * porTarima;
+        document.getElementById('batTotalCalc').textContent = total;
+    }
+    
+    function abrirScannerBaterias(){
+        if(typeof Html5Qrcode === 'undefined'){
+            showToast('warning','Escáner no disponible - escribe la serie manualmente');
+            return;
+        }
+        document.getElementById('batScannerModal').classList.remove('hidden');
+        document.getElementById('batScannerModal').style.display = 'flex';
+        
+        batScanner = new Html5Qrcode('batScannerReader');
+        batScanner.start(
+            { facingMode: 'environment' },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            function(decodedText){
+                cerrarScannerBaterias();
+                document.getElementById('batSerieInput').value = decodedText.toUpperCase();
+                showToast('success','Serie escaneada: '+decodedText);
+            },
+            function(){}
+        ).catch(function(err){
+            console.log('Error scanner:', err);
+            showToast('error','No se pudo acceder a la cámara');
+            cerrarScannerBaterias();
+        });
+    }
+    
+    function cerrarScannerBaterias(){
+        if(batScanner){
+            batScanner.stop().catch(function(){});
+            batScanner = null;
+        }
+        document.getElementById('batScannerModal').classList.add('hidden');
+        document.getElementById('batScannerModal').style.display = 'none';
+    }
+    
+    function guardarRegistroBateria(){
+        var serie = document.getElementById('batSerieInput').value.trim().toUpperCase();
+        
+        // Validar serie
+        if(!serie){
+            showToast('warning','Ingresa o escanea una serie');
+            return;
+        }
+        
+        var esValida = serie.startsWith('BAT-') || serie.startsWith('BATLIT-') || serie.startsWith('BATERIAS-');
+        if(!esValida){
+            showToast('error','Formato inválido. Debe iniciar con BAT-, BATLIT- o Baterias-');
+            return;
+        }
+        
+        var cantTarimas = parseInt(document.getElementById('batCantidadTarimas').value) || 0;
+        var porTarima = parseInt(document.getElementById('batPorTarima').value) || 0;
+        var modelo = document.getElementById('batModelo').value.trim();
+        var marca = document.getElementById('batMarca').value.trim();
+        var ubicacion = document.getElementById('batUbicacion').value;
+        var comentarios = document.getElementById('batComentarios').value.trim();
+        
+        if(cantTarimas < 1 || porTarima < 1){
+            showToast('warning','Cantidad de tarimas y baterías debe ser al menos 1');
+            return;
+        }
+        
+        var registro = {
+            id: Date.now(),
+            serie: serie,
+            cantidadTarimas: cantTarimas,
+            bateriasPorTarima: porTarima,
+            totalBaterias: cantTarimas * porTarima,
+            modelo: modelo,
+            marca: marca,
+            ubicacion: ubicacion,
+            comentarios: comentarios,
+            fecha: new Date().toISOString().slice(0,10),
+            hora: new Date().toTimeString().slice(0,5),
+            usuario: state.currentUser
+        };
+        
+        // Guardar
+        var inventario = JSON.parse(localStorage.getItem('inventarioBaterias') || '[]');
+        inventario.push(registro);
+        localStorage.setItem('inventarioBaterias', JSON.stringify(inventario));
+        
+        showToast('success','Registro guardado: '+registro.totalBaterias+' baterías');
+        
+        // Reset campos
+        document.getElementById('batSerieInput').value = '';
+        document.getElementById('batCantidadTarimas').value = 1;
+        document.getElementById('batPorTarima').value = 1;
+        document.getElementById('batModelo').value = '';
+        document.getElementById('batMarca').value = '';
+        document.getElementById('batUbicacion').value = '';
+        document.getElementById('batComentarios').value = '';
+        calcularTotalBaterias();
+    }
+    
+    function filtrarInventarioBaterias(){
+        var inventario = JSON.parse(localStorage.getItem('inventarioBaterias') || '[]');
+        var fecha = document.getElementById('batFiltroFecha').value;
+        var buscar = document.getElementById('batFiltroBuscar').value.trim().toUpperCase();
+        
+        batInventarioFiltrado = inventario;
+        
+        if(fecha){
+            batInventarioFiltrado = batInventarioFiltrado.filter(function(r){ return r.fecha === fecha; });
+        }
+        if(buscar){
+            batInventarioFiltrado = batInventarioFiltrado.filter(function(r){
+                return r.serie.indexOf(buscar) !== -1 || (r.modelo && r.modelo.toUpperCase().indexOf(buscar) !== -1);
+            });
+        }
+        
+        // Ordenar por fecha descendente
+        batInventarioFiltrado.sort(function(a,b){ return (b.fecha+b.hora).localeCompare(a.fecha+a.hora); });
+        
+        renderInventarioBaterias();
+    }
+    
+    function renderInventarioBaterias(){
+        var container = document.getElementById('batListaInventario');
+        
+        if(!batInventarioFiltrado.length){
+            container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px">Sin registros</p>';
+            document.getElementById('batResumenInventario').classList.add('hidden');
+            return;
+        }
+        
+        // Resumen
+        var totalBats = batInventarioFiltrado.reduce(function(acc, r){ return acc + r.totalBaterias; }, 0);
+        document.getElementById('batTotalRegistros').textContent = batInventarioFiltrado.length;
+        document.getElementById('batTotalBaterias').textContent = totalBats;
+        document.getElementById('batResumenInventario').classList.remove('hidden');
+        
+        // Lista
+        var html = '';
+        batInventarioFiltrado.forEach(function(r){
+            html += '<div class="config-card" style="margin-bottom:10px;padding:12px;border-left:4px solid #6366f1;position:relative">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+            html += '<div>';
+            html += '<div style="font-family:monospace;font-weight:700;font-size:14px;color:var(--primary)">⚡ '+r.serie+'</div>';
+            html += '<div style="font-size:12px;margin-top:4px"><strong>'+r.totalBaterias+'</strong> baterías ('+r.cantidadTarimas+' tarimas × '+r.bateriasPorTarima+')</div>';
+            if(r.modelo || r.marca) html += '<div style="font-size:11px;color:var(--text-light)">'+(r.marca||'-')+' • '+(r.modelo||'-')+'</div>';
+            if(r.ubicacion) html += '<div style="font-size:11px;color:var(--info)">📍 '+r.ubicacion+'</div>';
+            if(r.comentarios) html += '<div style="font-size:10px;color:var(--text-light);font-style:italic;margin-top:4px">'+r.comentarios+'</div>';
+            html += '</div>';
+            html += '<div style="text-align:right;font-size:10px;color:var(--text-light)">';
+            html += r.fecha+'<br>'+r.hora+'<br>'+r.usuario;
+            html += '</div>';
+            html += '</div>';
+            html += '<div style="display:flex;gap:6px;margin-top:8px">';
+            html += '<button onclick="editarRegistroBateria('+r.id+')" style="background:var(--info);color:white;border:none;border-radius:4px;padding:4px 10px;font-size:10px;cursor:pointer">✏️ Editar</button>';
+            html += '<button onclick="eliminarRegistroBateria('+r.id+')" style="background:var(--error);color:white;border:none;border-radius:4px;padding:4px 10px;font-size:10px;cursor:pointer">🗑️ Eliminar</button>';
+            html += '</div>';
+            html += '</div>';
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    // Funciones globales para botones
+    window.editarRegistroBateria = function(id){
+        var inventario = JSON.parse(localStorage.getItem('inventarioBaterias') || '[]');
+        var registro = inventario.find(function(r){ return r.id === id; });
+        if(!registro){ showToast('error','Registro no encontrado'); return; }
+        
+        // Cargar datos en formulario
+        switchTabBaterias('registrar');
+        document.getElementById('batSerieInput').value = registro.serie;
+        document.getElementById('batCantidadTarimas').value = registro.cantidadTarimas;
+        document.getElementById('batPorTarima').value = registro.bateriasPorTarima;
+        document.getElementById('batModelo').value = registro.modelo || '';
+        document.getElementById('batMarca').value = registro.marca || '';
+        document.getElementById('batUbicacion').value = registro.ubicacion || '';
+        document.getElementById('batComentarios').value = registro.comentarios || '';
+        calcularTotalBaterias();
+        
+        // Eliminar el registro anterior (se guardará como nuevo)
+        inventario = inventario.filter(function(r){ return r.id !== id; });
+        localStorage.setItem('inventarioBaterias', JSON.stringify(inventario));
+        
+        showToast('info','Editando registro - modifica y guarda');
+    };
+    
+    window.eliminarRegistroBateria = function(id){
+        if(!confirm('¿Eliminar este registro de baterías?')) return;
+        
+        var inventario = JSON.parse(localStorage.getItem('inventarioBaterias') || '[]');
+        inventario = inventario.filter(function(r){ return r.id !== id; });
+        localStorage.setItem('inventarioBaterias', JSON.stringify(inventario));
+        
+        showToast('success','Registro eliminado');
+        filtrarInventarioBaterias();
+    };
+    
+    function exportarInventarioBaterias(){
+        if(!batInventarioFiltrado.length){
+            showToast('warning','Sin datos para exportar');
+            return;
+        }
+        
+        var data = batInventarioFiltrado.map(function(r){
+            return {
+                'Fecha': r.fecha,
+                'Hora': r.hora,
+                'Serie': r.serie,
+                'Cant. Tarimas': r.cantidadTarimas,
+                'Bats/Tarima': r.bateriasPorTarima,
+                'Total Baterías': r.totalBaterias,
+                'Modelo': r.modelo || '',
+                'Marca': r.marca || '',
+                'Ubicación': r.ubicacion || '',
+                'Comentarios': r.comentarios || '',
+                'Usuario': r.usuario
+            };
+        });
+        
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, 'Inventario Baterias');
+        
+        var fechaFiltro = document.getElementById('batFiltroFecha').value || 'todos';
+        XLSX.writeFile(wb, 'inventario_baterias_'+fechaFiltro+'.xlsx');
+        showToast('success','Excel descargado');
+    }
+
+    // ==================== EXPORTAR BATERÍAS (REPORTES) ====================
+    var exportBatFiltrado = [];
+    
+    function initExportBaterias(){
+        document.getElementById('exportBatFecha').value = '';
+        document.getElementById('exportBatBuscar').value = '';
+        document.getElementById('exportBatResumen').classList.add('hidden');
+        document.getElementById('exportBatLista').innerHTML = '<p style="text-align:center;color:var(--text-light)">Usa los filtros para ver registros</p>';
+        filtrarExportBaterias();
+    }
+    
+    function filtrarExportBaterias(){
+        var inventario = JSON.parse(localStorage.getItem('inventarioBaterias') || '[]');
+        var fecha = document.getElementById('exportBatFecha').value;
+        var buscar = document.getElementById('exportBatBuscar').value.trim().toUpperCase();
+        
+        exportBatFiltrado = inventario;
+        
+        if(fecha){
+            exportBatFiltrado = exportBatFiltrado.filter(function(r){ return r.fecha === fecha; });
+        }
+        if(buscar){
+            exportBatFiltrado = exportBatFiltrado.filter(function(r){
+                return r.serie.indexOf(buscar) !== -1 || (r.modelo && r.modelo.toUpperCase().indexOf(buscar) !== -1);
+            });
+        }
+        
+        exportBatFiltrado.sort(function(a,b){ return (b.fecha+b.hora).localeCompare(a.fecha+a.hora); });
+        
+        var container = document.getElementById('exportBatLista');
+        
+        if(!exportBatFiltrado.length){
+            container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px">Sin registros</p>';
+            document.getElementById('exportBatResumen').classList.add('hidden');
+            return;
+        }
+        
+        var totalBats = exportBatFiltrado.reduce(function(acc, r){ return acc + r.totalBaterias; }, 0);
+        document.getElementById('exportBatRegistros').textContent = exportBatFiltrado.length;
+        document.getElementById('exportBatTotal').textContent = totalBats;
+        document.getElementById('exportBatResumen').classList.remove('hidden');
+        
+        var html = '';
+        exportBatFiltrado.forEach(function(r){
+            html += '<div class="config-card" style="margin-bottom:8px;padding:10px;border-left:4px solid #6366f1">';
+            html += '<div style="display:flex;justify-content:space-between">';
+            html += '<div><span style="font-family:monospace;font-weight:700;color:var(--primary)">⚡ '+r.serie+'</span>';
+            html += '<div style="font-size:11px"><strong>'+r.totalBaterias+'</strong> bats • '+(r.marca||'-')+' • '+(r.modelo||'-')+'</div>';
+            if(r.ubicacion) html += '<div style="font-size:10px;color:var(--info)">📍 '+r.ubicacion+'</div>';
+            html += '</div>';
+            html += '<div style="text-align:right;font-size:10px;color:var(--text-light)">'+r.fecha+'<br>'+r.usuario+'</div>';
+            html += '</div></div>';
+        });
+        
+        container.innerHTML = html;
+    }
+    
+    function descargarExportBaterias(){
+        if(!exportBatFiltrado.length){ showToast('warning','Sin datos'); return; }
+        
+        var data = exportBatFiltrado.map(function(r){
+            return {
+                'Fecha': r.fecha,
+                'Hora': r.hora,
+                'Serie': r.serie,
+                'Cant. Tarimas': r.cantidadTarimas,
+                'Bats/Tarima': r.bateriasPorTarima,
+                'Total Baterías': r.totalBaterias,
+                'Modelo': r.modelo || '',
+                'Marca': r.marca || '',
+                'Ubicación': r.ubicacion || '',
+                'Comentarios': r.comentarios || '',
+                'Usuario': r.usuario
+            };
+        });
+        
+        var wb = XLSX.utils.book_new();
+        var ws = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, 'Inventario Baterias');
+        XLSX.writeFile(wb, 'reporte_baterias_'+new Date().toISOString().slice(0,10)+'.xlsx');
         showToast('success','Excel descargado');
     }
 
