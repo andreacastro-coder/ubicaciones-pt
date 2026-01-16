@@ -8,6 +8,9 @@
     <title>PT Control | Industronic</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1209,6 +1212,21 @@
     <div id="pendingBadge" class="pending-badge">⏳ <span id="pendingCount">0</span> pendientes</div>
 
 <script>
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+    apiKey: "AIzaSyBnl7Hx8IJRcXhrPnEGXDpSOVC-lIaPu7Y",
+    authDomain: "ubicaciones-pt.firebaseapp.com",
+    databaseURL: "https://ubicaciones-pt-default-rtdb.firebaseio.com",
+    projectId: "ubicaciones-pt",
+    storageBucket: "ubicaciones-pt.firebasestorage.app",
+    messagingSenderId: "154594257298",
+    appId: "1:154594257298:web:ee9df8e25580fb3330f94b"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 (function(){
     // ==================== CONFIG ====================
     const CONFIG = {
@@ -1252,14 +1270,18 @@
     };
 
     // ==================== DOM READY ====================
-    document.addEventListener('DOMContentLoaded', function(){
-        loadStorage();
+    document.addEventListener('DOMContentLoaded', async function(){
+        await loadStorage();
         renderUsers();
         updateStats();
         updatePending();
         bindEvents();
+        setupRealtimeSync();
         
-        window.addEventListener('online', function(){ document.getElementById('offlineBar').classList.remove('show'); });
+        window.addEventListener('online', function(){ 
+            document.getElementById('offlineBar').classList.remove('show'); 
+            saveToFirebase(); // Sincronizar al volver online
+        });
         window.addEventListener('offline', function(){ document.getElementById('offlineBar').classList.add('show'); });
         if(!navigator.onLine) document.getElementById('offlineBar').classList.add('show');
     });
@@ -1501,8 +1523,11 @@
         });
     }
 
-    // ==================== STORAGE ====================
-    function loadStorage(){
+    // ==================== FIREBASE STORAGE ====================
+    let firebaseLoaded = false;
+    
+    async function loadStorage(){
+        // Primero cargar de localStorage (para que funcione offline)
         try{
             var m = localStorage.getItem('ubicaciones_movements');
             var p = localStorage.getItem('ubicaciones_pending');
@@ -1511,14 +1536,114 @@
             if(p) state.pendingSync = JSON.parse(p);
             if(ar) state.auditResults = JSON.parse(ar);
         }catch(e){}
+        
+        // Luego cargar de Firebase (datos sincronizados)
+        try{
+            const movDoc = await db.collection('ptcontrol').doc('movements').get();
+            if(movDoc.exists && movDoc.data().data){
+                state.movements = movDoc.data().data;
+                localStorage.setItem('ubicaciones_movements', JSON.stringify(state.movements));
+            }
+            
+            const auditDoc = await db.collection('ptcontrol').doc('auditResults').get();
+            if(auditDoc.exists && auditDoc.data().data){
+                state.auditResults = auditDoc.data().data;
+                localStorage.setItem('ubicaciones_auditResults', JSON.stringify(state.auditResults));
+            }
+            
+            const repDoc = await db.collection('ptcontrol').doc('reparaciones').get();
+            if(repDoc.exists && repDoc.data().data){
+                localStorage.setItem('ptcontrol_reparaciones', JSON.stringify(repDoc.data().data));
+            }
+            
+            const incDoc = await db.collection('ptcontrol').doc('incidencias').get();
+            if(incDoc.exists && incDoc.data().data){
+                localStorage.setItem('ubicaciones_incidencias', JSON.stringify(incDoc.data().data));
+            }
+            
+            const calDoc = await db.collection('ptcontrol').doc('calidadSalidas').get();
+            if(calDoc.exists && calDoc.data().data){
+                localStorage.setItem('ubicaciones_calidadSalidas', JSON.stringify(calDoc.data().data));
+            }
+            
+            firebaseLoaded = true;
+            updateStats();
+            updatePending();
+            console.log('✅ Datos cargados de Firebase');
+        }catch(e){
+            console.log('⚠️ Firebase offline, usando datos locales', e);
+        }
     }
 
     function saveStorage(){
+        // Guardar en localStorage primero (siempre funciona)
         try{
             localStorage.setItem('ubicaciones_movements', JSON.stringify(state.movements));
             localStorage.setItem('ubicaciones_pending', JSON.stringify(state.pendingSync));
             localStorage.setItem('ubicaciones_auditResults', JSON.stringify(state.auditResults));
         }catch(e){}
+        
+        // Guardar en Firebase (sincronizado)
+        saveToFirebase();
+    }
+    
+    async function saveToFirebase(){
+        try{
+            await db.collection('ptcontrol').doc('movements').set({
+                data: state.movements,
+                lastUpdate: new Date().toISOString()
+            });
+            
+            await db.collection('ptcontrol').doc('auditResults').set({
+                data: state.auditResults,
+                lastUpdate: new Date().toISOString()
+            });
+            
+            // Guardar reparaciones
+            var reps = JSON.parse(localStorage.getItem('ptcontrol_reparaciones') || '[]');
+            await db.collection('ptcontrol').doc('reparaciones').set({
+                data: reps,
+                lastUpdate: new Date().toISOString()
+            });
+            
+            // Guardar incidencias
+            var incs = JSON.parse(localStorage.getItem('ubicaciones_incidencias') || '[]');
+            await db.collection('ptcontrol').doc('incidencias').set({
+                data: incs,
+                lastUpdate: new Date().toISOString()
+            });
+            
+            // Guardar calidad salidas
+            var cals = JSON.parse(localStorage.getItem('ubicaciones_calidadSalidas') || '[]');
+            await db.collection('ptcontrol').doc('calidadSalidas').set({
+                data: cals,
+                lastUpdate: new Date().toISOString()
+            });
+            
+            console.log('✅ Guardado en Firebase');
+        }catch(e){
+            console.log('⚠️ Error guardando en Firebase:', e);
+        }
+    }
+    
+    // Escuchar cambios en tiempo real
+    function setupRealtimeSync(){
+        db.collection('ptcontrol').doc('movements').onSnapshot(function(doc){
+            if(doc.exists && doc.data().data && firebaseLoaded){
+                state.movements = doc.data().data;
+                localStorage.setItem('ubicaciones_movements', JSON.stringify(state.movements));
+                updateStats();
+                updatePending();
+                console.log('🔄 Movimientos actualizados en tiempo real');
+            }
+        });
+        
+        db.collection('ptcontrol').doc('reparaciones').onSnapshot(function(doc){
+            if(doc.exists && doc.data().data && firebaseLoaded){
+                localStorage.setItem('ptcontrol_reparaciones', JSON.stringify(doc.data().data));
+                console.log('🔄 Reparaciones actualizadas en tiempo real');
+            }
+        });
     }
 
     // ==================== ROLES ====================
@@ -4014,6 +4139,7 @@
             });
         });
         localStorage.setItem('ptcontrol_reparaciones', JSON.stringify(reps));
+        saveToFirebase(); // Sincronizar con Firebase
         showToast('success', items.length + ' equipos liberados a ' + ubicDestino);
         state.scannedItems.reparacion = [];
         document.getElementById('reparacionComentario').value = '';
