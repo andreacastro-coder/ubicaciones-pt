@@ -292,6 +292,19 @@
                     <div class="menu-card acomodo" id="menuCargaMasiva"><div class="menu-icon">📤</div><div class="menu-title">Carga Masiva</div><div class="menu-desc">Subir inventario</div></div>
                     <div class="menu-card traspaso" id="menuVerIncidencias"><div class="menu-icon">📝</div><div class="menu-title">Incidencias Calidad</div><div class="menu-desc">Ver reportes</div></div>
                     <div class="menu-card embarque" id="menuVerCalidadSalidas"><div class="menu-icon">✅</div><div class="menu-title">Resultado Calidad</div><div class="menu-desc">Diferencias salidas</div></div>
+                    <div class="menu-card mis-movs" id="menuEmpacadosVs"><div class="menu-icon">📥</div><div class="menu-title">Empacados vs Recep.</div><div class="menu-desc">Comparar Excel SAP</div></div>
+                </div>
+                <!-- BORRAR TODO - Solo Auditoría -->
+                <div id="borrarTodoSection" class="hidden" style="margin-top:16px;padding-top:16px;border-top:2px solid var(--error)">
+                    <div class="config-card" style="background:var(--error-bg);border:2px solid var(--error);cursor:pointer" id="menuBorrarTodo">
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <div style="width:44px;height:44px;background:var(--error);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">🗑️</div>
+                            <div>
+                                <div style="font-weight:700;font-size:14px;color:var(--error)">BORRAR TODO</div>
+                                <div style="font-size:11px;color:var(--error)">⚠️ Elimina TODOS los datos</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -607,29 +620,29 @@
         <div class="scanner-body">
             <p style="font-size:12px;color:var(--text-light);margin-bottom:14px">Selecciona el reporte a descargar</p>
             
-            <!-- MOVIMIENTOS CON FILTRO -->
-            <div class="config-card" style="cursor:pointer" id="exportMovsBtn">
+            <!-- 1. EMBARQUES -->
+            <div class="config-card" style="cursor:pointer" id="exportEmbarquesBtn2">
                 <div style="display:flex;align-items:center;gap:12px">
-                    <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
+                    <div style="width:44px;height:44px;background:var(--error-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📤</div>
                     <div>
-                        <div style="font-weight:700;font-size:14px">Movimientos</div>
-                        <div style="font-size:11px;color:var(--text-light)">Filtrar por rango de fechas</div>
+                        <div style="font-weight:700;font-size:14px">Embarques</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
                     </div>
                 </div>
             </div>
             
-            <!-- PENDIENTES CON FILTRO -->
-            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportPendientesBtn">
+            <!-- 2. RECEPCIONES -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportRecepcionesBtn">
                 <div style="display:flex;align-items:center;gap:12px">
-                    <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⏳</div>
+                    <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📥</div>
                     <div>
-                        <div style="font-weight:700;font-size:14px">Pendientes de Acomodo</div>
-                        <div style="font-size:11px;color:var(--text-light)">Filtrar por rango de fechas</div>
+                        <div style="font-weight:700;font-size:14px">Recepciones</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
                     </div>
                 </div>
             </div>
             
-            <!-- INVENTARIO CON FILTRO -->
+            <!-- 3. INVENTARIO -->
             <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportInventarioBtn">
                 <div style="display:flex;align-items:center;gap:12px">
                     <div style="width:44px;height:44px;background:var(--info-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📦</div>
@@ -640,73 +653,88 @@
                 </div>
             </div>
             
-            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-                <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:12px">REPORTES ADICIONALES</div>
-                
-                <div class="config-card" style="cursor:pointer" id="exportEmbarquesBtn2">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:44px;height:44px;background:#e8f4fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📤</div>
-                        <div>
-                            <div style="font-weight:700;font-size:14px">Embarques</div>
-                            <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportIncidenciasBtn2">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⚠️</div>
-                        <div>
-                            <div style="font-weight:700;font-size:14px">Incidencias Calidad</div>
-                            <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportCalidadSalidasBtn2">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
-                        <div>
-                            <div style="font-weight:700;font-size:14px">Calidad Salidas</div>
-                            <div style="font-size:11px;color:var(--text-light)">Resultados de verificación</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportMuestreosBtn2">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:44px;height:44px;background:#f3e8ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
-                        <div>
-                            <div style="font-weight:700;font-size:14px">Muestreos Auditoría</div>
-                            <div style="font-size:11px;color:var(--text-light)">Historial de verificaciones</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportRecepcionesBtn">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:44px;height:44px;background:var(--success-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📥</div>
-                        <div>
-                            <div style="font-weight:700;font-size:14px">Recepciones</div>
-                            <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportReparacionesBtn">
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <div style="width:44px;height:44px;background:#fef3c7;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔧</div>
-                        <div>
-                            <div style="font-weight:700;font-size:14px">Reparaciones</div>
-                            <div style="font-size:11px;color:var(--text-light)">Equipos liberados</div>
-                        </div>
+            <!-- 4. TRASPASOS (NUEVO) -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportTraspasosBtn">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔄</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Traspasos</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
                     </div>
                 </div>
             </div>
             
+            <!-- 5. MOVIMIENTOS -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportMovsBtn">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:#e8f4fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📅</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Movimientos</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por rango de fechas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 6. PENDIENTES -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportPendientesBtn">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:#fef3c7;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⏳</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Pendientes de Acomodo</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por rango de fechas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 7. REPARACIONES -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportReparacionesBtn">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:#d1fae5;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔧</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Reparaciones</div>
+                        <div style="font-size:11px;color:var(--text-light)">Equipos liberados</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 8. CALIDAD SALIDAS -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportCalidadSalidasBtn2">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:#dcfce7;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Calidad Salidas</div>
+                        <div style="font-size:11px;color:var(--text-light)">Resultados de verificación</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 9. INCIDENCIAS -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportIncidenciasBtn2">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">⚠️</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Incidencias Calidad</div>
+                        <div style="font-size:11px;color:var(--text-light)">Filtrar por fechas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 10. MUESTREOS -->
+            <div class="config-card" style="cursor:pointer;margin-top:10px" id="exportMuestreosBtn2">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="width:44px;height:44px;background:#f3e8ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🎯</div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px">Muestreos Auditoría</div>
+                        <div style="font-size:11px;color:var(--text-light)">Historial de verificaciones</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN ALERTAS -->
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
                 <div style="font-size:12px;font-weight:700;color:var(--error);margin-bottom:12px">⚠️ ALERTAS</div>
                 
+                <!-- 11. ALERTAS >30 -->
                 <div class="config-card" style="cursor:pointer;border-left:4px solid var(--warning)" id="exportAlertasBtn">
                     <div style="display:flex;align-items:center;gap:12px">
                         <div style="width:44px;height:44px;background:var(--warning-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔔</div>
@@ -717,6 +745,7 @@
                     </div>
                 </div>
                 
+                <!-- 12. OBSOLESCENCIA -->
                 <div class="config-card" style="cursor:pointer;margin-top:10px;border-left:4px solid var(--error)" id="exportObsolescenciaBtn">
                     <div style="display:flex;align-items:center;gap:12px">
                         <div style="width:44px;height:44px;background:var(--error-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🚨</div>
@@ -1207,25 +1236,166 @@
         </div>
     </div>
 
+    <!-- EXPORTAR TRASPASOS -->
+    <div id="exportTraspasosScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backExportTraspasos">←</button><h2 class="scanner-title">🔄 Exportar Traspasos</h2></div>
+        <div class="scanner-body">
+            <div class="config-card" style="margin-bottom:14px">
+                <div class="config-row"><span class="config-label">Desde:</span><input type="date" class="form-input" id="exportTraspasosDesde"></div>
+                <div class="config-row"><span class="config-label">Hasta:</span><input type="date" class="form-input" id="exportTraspasosHasta"></div>
+                <button class="btn btn-primary mt-14" id="filtrarTraspasosExportBtn">🔍 Filtrar</button>
+            </div>
+            <div id="traspasosExportResumen" class="hidden">
+                <div class="config-card" style="background:var(--warning-bg);margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div><strong>Traspasos encontrados</strong></div>
+                        <div style="font-size:28px;font-weight:800;color:var(--warning)" id="traspasosExportTotal">0</div>
+                    </div>
+                    <div style="font-size:11px;color:var(--text-light);margin-top:4px" id="traspasosRangoFechas"></div>
+                </div>
+                <button class="btn btn-success" id="descargarTraspasosBtn">📊 Descargar Excel</button>
+            </div>
+            <div id="traspasosExportLista" style="margin-top:14px;max-height:300px;overflow-y:auto"></div>
+        </div>
+    </div>
+
+    <!-- EMPACADOS VS RECEPCIONES (AUDITORÍA) -->
+    <div id="empacadosVsRecepcionesScreen" class="screen">
+        <div class="scanner-header"><button class="back-btn" id="backEmpacadosVs">←</button><h2 class="scanner-title">📥 Empacados vs Recepciones</h2></div>
+        <div class="scanner-body">
+            <!-- Tabs -->
+            <div class="input-tabs" style="margin-bottom:14px">
+                <div class="input-tab active" id="tabComparar">📊 Comparar</div>
+                <div class="input-tab" id="tabDashboardEmp">📈 Dashboard</div>
+            </div>
+            
+            <!-- TAB COMPARAR -->
+            <div id="seccionComparar">
+                <div class="config-card" style="margin-bottom:14px">
+                    <p style="font-size:12px;color:var(--text-light);margin-bottom:10px">Sube el Excel de empaque (Fecha, OPI, Modelo y Serie, Serie)</p>
+                    <input type="file" id="empacadosFileInput" accept=".xlsx,.xls" style="display:none">
+                    <button class="btn btn-primary" id="seleccionarArchivoEmpacados">📂 Seleccionar Excel</button>
+                    <div id="empacadosFileInfo" class="hidden" style="margin-top:10px;padding:10px;background:var(--info-bg);border-radius:8px">
+                        <span id="empacadosFileName" style="font-weight:600"></span>
+                    </div>
+                </div>
+                
+                <div id="empacadosResultados" class="hidden">
+                    <!-- Semáforo -->
+                    <div class="config-card" style="margin-bottom:14px" id="empacadosSemaforo">
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <div>
+                                <strong>Cumplimiento</strong><br>
+                                <span style="font-size:11px;color:var(--text-light)">Fecha empaque: <span id="empacadosFechaEmpaque">-</span></span>
+                            </div>
+                            <div style="text-align:right">
+                                <div style="font-size:36px;font-weight:800" id="empacadosPorcentaje">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resumen -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+                        <div class="config-card" style="text-align:center;background:var(--success-bg);padding:12px">
+                            <div style="font-size:24px;font-weight:800;color:var(--success)" id="empacadosRecibidos">0</div>
+                            <div style="font-size:10px;color:var(--success)">✅ Recibidos</div>
+                        </div>
+                        <div class="config-card" style="text-align:center;background:var(--info-bg);padding:12px">
+                            <div style="font-size:24px;font-weight:800;color:var(--info)" id="empacadosEmbarcados">0</div>
+                            <div style="font-size:10px;color:var(--info)">🚚 Embarcados</div>
+                        </div>
+                        <div class="config-card" style="text-align:center;background:var(--warning-bg);padding:12px">
+                            <div style="font-size:24px;font-weight:800;color:var(--warning)" id="empacadosPendientes">0</div>
+                            <div style="font-size:10px;color:var(--warning)">⚠️ Pendientes</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Desglose por bodega -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                        <div class="config-card" style="text-align:center;padding:10px;border-left:4px solid #6366f1">
+                            <div style="font-size:20px;font-weight:800;color:#6366f1" id="empacadosB5">0</div>
+                            <div style="font-size:10px;color:var(--text-light)">Entrada PT B5</div>
+                        </div>
+                        <div class="config-card" style="text-align:center;padding:10px;border-left:4px solid #f59e0b">
+                            <div style="font-size:20px;font-weight:800;color:#f59e0b" id="empacadosB3B7">0</div>
+                            <div style="font-size:10px;color:var(--text-light)">Entrada PT B3/B7</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex;gap:8px;margin-bottom:14px">
+                        <button class="btn btn-success flex-1" id="descargarEmpacadosBtn">📊 Descargar Excel</button>
+                        <button class="btn btn-primary" id="guardarEnDashboardBtn">💾 Guardar</button>
+                    </div>
+                    
+                    <!-- Lista de pendientes -->
+                    <div id="empacadosPendientesLista" style="max-height:250px;overflow-y:auto"></div>
+                </div>
+            </div>
+            
+            <!-- TAB DASHBOARD -->
+            <div id="seccionDashboardEmp" class="hidden">
+                <!-- Promedio Total -->
+                <div class="config-card" style="margin-bottom:14px;background:linear-gradient(135deg,var(--primary),#0065FF);color:white">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div>
+                            <strong>PROMEDIO TOTAL</strong><br>
+                            <span style="font-size:11px;opacity:0.8">Cumplimiento acumulado</span>
+                        </div>
+                        <div style="font-size:36px;font-weight:800" id="dashboardPromedioTotal">0%</div>
+                    </div>
+                </div>
+                
+                <!-- Filtros -->
+                <div class="config-card" style="margin-bottom:14px">
+                    <div class="config-row">
+                        <span class="config-label">Desde:</span>
+                        <input type="date" class="form-input" id="dashboardEmpDesde">
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Hasta:</span>
+                        <input type="date" class="form-input" id="dashboardEmpHasta">
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:10px">
+                        <button class="btn btn-primary flex-1" id="filtrarDashboardEmpBtn">🔍 Filtrar</button>
+                        <button class="btn btn-success" id="exportarDashboardEmpBtn">📊 Excel</button>
+                    </div>
+                </div>
+                
+                <!-- Tabla de historial -->
+                <div id="dashboardEmpTabla" style="overflow-x:auto;font-size:11px">
+                    <p style="text-align:center;color:var(--text-light)">Sin registros</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div id="toast" class="toast"><span id="toastMessage">Mensaje</span></div>
     <div id="pendingBadge" class="pending-badge">⏳ <span id="pendingCount">0</span> pendientes</div>
 
 <script>
 // ==================== FIREBASE CONFIG ====================
-const firebaseConfig = {
-    apiKey: "AIzaSyBnl7Hx8IJRcXhrPnEGXDpSOVC-lIaPu7Y",
-    authDomain: "ubicaciones-pt.firebaseapp.com",
-    databaseURL: "https://ubicaciones-pt-default-rtdb.firebaseio.com",
-    projectId: "ubicaciones-pt",
-    storageBucket: "ubicaciones-pt.firebasestorage.app",
-    messagingSenderId: "154594257298",
-    appId: "1:154594257298:web:ee9df8e25580fb3330f94b"
-};
-
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+let db = null;
+try {
+    if(typeof firebase !== 'undefined') {
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnl7Hx8IJRcXhrPnEGXDpSOVC-lIaPu7Y",
+            authDomain: "ubicaciones-pt.firebaseapp.com",
+            databaseURL: "https://ubicaciones-pt-default-rtdb.firebaseio.com",
+            projectId: "ubicaciones-pt",
+            storageBucket: "ubicaciones-pt.firebasestorage.app",
+            messagingSenderId: "154594257298",
+            appId: "1:154594257298:web:ee9df8e25580fb3330f94b"
+        };
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log('✅ Firebase inicializado');
+    } else {
+        console.log('⚠️ Firebase no disponible - usando solo localStorage');
+    }
+} catch(e) {
+    console.log('⚠️ Error inicializando Firebase:', e);
+}
 
 (function(){
     // ==================== CONFIG ====================
@@ -1331,6 +1501,7 @@ const db = firebase.firestore();
         if(document.getElementById('menuVerIncidencias')) document.getElementById('menuVerIncidencias').addEventListener('click', function(){ openModule('verIncidencias'); });
         if(document.getElementById('menuVerCalidadSalidas')) document.getElementById('menuVerCalidadSalidas').addEventListener('click', function(){ openModule('verCalidadSalidas'); });
         if(document.getElementById('menuMuestreoInterno')) document.getElementById('menuMuestreoInterno').addEventListener('click', function(){ openModule('muestreoInterno'); });
+        if(document.getElementById('menuEmpacadosVs')) document.getElementById('menuEmpacadosVs').addEventListener('click', function(){ openModule('empacadosVsRecepciones'); });
 
         // Back buttons
         document.getElementById('backRecepcion').addEventListener('click', goBack);
@@ -1424,6 +1595,24 @@ const db = firebase.firestore();
         if(document.getElementById('backExportReparaciones')) document.getElementById('backExportReparaciones').addEventListener('click', goBack);
         if(document.getElementById('backExportAlertas')) document.getElementById('backExportAlertas').addEventListener('click', goBack);
         if(document.getElementById('backExportObsolescencia')) document.getElementById('backExportObsolescencia').addEventListener('click', goBack);
+        if(document.getElementById('backExportTraspasos')) document.getElementById('backExportTraspasos').addEventListener('click', goBack);
+        if(document.getElementById('backEmpacadosVs')) document.getElementById('backEmpacadosVs').addEventListener('click', goBack);
+        
+        // Exportar Traspasos
+        if(document.getElementById('exportTraspasosBtn')) document.getElementById('exportTraspasosBtn').addEventListener('click', function(){ openModule('exportTraspasos'); });
+        if(document.getElementById('filtrarTraspasosExportBtn')) document.getElementById('filtrarTraspasosExportBtn').addEventListener('click', filtrarTraspasosExport);
+        if(document.getElementById('descargarTraspasosBtn')) document.getElementById('descargarTraspasosBtn').addEventListener('click', descargarTraspasosExcel);
+        
+        // Empacados vs Recepciones
+        if(document.getElementById('seleccionarArchivoEmpacados')) document.getElementById('seleccionarArchivoEmpacados').addEventListener('click', function(){ document.getElementById('empacadosFileInput').click(); });
+        if(document.getElementById('empacadosFileInput')) document.getElementById('empacadosFileInput').addEventListener('change', procesarArchivoEmpacados);
+        if(document.getElementById('descargarEmpacadosBtn')) document.getElementById('descargarEmpacadosBtn').addEventListener('click', descargarEmpacadosExcel);
+        if(document.getElementById('guardarEnDashboardBtn')) document.getElementById('guardarEnDashboardBtn').addEventListener('click', guardarEnDashboardEmp);
+        if(document.getElementById('tabComparar')) document.getElementById('tabComparar').addEventListener('click', function(){ switchTabEmpacados('comparar'); });
+        if(document.getElementById('tabDashboardEmp')) document.getElementById('tabDashboardEmp').addEventListener('click', function(){ switchTabEmpacados('dashboard'); });
+        if(document.getElementById('filtrarDashboardEmpBtn')) document.getElementById('filtrarDashboardEmpBtn').addEventListener('click', renderDashboardEmpacados);
+        if(document.getElementById('exportarDashboardEmpBtn')) document.getElementById('exportarDashboardEmpBtn').addEventListener('click', exportarDashboardEmpExcel);
+        if(document.getElementById('exportRecepcionesBtn')) document.getElementById('exportRecepcionesBtn').addEventListener('click', function(){ openModule('exportRecepciones'); });
         
         // Filtros de exportar
         if(document.getElementById('filtrarMovsExportBtn')) document.getElementById('filtrarMovsExportBtn').addEventListener('click', filtrarMovimientosExport);
@@ -1800,6 +1989,9 @@ const db = firebase.firestore();
             admin.classList.remove('hidden');
             if(calidadSec) calidadSec.classList.remove('hidden');
             muestreo.classList.remove('hidden');
+            // Mostrar botón Borrar Todo solo para Auditoría
+            var borrarTodoSec = document.getElementById('borrarTodoSection');
+            if(borrarTodoSec) borrarTodoSec.classList.remove('hidden');
         }else if(state.currentRole === 'supervisor'){
             // Supervisor: todo EXCEPTO muestreo auditoría, pero SÍ muestreo interno
             ops.classList.remove('hidden');
@@ -1810,6 +2002,9 @@ const db = firebase.firestore();
             if(calidadSec) calidadSec.classList.remove('hidden');
             if(supervisorSec) supervisorSec.classList.remove('hidden');
             muestreo.classList.add('hidden');
+            // Ocultar botón Borrar Todo para Supervisor
+            var borrarTodoSec = document.getElementById('borrarTodoSection');
+            if(borrarTodoSec) borrarTodoSec.classList.add('hidden');
         }
     }
 
@@ -1911,8 +2106,21 @@ const db = firebase.firestore();
         showToast('success', p.full + ' agregado');
     }
 
-    function parseCode(c){
+    function parseCode(c, allowAny){
         var clean = c.trim().toUpperCase();
+        
+        // Si allowAny es true (para reparaciones), acepta cualquier formato
+        if(allowAny && clean.length >= 3){
+            // Si tiene guion, separar
+            if(clean.indexOf('-') !== -1){
+                var lastDash = clean.lastIndexOf('-');
+                var pr = clean.substring(0, lastDash);
+                var s = clean.substring(lastDash + 1);
+                return {prefix:pr, serie:s, full:clean, isSpecial:true};
+            }
+            // Sin guion, usar todo como serie
+            return {prefix:'', serie:clean, full:clean, isSpecial:true};
+        }
         
         // Si no tiene guiones, intentar extraer serie de los ultimos 9 digitos
         if(clean.indexOf('-') === -1){
@@ -3852,17 +4060,27 @@ const db = firebase.firestore();
             return;
         }
         
-        var csv = 'REPORTE DE EMBARQUES\n';
-        csv += 'Desde:,' + document.getElementById('exportEmbarquesDesde').value + '\n';
-        csv += 'Hasta:,' + document.getElementById('exportEmbarquesHasta').value + '\n';
-        csv += 'Total:,' + embarquesFiltrados.length + '\n\n';
-        csv += 'Fecha,Hora,Serie,Prefijo,Tipo Salida,Referencia,Usuario\n';
-        
-        embarquesFiltrados.forEach(function(m){
-            csv += '"'+m.fecha+'","'+m.hora+'","'+m.equipment.serie+'","'+m.equipment.prefix+'","'+(m.tipoSalida||'cliente')+'","'+(m.referencia||'')+'","'+m.user+'"\n';
+        var data = embarquesFiltrados.map(function(m){
+            var serieCompleta = m.equipment.full;
+            var serie9 = m.equipment.serie || serieCompleta.slice(-9);
+            var prefijo = m.equipment.prefix || '';
+            return {
+                'Fecha': m.fecha,
+                'Hora': m.hora,
+                'Serie Completa': serieCompleta,
+                'Serie (9 dig)': serie9,
+                'Prefijo': prefijo,
+                'Tipo Salida': m.tipoSalida || 'cliente',
+                'Referencia': m.referencia || '',
+                'Usuario': m.user
+            };
         });
         
-        downloadCSV(csv, 'embarques_'+document.getElementById('exportEmbarquesDesde').value+'_'+document.getElementById('exportEmbarquesHasta').value+'.csv');
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Embarques');
+        XLSX.writeFile(wb, 'embarques_'+document.getElementById('exportEmbarquesDesde').value+'.xlsx');
+        showToast('success','Excel descargado');
     }
 
     // ==================== EXPORTAR MUESTREOS AUDITORIA ====================
@@ -4106,7 +4324,7 @@ const db = firebase.firestore();
         var input = document.getElementById('reparacionManualInput');
         var code = input.value.trim().toUpperCase();
         if(!code) return;
-        var parsed = parseCode(code);
+        var parsed = parseCode(code, true); // true = acepta cualquier formato
         if(!parsed){ showToast('error','Serie inválida'); return; }
         if(state.scannedItems.reparacion.some(function(i){return i.full===parsed.full;})){ showToast('warning','Ya escaneado'); return; }
         state.scannedItems.reparacion.push(parsed);
@@ -4180,9 +4398,27 @@ const db = firebase.firestore();
     
     function descargarMovimientosExcel(){
         if(!movsFiltrados.length){ showToast('warning','Sin movimientos'); return; }
-        var csv='Fecha,Hora,Tipo,Serie,Prefijo,Usuario,Bodega,Ubicacion\n';
-        movsFiltrados.forEach(function(m){ csv+='"'+m.fecha+'","'+m.hora+'","'+m.type+'","'+m.equipment.serie+'","'+m.equipment.prefix+'","'+m.user+'","'+(m.bodega||'')+'","'+(m.location||'')+'"\n'; });
-        downloadCSV(csv,'movimientos_'+document.getElementById('exportMovsDesde').value+'.csv');
+        var data = movsFiltrados.map(function(m){
+            var serieCompleta = m.equipment.full;
+            var serie9 = m.equipment.serie || serieCompleta.slice(-9);
+            var prefijo = m.equipment.prefix || '';
+            return {
+                'Fecha': m.fecha,
+                'Hora': m.hora,
+                'Tipo': m.type,
+                'Serie Completa': serieCompleta,
+                'Serie (9 dig)': serie9,
+                'Prefijo': prefijo,
+                'Usuario': m.user,
+                'Bodega': m.bodega || '',
+                'Ubicacion': m.location || ''
+            };
+        });
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Movimientos');
+        XLSX.writeFile(wb, 'movimientos_'+document.getElementById('exportMovsDesde').value+'.xlsx');
+        showToast('success','Excel descargado');
     }
     
     function filtrarPendientesExport(){
@@ -4198,9 +4434,25 @@ const db = firebase.firestore();
     
     function descargarPendientesExcel(){
         if(!pendFiltrados.length){ showToast('warning','Sin pendientes'); return; }
-        var csv='Fecha,Hora,Serie,Prefijo,Tipo,Usuario\n';
-        pendFiltrados.forEach(function(m){ csv+='"'+m.fecha+'","'+m.hora+'","'+m.equipment.serie+'","'+m.equipment.prefix+'","'+m.type+'","'+m.user+'"\n'; });
-        downloadCSV(csv,'pendientes_'+new Date().toISOString().slice(0,10)+'.csv');
+        var data = pendFiltrados.map(function(m){
+            var serieCompleta = m.equipment.full;
+            var serie9 = m.equipment.serie || serieCompleta.slice(-9);
+            var prefijo = m.equipment.prefix || '';
+            return {
+                'Fecha': m.fecha,
+                'Hora': m.hora,
+                'Serie Completa': serieCompleta,
+                'Serie (9 dig)': serie9,
+                'Prefijo': prefijo,
+                'Tipo': m.type,
+                'Usuario': m.user
+            };
+        });
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Pendientes');
+        XLSX.writeFile(wb, 'pendientes_'+new Date().toISOString().slice(0,10)+'.xlsx');
+        showToast('success','Excel descargado');
     }
     
     function exportarInventarioHoy(){ exportInventario(); }
@@ -4212,14 +4464,24 @@ const db = firebase.firestore();
         var inv = {};
         movsHastaFecha.forEach(function(m){
             if(m.type==='embarque'){ delete inv[m.equipment.full]; }
-            else if(m.type==='acomodo'){ inv[m.equipment.full] = { serie: m.equipment.full, prefix: m.equipment.prefix, location: m.location, fecha: m.fecha }; }
-            else if(m.type==='recepcion'||m.type==='traspaso'){ if(!inv[m.equipment.full]) inv[m.equipment.full] = { serie: m.equipment.full, prefix: m.equipment.prefix, location: 'PENDIENTE', fecha: m.fecha }; }
+            else if(m.type==='acomodo'){ inv[m.equipment.full] = { serieCompleta: m.equipment.full, serie9: m.equipment.serie || m.equipment.full.slice(-9), prefix: m.equipment.prefix || '', location: m.location, fecha: m.fecha }; }
+            else if(m.type==='recepcion'||m.type==='traspaso'){ if(!inv[m.equipment.full]) inv[m.equipment.full] = { serieCompleta: m.equipment.full, serie9: m.equipment.serie || m.equipment.full.slice(-9), prefix: m.equipment.prefix || '', location: 'PENDIENTE', fecha: m.fecha }; }
         });
         var items = Object.values(inv);
         if(!items.length){ showToast('warning','Sin inventario'); return; }
-        var csv='Serie,Prefijo,Ubicacion,Fecha Registro\n';
-        items.forEach(function(i){ csv+='"'+i.serie+'","'+i.prefix+'","'+i.location+'","'+i.fecha+'"\n'; });
-        downloadCSV(csv,'inventario_'+fecha+'.csv');
+        var data = items.map(function(i){
+            return {
+                'Serie Completa': i.serieCompleta,
+                'Serie (9 dig)': i.serie9,
+                'Prefijo': i.prefix,
+                'Ubicacion': i.location,
+                'Fecha Registro': i.fecha
+            };
+        });
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+        XLSX.writeFile(wb, 'inventario_'+fecha+'.xlsx');
         showToast('success','Inventario al '+fecha);
     }
     
@@ -4247,9 +4509,25 @@ const db = firebase.firestore();
     
     function descargarRecepcionesExcel(){
         if(!recFiltradas.length){ showToast('warning','Sin recepciones'); return; }
-        var csv='Fecha,Hora,Serie,Prefijo,Bodega,Usuario\n';
-        recFiltradas.forEach(function(r){ csv+='"'+r.fecha+'","'+r.hora+'","'+r.equipment.serie+'","'+r.equipment.prefix+'","'+(r.bodega||'')+'","'+r.user+'"\n'; });
-        downloadCSV(csv,'recepciones_'+document.getElementById('exportRecepcionesDesde').value+'.csv');
+        var data = recFiltradas.map(function(r){
+            var serieCompleta = r.equipment.full;
+            var serie9 = r.equipment.serie || serieCompleta.slice(-9);
+            var prefijo = r.equipment.prefix || '';
+            return {
+                'Fecha': r.fecha,
+                'Hora': r.hora,
+                'Serie Completa': serieCompleta,
+                'Serie (9 dig)': serie9,
+                'Prefijo': prefijo,
+                'Bodega': r.bodega || '',
+                'Usuario': r.user
+            };
+        });
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Recepciones');
+        XLSX.writeFile(wb, 'recepciones_'+document.getElementById('exportRecepcionesDesde').value+'.xlsx');
+        showToast('success','Excel descargado');
     }
     
     function filtrarReparacionesExport(){
@@ -4274,9 +4552,28 @@ const db = firebase.firestore();
     
     function descargarReparacionesExcel(){
         if(!repFiltradas.length){ showToast('warning','Sin reparaciones'); return; }
-        var csv='Fecha,Hora,Serie,Bodega Origen,Ubicacion Destino,Comentario,Usuario\n';
-        repFiltradas.forEach(function(r){ csv+='"'+r.fecha+'","'+r.hora+'","'+r.serie+'","'+(r.bodegaOrigen||r.bodega)+'","'+(r.ubicacionDestino||'')+'","'+(r.comentario||'')+'","'+r.user+'"\n'; });
-        downloadCSV(csv,'reparaciones_'+document.getElementById('exportReparacionesDesde').value+'.csv');
+        var data = repFiltradas.map(function(r){
+            // Para reparaciones, la serie puede ser especial (cualquier formato)
+            var serieCompleta = r.serie;
+            var serie9 = r.serie.slice(-9);
+            var prefijo = r.prefix || '';
+            return {
+                'Fecha': r.fecha,
+                'Hora': r.hora,
+                'Serie Completa': serieCompleta,
+                'Serie (9 dig)': serie9,
+                'Prefijo': prefijo,
+                'Bodega Origen': r.bodegaOrigen || r.bodega || '',
+                'Ubicacion Destino': r.ubicacionDestino || '',
+                'Comentario': r.comentario || '',
+                'Usuario': r.user
+            };
+        });
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Reparaciones');
+        XLSX.writeFile(wb, 'reparaciones_'+document.getElementById('exportReparacionesDesde').value+'.xlsx');
+        showToast('success','Excel descargado');
     }
 
     // ==================== ALERTAS Y OBSOLESCENCIA ====================
@@ -4331,6 +4628,8 @@ const db = firebase.firestore();
         if(m === 'historialReparaciones') filtrarHistorialReparaciones();
         if(m === 'exportAlertas') renderAlertas();
         if(m === 'exportObsolescencia') renderObsolescencia();
+        if(m === 'exportTraspasos') initExportTraspasos();
+        if(m === 'empacadosVsRecepciones') initEmpacadosVsRecepciones();
     }
     
     function renderAlertas(){
@@ -4367,6 +4666,566 @@ const db = firebase.firestore();
         var csv='Serie,Dias Sin Embarque,Ubicacion\n';
         obsoletos.forEach(function(o){ csv+='"'+o.serie+'",'+o.dias+',"'+o.ubicacion+'"\n'; });
         downloadCSV(csv,'obsolescencia_90dias_'+new Date().toISOString().slice(0,10)+'.csv');
+    }
+
+    // ==================== EXPORTAR TRASPASOS ====================
+    var traspasosFiltrados = [];
+    
+    function initExportTraspasos(){
+        var hoy = new Date().toISOString().slice(0,10);
+        document.getElementById('exportTraspasosDesde').value = hoy;
+        document.getElementById('exportTraspasosHasta').value = hoy;
+        document.getElementById('traspasosExportResumen').classList.add('hidden');
+        document.getElementById('traspasosExportLista').innerHTML = '';
+    }
+    
+    function filtrarTraspasosExport(){
+        var desde = document.getElementById('exportTraspasosDesde').value;
+        var hasta = document.getElementById('exportTraspasosHasta').value;
+        if(!desde || !hasta){ showToast('warning','Selecciona rango de fechas'); return; }
+        
+        traspasosFiltrados = state.movements.filter(function(m){
+            if(m.type !== 'traspaso') return false;
+            var fecha = m.timestamp.slice(0,10);
+            return fecha >= desde && fecha <= hasta;
+        });
+        
+        document.getElementById('traspasosExportTotal').textContent = traspasosFiltrados.length;
+        document.getElementById('traspasosRangoFechas').textContent = desde + ' a ' + hasta;
+        document.getElementById('traspasosExportResumen').classList.remove('hidden');
+        
+        var container = document.getElementById('traspasosExportLista');
+        if(!traspasosFiltrados.length){ container.innerHTML = '<div class="empty-state"><p>No hay traspasos</p></div>'; return; }
+        
+        var html = '';
+        traspasosFiltrados.slice(0,50).forEach(function(m){
+            html += '<div class="config-card" style="margin-bottom:6px;padding:10px">';
+            html += '<div style="display:flex;justify-content:space-between">';
+            html += '<div><span style="font-family:monospace;font-weight:700">'+m.equipment.full+'</span><br>';
+            html += '<span style="font-size:11px;color:var(--text-light)">'+m.fecha+' '+m.hora+' • '+m.user+'</span></div>';
+            html += '<div style="text-align:right"><span style="font-size:10px;background:var(--warning-bg);padding:2px 6px;border-radius:4px">→ '+(m.bodega||'-')+'</span></div>';
+            html += '</div></div>';
+        });
+        container.innerHTML = html;
+    }
+    
+    function descargarTraspasosExcel(){
+        if(!traspasosFiltrados.length){ showToast('warning','No hay traspasos'); return; }
+        
+        var data = traspasosFiltrados.map(function(m){
+            var serieCompleta = m.equipment.full;
+            var serie9 = m.equipment.serie || serieCompleta;
+            var prefijo = m.equipment.prefix || '';
+            return {
+                'Fecha': m.fecha,
+                'Hora': m.hora,
+                'Serie Completa': serieCompleta,
+                'Serie (9 dig)': serie9,
+                'Prefijo': prefijo,
+                'Bodega Origen': m.bodegaOrigen || '-',
+                'Bodega Destino': m.bodega || '-',
+                'Solicitante': m.solicitante || '-',
+                'Motivo': m.motivo || '-',
+                'Usuario': m.user
+            };
+        });
+        
+        var ws = XLSX.utils.json_to_sheet(data);
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Traspasos');
+        XLSX.writeFile(wb, 'traspasos_'+new Date().toISOString().slice(0,10)+'.xlsx');
+        showToast('success','Excel descargado');
+    }
+
+    // ==================== EMPACADOS VS RECEPCIONES ====================
+    var empacadosData = { items: [], resultados: null };
+    
+    function initEmpacadosVsRecepciones(){
+        empacadosData = { items: [], resultados: null };
+        document.getElementById('empacadosFileInfo').classList.add('hidden');
+        document.getElementById('empacadosResultados').classList.add('hidden');
+        // Asegurar que empieza en tab Comparar
+        switchTabEmpacados('comparar');
+        // Inicializar fechas del dashboard
+        var hoy = new Date().toISOString().slice(0,10);
+        var hace30 = new Date(Date.now() - 30*24*60*60*1000).toISOString().slice(0,10);
+        document.getElementById('dashboardEmpDesde').value = hace30;
+        document.getElementById('dashboardEmpHasta').value = hoy;
+    }
+    
+    function procesarArchivoEmpacados(e){
+        var file = e.target.files[0];
+        if(!file) return;
+        
+        document.getElementById('empacadosFileName').textContent = file.name;
+        document.getElementById('empacadosFileInfo').classList.remove('hidden');
+        
+        var reader = new FileReader();
+        reader.onload = function(evt){
+            try {
+                var data = new Uint8Array(evt.target.result);
+                var workbook = XLSX.read(data, {type:'array'});
+                var sheet = workbook.Sheets[workbook.SheetNames[0]];
+                var rows = XLSX.utils.sheet_to_json(sheet, {header:1});
+                
+                // Buscar encabezados
+                var headerRow = -1;
+                for(var i=0; i<Math.min(10, rows.length); i++){
+                    var row = rows[i];
+                    if(row && row.some(function(c){ return String(c).toLowerCase().indexOf('serie') !== -1 || String(c).toLowerCase().indexOf('fecha') !== -1; })){
+                        headerRow = i;
+                        break;
+                    }
+                }
+                
+                if(headerRow === -1){ showToast('error','No se encontraron encabezados'); return; }
+                
+                var headers = rows[headerRow].map(function(h){ return String(h).toLowerCase().trim(); });
+                var fechaIdx = headers.findIndex(function(h){ return h.indexOf('fecha') !== -1; });
+                var opiIdx = headers.findIndex(function(h){ return h.indexOf('opi') !== -1; });
+                var modeloSerieIdx = headers.findIndex(function(h){ return h.indexOf('modelo') !== -1 && h.indexOf('serie') !== -1; });
+                var serieIdx = headers.findIndex(function(h){ return h === 'serie' || (h.indexOf('serie') !== -1 && h.indexOf('modelo') === -1); });
+                
+                empacadosData.items = [];
+                var fechaEmpaque = null;
+                
+                for(var i=headerRow+1; i<rows.length; i++){
+                    var row = rows[i];
+                    if(!row || row.length < 2) continue;
+                    
+                    var fecha = fechaIdx !== -1 ? row[fechaIdx] : null;
+                    var opi = opiIdx !== -1 ? row[opiIdx] : null;
+                    var modeloSerie = modeloSerieIdx !== -1 ? String(row[modeloSerieIdx] || '').replace(/'/g, '-') : null;
+                    var serie = serieIdx !== -1 ? row[serieIdx] : null;
+                    
+                    // Normalizar fecha
+                    if(fecha && !fechaEmpaque){
+                        if(typeof fecha === 'number'){ fecha = XLSX.SSF.format('YYYY-MM-DD', fecha); }
+                        else if(typeof fecha === 'string'){ 
+                            var parts = fecha.split('/');
+                            if(parts.length === 3){ fecha = parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0'); }
+                        }
+                        fechaEmpaque = fecha;
+                    }
+                    
+                    // Usar modeloSerie o serie
+                    var serieUsar = modeloSerie || serie;
+                    if(!serieUsar) continue;
+                    serieUsar = String(serieUsar).toUpperCase().trim();
+                    
+                    empacadosData.items.push({
+                        fecha: fechaEmpaque,
+                        opi: opi,
+                        modeloSerie: modeloSerie,
+                        serie: serie,
+                        serieBuscar: serieUsar
+                    });
+                }
+                
+                if(!empacadosData.items.length){ showToast('error','No se encontraron datos'); return; }
+                
+                // Comparar contra recepciones
+                compararEmpacadosVsRecepciones(fechaEmpaque);
+                
+            } catch(err){
+                console.error(err);
+                showToast('error','Error al leer archivo');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        e.target.value = '';
+    }
+    
+    function compararEmpacadosVsRecepciones(fechaEmpaque){
+        var hoy = new Date().toISOString().slice(0,10);
+        
+        // Buscar recepciones desde fecha empaque hasta hoy
+        var recepciones = {};
+        var embarques = {};
+        
+        state.movements.forEach(function(m){
+            var fecha = m.timestamp.slice(0,10);
+            if(fecha >= fechaEmpaque && fecha <= hoy){
+                if(m.type === 'recepcion'){
+                    recepciones[m.equipment.full] = m;
+                    // También buscar por serie sola
+                    if(m.equipment.serie) recepciones[m.equipment.serie] = m;
+                }
+                if(m.type === 'embarque'){
+                    embarques[m.equipment.full] = m;
+                    if(m.equipment.serie) embarques[m.equipment.serie] = m;
+                }
+            }
+        });
+        
+        var recibidos = [];
+        var embarcados = [];
+        var pendientes = [];
+        var entradaB5 = 0;
+        var entradaB3B7 = 0;
+        
+        empacadosData.items.forEach(function(item){
+            var serieBuscar = item.serieBuscar;
+            var serie9 = serieBuscar.slice(-9);
+            
+            // Buscar en recepciones
+            var encontradoRecepcion = recepciones[serieBuscar] || recepciones[serie9];
+            if(encontradoRecepcion){
+                recibidos.push({ item: item, movimiento: encontradoRecepcion, status: 'recibido' });
+                // Contar por bodega
+                var bodega = (encontradoRecepcion.bodega || '').toUpperCase();
+                if(bodega === 'B5') entradaB5++;
+                else if(bodega === 'B3' || bodega === 'B7') entradaB3B7++;
+                return;
+            }
+            
+            // Buscar en embarques
+            var encontradoEmbarque = embarques[serieBuscar] || embarques[serie9];
+            if(encontradoEmbarque){
+                embarcados.push({ item: item, movimiento: encontradoEmbarque, status: 'embarcado' });
+                return;
+            }
+            
+            // Pendiente - calcular días transcurridos
+            var diasTranscurridos = Math.floor((new Date(hoy) - new Date(fechaEmpaque)) / (1000*60*60*24));
+            pendientes.push({ item: item, status: 'pendiente', dias: diasTranscurridos });
+        });
+        
+        // Guardar resultados incluyendo desglose por bodega
+        var total = empacadosData.items.length;
+        var escaneados = recibidos.length;
+        var porcentaje = total > 0 ? ((escaneados / total) * 100) : 0;
+        
+        empacadosData.resultados = { 
+            recibidos: recibidos, 
+            embarcados: embarcados, 
+            pendientes: pendientes, 
+            fechaEmpaque: fechaEmpaque,
+            fechaReporte: hoy,
+            seriesEmpacadas: total,
+            seriesEscaneadas: escaneados,
+            diferencia: total - escaneados,
+            porcentaje: porcentaje,
+            entradaB5: entradaB5,
+            entradaB3B7: entradaB3B7
+        };
+        
+        // Mostrar resultados
+        document.getElementById('empacadosFechaEmpaque').textContent = fechaEmpaque;
+        document.getElementById('empacadosPorcentaje').textContent = porcentaje.toFixed(2) + '%';
+        document.getElementById('empacadosRecibidos').textContent = recibidos.length;
+        document.getElementById('empacadosEmbarcados').textContent = embarcados.length;
+        document.getElementById('empacadosPendientes').textContent = pendientes.length;
+        document.getElementById('empacadosB5').textContent = entradaB5;
+        document.getElementById('empacadosB3B7').textContent = entradaB3B7;
+        
+        // Semáforo
+        var semaforo = document.getElementById('empacadosSemaforo');
+        semaforo.style.background = porcentaje >= 95 ? 'var(--success-bg)' : porcentaje >= 90 ? 'var(--warning-bg)' : 'var(--error-bg)';
+        document.getElementById('empacadosPorcentaje').style.color = porcentaje >= 95 ? 'var(--success)' : porcentaje >= 90 ? 'var(--warning)' : 'var(--error)';
+        
+        // Lista de pendientes
+        var container = document.getElementById('empacadosPendientesLista');
+        if(pendientes.length){
+            var html = '<div style="font-weight:700;margin-bottom:8px;color:var(--warning)">⚠️ Pendientes de recibir ('+pendientes.length+'):</div>';
+            pendientes.forEach(function(p){
+                html += '<div class="config-card" style="margin-bottom:6px;padding:10px;border-left:4px solid var(--warning)">';
+                html += '<div style="display:flex;justify-content:space-between">';
+                html += '<span style="font-family:monospace;font-weight:600">'+p.item.serieBuscar+'</span>';
+                html += '<span style="color:var(--warning);font-weight:700">'+p.dias+' días</span>';
+                html += '</div></div>';
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<div style="text-align:center;color:var(--success);font-weight:600">✅ Todo recibido</div>';
+        }
+        
+        document.getElementById('empacadosResultados').classList.remove('hidden');
+        showToast('success', 'Comparación completada: '+porcentaje.toFixed(2)+'% cumplimiento');
+    }
+    
+    function descargarEmpacadosExcel(){
+        if(!empacadosData.resultados){ showToast('warning','No hay datos'); return; }
+        
+        var r = empacadosData.resultados;
+        var wb = XLSX.utils.book_new();
+        
+        // Hoja 1: RESUMEN
+        var resumen = [
+            ['COMPARACIÓN EMPACADOS VS RECEPCIONES'],
+            [''],
+            ['Fecha Empaque:', r.fechaEmpaque],
+            ['Fecha Comparación:', new Date().toISOString().slice(0,10)],
+            [''],
+            ['Total Empacados:', empacadosData.items.length],
+            ['Recibidos:', r.recibidos.length],
+            ['Embarcados (sin recepción):', r.embarcados.length],
+            ['Pendientes:', r.pendientes.length],
+            [''],
+            ['% Cumplimiento:', Math.round(((r.recibidos.length + r.embarcados.length) / empacadosData.items.length) * 100) + '%']
+        ];
+        var wsResumen = XLSX.utils.aoa_to_sheet(resumen);
+        XLSX.utils.book_append_sheet(wb, wsResumen, 'RESUMEN');
+        
+        // Hoja 2: DETALLE OK
+        var detalleOk = r.recibidos.map(function(x){
+            return {
+                'Serie Completa': x.item.serieBuscar,
+                'Serie (9 dig)': x.item.serie || x.item.serieBuscar.slice(-9),
+                'OPI': x.item.opi || '-',
+                'Status': '✅ Recibido',
+                'Fecha Recepción': x.movimiento.fecha,
+                'Usuario': x.movimiento.user
+            };
+        });
+        r.embarcados.forEach(function(x){
+            detalleOk.push({
+                'Serie Completa': x.item.serieBuscar,
+                'Serie (9 dig)': x.item.serie || x.item.serieBuscar.slice(-9),
+                'OPI': x.item.opi || '-',
+                'Status': '🚚 Embarcado',
+                'Fecha Recepción': '-',
+                'Usuario': x.movimiento.user
+            });
+        });
+        if(detalleOk.length){
+            var wsOk = XLSX.utils.json_to_sheet(detalleOk);
+            XLSX.utils.book_append_sheet(wb, wsOk, 'DETALLE OK');
+        }
+        
+        // Hoja 3: PENDIENTES
+        if(r.pendientes.length){
+            var detallePendientes = r.pendientes.map(function(x){
+                return {
+                    'Serie Completa': x.item.serieBuscar,
+                    'Serie (9 dig)': x.item.serie || x.item.serieBuscar.slice(-9),
+                    'OPI': x.item.opi || '-',
+                    'Días Transcurridos': x.dias,
+                    'Status': '⚠️ Pendiente'
+                };
+            });
+            var wsPendientes = XLSX.utils.json_to_sheet(detallePendientes);
+            XLSX.utils.book_append_sheet(wb, wsPendientes, 'PENDIENTES');
+        }
+        
+        XLSX.writeFile(wb, 'empacados_vs_recepciones_'+new Date().toISOString().slice(0,10)+'.xlsx');
+        showToast('success','Excel descargado');
+    }
+
+    // ==================== BORRAR TODO (Solo Auditoría, clave 0122) ====================
+    function borrarTodoDatos(){
+        var clave = prompt('⚠️ ADVERTENCIA: Esto eliminará TODOS los datos.\n\nEscribe la clave para confirmar:');
+        if(clave !== '0122'){
+            if(clave !== null) showToast('error','Clave incorrecta');
+            return;
+        }
+        
+        var confirmar = confirm('¿ESTÁS SEGURA?\n\nEsto borrará:\n• Todos los movimientos\n• Todas las reparaciones\n• Todas las incidencias\n• Todos los muestreos\n• Todos los reportes de calidad\n\nEsta acción NO se puede deshacer.');
+        if(!confirmar) return;
+        
+        // Borrar localStorage
+        localStorage.removeItem('ptcontrol_movements');
+        localStorage.removeItem('ptcontrol_pendingSync');
+        localStorage.removeItem('ptcontrol_reparaciones');
+        localStorage.removeItem('ptcontrol_incidencias');
+        localStorage.removeItem('calidadReportes');
+        localStorage.removeItem('calidadScannedItems');
+        localStorage.removeItem('auditResults');
+        localStorage.removeItem('muestreoInternoHistorial');
+        localStorage.removeItem('dashboardEmpacadosHistorial');
+        
+        // Borrar Firebase (si existe)
+        if(typeof db !== 'undefined' && db){
+            try {
+                // Borrar colecciones de Firebase
+                var colecciones = ['movements', 'reparaciones', 'incidencias', 'auditResults', 'calidadSalidas'];
+                colecciones.forEach(function(col){
+                    db.collection('ptcontrol').doc(col).delete().catch(function(){});
+                });
+            } catch(e){ console.log('Error limpiando Firebase:', e); }
+        }
+        
+        // Limpiar estado
+        state.movements = [];
+        state.pendingSync = [];
+        
+        showToast('success','Todos los datos han sido eliminados');
+        
+        // Recargar página
+        setTimeout(function(){ location.reload(); }, 1500);
+    }
+
+    // ==================== DASHBOARD EMPACADOS VS RECEPCIONES ====================
+    
+    function switchTabEmpacados(tab){
+        var tabComparar = document.getElementById('tabComparar');
+        var tabDashboard = document.getElementById('tabDashboardEmp');
+        var secComparar = document.getElementById('seccionComparar');
+        var secDashboard = document.getElementById('seccionDashboardEmp');
+        
+        if(tab === 'comparar'){
+            tabComparar.classList.add('active');
+            tabDashboard.classList.remove('active');
+            secComparar.classList.remove('hidden');
+            secDashboard.classList.add('hidden');
+        } else {
+            tabComparar.classList.remove('active');
+            tabDashboard.classList.add('active');
+            secComparar.classList.add('hidden');
+            secDashboard.classList.remove('hidden');
+            renderDashboardEmpacados();
+        }
+    }
+    
+    function guardarEnDashboardEmp(){
+        if(!empacadosData.resultados){
+            showToast('warning','Primero realiza una comparación');
+            return;
+        }
+        
+        var r = empacadosData.resultados;
+        var historial = JSON.parse(localStorage.getItem('dashboardEmpacadosHistorial') || '[]');
+        
+        // Verificar si ya existe un registro para esta fecha de reporte
+        var yaExiste = historial.some(function(h){ return h.fechaReporte === r.fechaReporte; });
+        if(yaExiste){
+            if(!confirm('Ya existe un registro para '+r.fechaReporte+'. ¿Deseas reemplazarlo?')) return;
+            historial = historial.filter(function(h){ return h.fechaReporte !== r.fechaReporte; });
+        }
+        
+        // Agregar nuevo registro
+        historial.push({
+            id: Date.now(),
+            fechaReporte: r.fechaReporte,
+            fechaEmpaque: r.fechaEmpaque,
+            seriesEmpacadas: r.seriesEmpacadas,
+            seriesEscaneadas: r.seriesEscaneadas,
+            diferencia: r.diferencia,
+            porcentaje: r.porcentaje,
+            entradaB5: r.entradaB5,
+            entradaB3B7: r.entradaB3B7
+        });
+        
+        // Ordenar por fecha descendente
+        historial.sort(function(a,b){ return b.fechaReporte.localeCompare(a.fechaReporte); });
+        
+        localStorage.setItem('dashboardEmpacadosHistorial', JSON.stringify(historial));
+        showToast('success','Guardado en dashboard');
+        
+        // Cambiar a tab dashboard
+        switchTabEmpacados('dashboard');
+    }
+    
+    function renderDashboardEmpacados(){
+        var historial = JSON.parse(localStorage.getItem('dashboardEmpacadosHistorial') || '[]');
+        var desde = document.getElementById('dashboardEmpDesde').value;
+        var hasta = document.getElementById('dashboardEmpHasta').value;
+        
+        // Filtrar por fechas si están definidas
+        var filtrado = historial;
+        if(desde) filtrado = filtrado.filter(function(h){ return h.fechaReporte >= desde; });
+        if(hasta) filtrado = filtrado.filter(function(h){ return h.fechaReporte <= hasta; });
+        
+        // Calcular promedio
+        var promedio = 0;
+        if(filtrado.length > 0){
+            var suma = filtrado.reduce(function(acc, h){ return acc + h.porcentaje; }, 0);
+            promedio = suma / filtrado.length;
+        }
+        document.getElementById('dashboardPromedioTotal').textContent = promedio.toFixed(2) + '%';
+        
+        // Renderizar tabla
+        var container = document.getElementById('dashboardEmpTabla');
+        if(!filtrado.length){
+            container.innerHTML = '<p style="text-align:center;color:var(--text-light);padding:20px">Sin registros</p>';
+            return;
+        }
+        
+        var html = '<table style="width:100%;border-collapse:collapse;font-size:11px">';
+        html += '<thead><tr style="background:var(--primary);color:white">';
+        html += '<th style="padding:8px;text-align:left">Fecha Reporte</th>';
+        html += '<th style="padding:8px;text-align:center">Empacadas</th>';
+        html += '<th style="padding:8px;text-align:center">Escaneadas</th>';
+        html += '<th style="padding:8px;text-align:center">Diferencia</th>';
+        html += '<th style="padding:8px;text-align:center">% Cumpl.</th>';
+        html += '<th style="padding:8px;text-align:center">PT B5</th>';
+        html += '<th style="padding:8px;text-align:center">PT B3/B7</th>';
+        html += '<th style="padding:8px;text-align:center">🗑️</th>';
+        html += '</tr></thead><tbody>';
+        
+        filtrado.forEach(function(h){
+            var colorPct = h.porcentaje >= 95 ? 'var(--success)' : h.porcentaje >= 90 ? 'var(--warning)' : 'var(--error)';
+            html += '<tr style="border-bottom:1px solid var(--border)">';
+            html += '<td style="padding:8px"><strong>'+h.fechaReporte+'</strong><br><span style="font-size:9px;color:var(--text-light)">Emp: '+h.fechaEmpaque+'</span></td>';
+            html += '<td style="padding:8px;text-align:center">'+h.seriesEmpacadas+'</td>';
+            html += '<td style="padding:8px;text-align:center">'+h.seriesEscaneadas+'</td>';
+            html += '<td style="padding:8px;text-align:center;color:var(--error)">'+(-h.diferencia)+'</td>';
+            html += '<td style="padding:8px;text-align:center;font-weight:700;color:'+colorPct+'">'+h.porcentaje.toFixed(2)+'%</td>';
+            html += '<td style="padding:8px;text-align:center">'+h.entradaB5+'</td>';
+            html += '<td style="padding:8px;text-align:center">'+h.entradaB3B7+'</td>';
+            html += '<td style="padding:8px;text-align:center"><button onclick="eliminarRegistroDashboardEmp('+h.id+')" style="background:var(--error);color:white;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:10px">×</button></td>';
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+    
+    // Función global para eliminar (accesible desde onclick)
+    window.eliminarRegistroDashboardEmp = function(id){
+        if(!confirm('¿Eliminar este registro?')) return;
+        var historial = JSON.parse(localStorage.getItem('dashboardEmpacadosHistorial') || '[]');
+        historial = historial.filter(function(h){ return h.id !== id; });
+        localStorage.setItem('dashboardEmpacadosHistorial', JSON.stringify(historial));
+        renderDashboardEmpacados();
+        showToast('success','Registro eliminado');
+    };
+    
+    function exportarDashboardEmpExcel(){
+        var historial = JSON.parse(localStorage.getItem('dashboardEmpacadosHistorial') || '[]');
+        var desde = document.getElementById('dashboardEmpDesde').value;
+        var hasta = document.getElementById('dashboardEmpHasta').value;
+        
+        var filtrado = historial;
+        if(desde) filtrado = filtrado.filter(function(h){ return h.fechaReporte >= desde; });
+        if(hasta) filtrado = filtrado.filter(function(h){ return h.fechaReporte <= hasta; });
+        
+        if(!filtrado.length){ showToast('warning','Sin datos para exportar'); return; }
+        
+        // Calcular promedio
+        var promedio = filtrado.reduce(function(acc, h){ return acc + h.porcentaje; }, 0) / filtrado.length;
+        
+        var wb = XLSX.utils.book_new();
+        
+        // Hoja 1: Dashboard
+        var data = filtrado.map(function(h){
+            return {
+                'Fecha Reporte': h.fechaReporte,
+                'Series Empacadas': h.seriesEmpacadas,
+                'Series Escaneadas': h.seriesEscaneadas,
+                'Diferencia de Equipos': -h.diferencia,
+                '% Cumplimiento': h.porcentaje.toFixed(2) + '%',
+                'Entrada PT B5': h.entradaB5,
+                'Entrada PT B3/B7': h.entradaB3B7
+            };
+        });
+        
+        // Agregar fila de promedio al final
+        data.push({
+            'Fecha Reporte': 'PROMEDIO TOTAL',
+            'Series Empacadas': '',
+            'Series Escaneadas': '',
+            'Diferencia de Equipos': '',
+            '% Cumplimiento': promedio.toFixed(2) + '%',
+            'Entrada PT B5': '',
+            'Entrada PT B3/B7': ''
+        });
+        
+        var ws = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, 'Dashboard');
+        
+        XLSX.writeFile(wb, 'dashboard_empacados_vs_recepciones_'+new Date().toISOString().slice(0,10)+'.xlsx');
+        showToast('success','Excel descargado');
     }
 
 })();
